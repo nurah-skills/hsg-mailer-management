@@ -1464,3 +1464,61 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 @media (max-width: 560px) {
   .header-tools { width: 100%; }
 }
+
+/* Three status colours for the Decide first cards */
+:root {
+  --red-soft: #FBE6E2;
+  --red-line: #E5B7AE;
+  --red-ink: #97331F;
+  --yellow-soft: #FAF0C9;
+  --yellow-line: #E1CE8B;
+  --yellow-ink: #74580C;
+  --green-soft: #E1EEDC;
+  --green-line: #B7D4AE;
+  --green-ink: #2C5B2E;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --red-soft: #2C1A18;
+    --red-line: #4E2E28;
+    --red-ink: #F3A79B;
+    --yellow-soft: #2A2617;
+    --yellow-line: #48412A;
+    --yellow-ink: #E8CE86;
+    --green-soft: #1A271C;
+    --green-line: #314935;
+    --green-ink: #A8CFA5;
+  }
+}
+
+/* Decide first: one group per status, and the card itself carries the colour */
+.decision-groups { display: flex; flex-direction: column; gap: 26px; }
+.decision-group[data-flag="blocked"] { --flag-soft: var(--red-soft); --flag-line: var(--red-line); --flag-ink: var(--red-ink); }
+.decision-group[data-flag="waiting"] { --flag-soft: var(--yellow-soft); --flag-line: var(--yellow-line); --flag-ink: var(--yellow-ink); }
+.decision-group[data-flag="testing"] { --flag-soft: var(--green-soft); --flag-line: var(--green-line); --flag-ink: var(--green-ink); }
+.decision-group-head { display: flex; align-items: center; gap: 10px; }
+.decision-group-head h3 {
+  margin: 0;
+  font-family: var(--heading);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--flag-ink);
+}
+.flag-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--flag-ink); }
+.flag-count { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--muted); }
+.decision-group > .panel-note { margin: 2px 0 12px 20px; }
+.decision-cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.decision-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--flag-line);
+  border-radius: var(--radius);
+  background: var(--flag-soft);
+}
+.decision-card h4 { margin: 0; font-family: var(--heading); font-size: 17px; font-weight: 600; }
+.decision-card .text-link { align-self: flex-start; color: var(--flag-ink); }

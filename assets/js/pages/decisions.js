@@ -1,6 +1,12 @@
 setUpShell();
 
-// Anything a manager has to settle: contradictions in the records, lessons waiting on a call, blocked findings
+// Anything a manager has to settle, kept in three groups so the worst is read first
+const GROUPS = [
+  ['blocked', 'Blocked', 'Stuck until someone makes a call.'],
+  ['waiting', 'Waiting', 'Moving, but waiting on an answer from someone else.'],
+  ['testing', 'Being tested', 'A change is running and the result is not in yet.']
+];
+
 function decisionsWaiting() {
   const conflicts = CHECKS.filter(({ type }) => type[0] === 'sent-early');
   const waitingLessons = LESSONS.filter((lesson) => lesson.status === 'Being tested');
@@ -9,30 +15,36 @@ function decisionsWaiting() {
   const list = [];
   if (conflicts.length) {
     list.push({
+      group: 'blocked',
       title: `${conflicts.length} jobs are marked as sent while the stage says otherwise`,
       detail: 'The tracker row says the mail went out, but the same row still shows an earlier step. Until that is settled, "sent" cannot be trusted as a count.',
       action: 'Agree who updates the stage after a send, then clear the backlog.',
-      link: ['checks.html', 'Open the evidence checks'],
-      tone: 'changed'
+      link: ['checks.html', 'Open the evidence checks']
     });
   }
   blocked.forEach((item) => list.push({
+    group: item.status === 'Blocked' ? 'blocked' : 'waiting',
     title: item.title,
     detail: item.detail,
     action: item.next,
-    link: ['week.html', 'Open needs attention'],
-    tone: item.status === 'Blocked' ? 'waiting' : 'info',
-    status: item.status
+    link: ['week.html', 'Open needs attention']
   }));
   waitingLessons.forEach((lesson) => list.push({
+    group: 'testing',
     title: lesson.title,
     detail: lesson.shows,
     action: lesson.action,
-    link: ['lessons.html', 'Open the lessons'],
-    tone: 'info',
-    status: 'Being tested'
+    link: ['lessons.html', 'Open the lessons']
   }));
   return list;
+}
+
+function decisionCard(item) {
+  const entry = create('li', 'decision-card');
+  const link = create('a', 'text-link', item.link[1]);
+  link.href = item.link[0];
+  entry.append(create('h4', '', item.title), create('p', '', item.detail), create('p', 'decision-action', item.action), link);
+  return entry;
 }
 
 function showDecisions() {
@@ -43,19 +55,23 @@ function showDecisions() {
   const holder = document.getElementById('decision-list');
   holder.replaceChildren();
   if (!list.length) {
-    holder.append(create('li', 'empty', 'Nothing waiting on a decision right now.'));
+    holder.append(create('p', 'empty', 'Nothing waiting on a decision right now.'));
     return;
   }
 
-  list.forEach((item) => {
-    const entry = create('li', 'decision');
-    const top = create('div', 'decision-top');
-    top.append(create('h3', '', item.title));
-    if (item.status) top.append(statusChip({ tone: item.tone, text: item.status }));
-    const link = create('a', 'text-link', item.link[1]);
-    link.href = item.link[0];
-    entry.append(top, create('p', '', item.detail), create('p', 'decision-action', item.action), link);
-    holder.append(entry);
+  GROUPS.forEach(([key, label, note]) => {
+    const group = list.filter((item) => item.group === key);
+    if (!group.length) return;
+
+    const section = create('section', 'decision-group');
+    section.dataset.flag = key;
+    const head = create('div', 'decision-group-head');
+    head.append(create('span', 'flag-dot'), create('h3', '', label), create('span', 'flag-count', `${group.length} ${group.length === 1 ? 'item' : 'items'}`));
+
+    const cards = create('ul', 'decision-cards');
+    group.forEach((item) => cards.append(decisionCard(item)));
+    section.append(head, create('p', 'panel-note', note), cards);
+    holder.append(section);
   });
 }
 
