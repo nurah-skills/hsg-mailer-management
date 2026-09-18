@@ -1184,3 +1184,17 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
   .column-list > li { min-width: 76px; }
   .column-scale { display: none; }
 }
+
+/* Four figures read across a wide panel instead of stacking down a narrow one */
+.figure-list.is-across { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 32px; }
+.figure-list.is-across div { flex-direction: column; align-items: flex-start; gap: 2px; padding: 0; border-top: 0; }
+.figure-list.is-across dt { font-size: 14px; font-weight: 700; color: var(--muted); }
+.figure-list.is-across dd { font-family: var(--heading); font-size: 20px; font-weight: 600; text-align: left; }
+
+@media (max-width: 1100px) {
+  .figure-list.is-across { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .figure-list.is-across { grid-template-columns: minmax(0, 1fr); }
+}
