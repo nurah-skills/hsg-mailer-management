@@ -131,9 +131,12 @@ function areaChart(points, { format = formatNumber, label = 'value', key = 'Emai
   plot.addEventListener('pointermove', readAt);
   plot.addEventListener('pointerleave', rest);
 
+  // A long run cannot label every day, so it labels the ends, the peak and a few between
+  const every = Math.max(1, Math.ceil(points.length / 11));
   const marks = create('div', 'chart-marks');
   points.forEach((point, index) => {
-    const mark = create('span', '', point.label);
+    const named = index === 0 || index === points.length - 1 || index === highest || index % every === 0;
+    const mark = create('span', '', named ? point.label : '');
     if (index === highest) mark.className = 'is-peak';
     marks.append(mark);
   });
@@ -160,6 +163,7 @@ function barList(rows, { format = formatNumber, split = false } = {}) {
     const track = create('div', 'track track-small');
     const fill = create('span', 'track-fill');
     fill.style.width = `${(row.value / most) * 100}%`;
+    if (row.colour) fill.style.background = row.colour;
     track.append(fill);
     item.append(head, track);
     if (row.note) item.append(create('small', '', row.note));

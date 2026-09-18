@@ -1177,6 +1177,7 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .chart-scale { display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 22px; font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
 .chart-art { flex: 1; min-width: 0; height: auto; }
 .chart-marks { display: flex; justify-content: space-between; gap: 4px; padding-left: 54px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.chart-marks span { min-width: 0; white-space: nowrap; }
 .chart-marks .is-peak { color: var(--ink); }
 
 /* A ranked list of figures */

@@ -13,7 +13,7 @@ const crypto = require('crypto');
 
 const root = path.join(__dirname, '..');
 const pages = [
-  'index.html',
+  ...fs.readdirSync(root).filter((name) => name.endsWith('.html')),
   ...fs.readdirSync(path.join(root, 'pages')).filter((name) => name.endsWith('.html')).map((name) => `pages/${name}`)
 ];
 
