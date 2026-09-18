@@ -68,6 +68,7 @@ Rules that hold everywhere: running text stops at **68 characters**; every figur
 A full pill (`999px`) is reserved for status chips and progress tracks, and `50%` for an avatar. Nothing else may invent a corner.
 
 - Panels are padded `20px 22px`, tiles `18px`, the page `24px 16px` on a phone and up to `32px` above that.
+- **The page rhythm is 22px, and every wrapper keeps it.** `.app-main` spaces its children by 22px. Any element that wraps stacked page sections — a view inside a page, an opened drill-down — has to carry the same column gap, or its children butt together and the cards read as one jammed block.
 - Panels sit on a 12-column grid (`.span-4` … `.span-12`) up to `1760px` wide, collapsing to one column at 900px. Panels in a row **stretch to the same height**, so a row never looks ragged.
 - **Elevation is declared once.** A raised surface takes `--shell` and no border: a soft shadow in light, a hairline ring in dark. A card never sits inside another card.
 

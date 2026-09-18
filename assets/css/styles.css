@@ -1149,3 +1149,20 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .pair-row b { flex: none; min-width: 74px; font-family: var(--heading); font-size: 14px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
 .track.is-first .track-fill { background: var(--field-line); }
 .span-12 { grid-column: span 12; }
+
+/* A wrapper that stacks page sections keeps the page's own rhythm.
+   Without this its children butt together and the cards read as one jammed block. */
+#view-comparison,
+#view-sameage,
+#view-attention,
+#check-view,
+#check-list,
+#decide-view,
+#verdict-view,
+#lesson-view { display: flex; flex-direction: column; gap: 22px; }
+
+/* The trail and heading are part of that rhythm, so they stop adding a margin of their own */
+#check-view .category-head,
+#decide-view .category-head,
+#verdict-view .category-head,
+#lesson-view .category-head { margin-bottom: 0; }
