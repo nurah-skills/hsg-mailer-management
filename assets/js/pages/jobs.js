@@ -32,6 +32,28 @@ function shown() {
     && (!search || `${job.code} ${job.title} ${job.owner}`.toLowerCase().includes(search)));
 }
 
+// Naming the filter, and one button back to the whole list
+function activeFilters() {
+  return [
+    state.phase !== 'All' ? `Phase ${state.phase}` : null,
+    state.stage !== 'All' ? state.stage : null,
+    state.owner !== 'All' ? state.owner : null,
+    state.search.trim() ? `“${state.search.trim()}”` : null
+  ].filter(Boolean);
+}
+
+function clearFilters() {
+  state.phase = 'All';
+  state.stage = 'All';
+  state.owner = 'All';
+  state.search = '';
+  ['jobs-phase', 'jobs-stage', 'jobs-owner'].forEach((key) => remember(key, ''));
+  ['phase-filter', 'stage-filter', 'owner-filter'].forEach((id) => { document.getElementById(id).value = 'All'; });
+  document.getElementById('job-search').value = '';
+  render();
+  document.getElementById('phase-filter').focus();
+}
+
 function jobRow(job) {
   const row = create('tr');
 
@@ -63,8 +85,12 @@ function jobRow(job) {
 function render() {
   document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   const rows = shown();
-  document.getElementById('jobs-note').textContent =
-    `${formatNumber(rows.length)} of ${formatNumber(JOBS.length)} jobs · ${formatNumber(rows.reduce((sum, job) => sum + job.audience, 0))} on the lists`;
+  const filters = activeFilters();
+  const audience = formatNumber(rows.reduce((sum, job) => sum + job.audience, 0));
+  document.getElementById('jobs-note').textContent = filters.length
+    ? `${formatNumber(rows.length)} of ${formatNumber(JOBS.length)} jobs, filtered by ${filters.join(' and ')} · ${audience} on the lists`
+    : `All ${formatNumber(JOBS.length)} jobs · ${audience} on the lists`;
+  document.getElementById('jobs-clear').hidden = !filters.length;
 
   const table = document.getElementById('jobs-table');
   table.replaceChildren();
@@ -107,6 +133,10 @@ fillSelect('owner-filter', 'All owners', [...new Set(JOBS.map((job) => job.owner
   remember('jobs-owner', value);
   render();
 });
+
+const jobsClear = document.getElementById('jobs-clear');
+jobsClear.textContent = `Show all ${formatNumber(JOBS.length)}`;
+jobsClear.addEventListener('click', clearFilters);
 
 document.getElementById('job-search').addEventListener('input', (event) => {
   state.search = event.target.value;

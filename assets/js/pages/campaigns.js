@@ -59,6 +59,26 @@ function showTiles(rows) {
   });
 }
 
+// Naming the filter, and one button back to the whole list
+function activeFilters() {
+  return [
+    state.college !== 'All' ? COLLEGE_NAMES[state.college] || state.college : null,
+    state.purpose !== 'All' ? state.purpose : null,
+    state.search.trim() ? `“${state.search.trim()}”` : null
+  ].filter(Boolean);
+}
+
+function clearFilters() {
+  state.college = 'All';
+  state.purpose = 'All';
+  state.search = '';
+  ['campaigns-college', 'campaigns-purpose'].forEach((key) => remember(key, ''));
+  ['campaign-college', 'campaign-purpose'].forEach((id) => { document.getElementById(id).value = 'All'; });
+  document.getElementById('campaign-search').value = '';
+  render();
+  document.getElementById('campaign-college').focus();
+}
+
 function sortHeader(key, label, className = '') {
   const cell = create('th', className);
   cell.scope = 'col';
@@ -126,8 +146,11 @@ function render() {
   document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   const rows = shown();
   showTiles(rows);
-  document.getElementById('campaigns-note').textContent =
-    `${formatNumber(rows.length)} of ${formatNumber(CAMPAIGNS.length)} campaigns, sent between 7 and 16 September`;
+  const filters = activeFilters();
+  document.getElementById('campaigns-note').textContent = filters.length
+    ? `${formatNumber(rows.length)} of ${formatNumber(CAMPAIGNS.length)} campaigns, filtered by ${filters.join(' and ')}`
+    : `All ${formatNumber(CAMPAIGNS.length)} campaigns, sent between 7 and 16 September`;
+  document.getElementById('campaigns-clear').hidden = !filters.length;
 
   document.getElementById('sort-select').value = state.sortKey;
 
@@ -160,6 +183,10 @@ function render() {
   table.append(body);
   labelCells(table);
 }
+
+const campaignsClear = document.getElementById('campaigns-clear');
+campaignsClear.textContent = `Show all ${formatNumber(CAMPAIGNS.length)}`;
+campaignsClear.addEventListener('click', clearFilters);
 
 fillSortPicker();
 

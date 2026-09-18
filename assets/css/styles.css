@@ -565,9 +565,7 @@ a.summary-note { color: var(--accent-ink); }
 .results .cell-name { width: 26%; }
 .results .cell-best,
 .results .cell-cash { width: 9%; text-align: right; white-space: nowrap; }
-.results tbody .cell-name small,
-.results .cell-best small,
-.results .cell-cash small { display: block; font-size: 13px; font-weight: 600; color: var(--muted); }
+.results tbody small { display: block; font-size: 13px; font-weight: 600; color: var(--muted); }
 .results .cell-best b,
 .results .cell-cash b { font-family: var(--heading); font-weight: 600; }
 .results .track-small { margin: 6px 0 2px; }
