@@ -73,6 +73,7 @@ A full pill (`999px`) is reserved for status chips and progress tracks, and `50%
 
 ## Components
 
+- **The page header** — the page name and its one-line note on the left, the refresh button and the board state on the right, closed by a hairline. The state is a dot, **Not connected**, and when the board was last read. One row on a laptop, stacking on a phone.
 - **`.tile`** — a figure with its name, an icon badge, and a footer that can hold a change chip and a note. Built by `statTile()` in `assets/js/shared/app.js`, used on Overview, This week and Campaigns.
 - **`.status`** — a chip. `status-up` / `status-down` carry a direction arrow and the green/red pair; `status-well` / `status-poor` say whether a lesson is good news; `status-good`, `-info`, `-waiting`, `-changed` are the neutral states. A chip never carries a verdict the figure does not support.
 - **Drill-down tiles** — `.decide-tile` (colour-filled, urgency) and `.status-tile` / `.category-tile` (plain, a stage or a kind). Opening one puts the step in the address bar; a `.trail` above the heading names the way back.

@@ -254,9 +254,9 @@ function buildHeaderTools() {
   refresh.type = 'button';
   refresh.append(icon(ICONS.refresh, 16), document.createTextNode('Refresh the mail tool'));
   refresh.addEventListener('click', () => showToast(`Sample figures, so nothing refreshes. The mail tool was read at ${SNAPSHOT.mailRead} and that reading is fixed.`));
-  const tag = header.querySelector('.tag');
+  const state = header.querySelector('.board-state');
   tools.append(refresh);
-  if (tag) tools.append(tag);
+  if (state) tools.append(state);
   header.append(tools);
 }
 
