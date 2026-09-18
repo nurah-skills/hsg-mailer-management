@@ -940,23 +940,36 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 }
 
 /* Decide first: one group per status, and the card itself carries the colour */
-.decision-groups { display: flex; flex-direction: column; gap: 26px; }
-.decision-group[data-flag="blocked"] { --flag-soft: var(--red-soft); --flag-line: var(--red-line); --flag-ink: var(--red-ink); }
-.decision-group[data-flag="waiting"] { --flag-soft: var(--yellow-soft); --flag-line: var(--yellow-line); --flag-ink: var(--yellow-ink); }
-.decision-group[data-flag="testing"] { --flag-soft: var(--green-soft); --flag-line: var(--green-line); --flag-ink: var(--green-ink); }
-.decision-group-head { display: flex; align-items: center; gap: 10px; }
-.decision-group-head h3 {
-  margin: 0;
-  font-family: var(--heading);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: var(--flag-ink);
+/* Decide first: one tile per group, opened to read the cards inside */
+[data-flag="blocked"] { --flag-soft: var(--red-soft); --flag-line: var(--red-line); --flag-ink: var(--red-ink); }
+[data-flag="waiting"] { --flag-soft: var(--yellow-soft); --flag-line: var(--yellow-line); --flag-ink: var(--yellow-ink); }
+[data-flag="testing"] { --flag-soft: var(--green-soft); --flag-line: var(--green-line); --flag-ink: var(--green-ink); }
+
+.decide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+.decide-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px 18px 18px;
+  border: 1px solid var(--flag-line);
+  border-radius: var(--radius);
+  background: var(--flag-soft);
+  color: var(--ink);
+  font-family: var(--body);
+  text-align: left;
+  cursor: pointer;
 }
-.flag-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--flag-ink); }
-.flag-count { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--muted); }
-.decision-group > .panel-note { margin: 2px 0 12px 20px; }
+.decide-tile:hover { border-color: var(--flag-ink); }
+.decide-count { display: flex; align-items: baseline; gap: 6px; color: var(--flag-ink); }
+.decide-count b { font-family: var(--heading); font-size: 38px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.decide-count span { font-size: 15px; font-weight: 700; }
+.decide-name { margin-top: 6px; font-family: var(--heading); font-size: 18px; font-weight: 600; }
+.decide-tile small { font-size: 14px; color: var(--muted); }
+
+#decide-view .category-head { margin-bottom: 14px; }
+#decide-view .back-link { color: var(--flag-ink); }
+.category-heading h3 { margin: 0; font-family: var(--heading); font-size: 20px; font-weight: 600; }
 .decision-cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .decision-card {
   display: flex;

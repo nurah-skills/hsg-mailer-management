@@ -127,8 +127,21 @@
         <section class="panel" aria-labelledby="decide-title">
           <div class="panel-head">
             <h2 id="decide-title">Decide first</h2>
+            <p class="panel-note" id="decide-count"></p>
           </div>
-          <div class="decision-groups" id="decision-list"></div>
+
+          <div class="decide-grid" id="decide-grid"></div>
+
+          <div id="decide-view" hidden>
+            <div class="category-head">
+              <button class="back-link" id="back-to-groups" type="button">Back to all three</button>
+              <div class="category-heading">
+                <h3 id="decide-group-title" tabindex="-1"></h3>
+                <p class="panel-note" id="decide-group-note"></p>
+              </div>
+            </div>
+            <ul class="decision-cards" id="decision-list"></ul>
+          </div>
         </section>
 
         <details class="about">

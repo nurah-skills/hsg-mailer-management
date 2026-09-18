@@ -47,33 +47,68 @@ function decisionCard(item) {
   return entry;
 }
 
-function showDecisions() {
-  const list = decisionsWaiting();
-  document.getElementById('summary-decisions').textContent = String(list.length);
-  document.getElementById('summary-decisions-note').textContent = list.length === 1 ? 'item' : 'items';
+const state = { group: null };
+const list = decisionsWaiting();
+const groupsWithItems = GROUPS.filter(([key]) => list.some((item) => item.group === key));
 
-  const holder = document.getElementById('decision-list');
-  holder.replaceChildren();
-  if (!list.length) {
-    holder.append(create('p', 'empty', 'Nothing waiting on a decision right now.'));
-    return;
-  }
+function showGroupTiles() {
+  const grid = document.getElementById('decide-grid');
+  grid.replaceChildren();
 
-  GROUPS.forEach(([key, label, note]) => {
-    const group = list.filter((item) => item.group === key);
-    if (!group.length) return;
+  groupsWithItems.forEach(([key, label, note]) => {
+    const items = list.filter((item) => item.group === key);
+    const tile = create('button', 'decide-tile');
+    tile.type = 'button';
+    tile.dataset.flag = key;
+    tile.dataset.focus = `decide:${key}`;
 
-    const section = create('section', 'decision-group');
-    section.dataset.flag = key;
-    const head = create('div', 'decision-group-head');
-    head.append(create('span', 'flag-dot'), create('h3', '', label), create('span', 'flag-count', `${group.length} ${group.length === 1 ? 'item' : 'items'}`));
-
-    const cards = create('ul', 'decision-cards');
-    group.forEach((item) => cards.append(decisionCard(item)));
-    section.append(head, create('p', 'panel-note', note), cards);
-    holder.append(section);
+    const count = create('span', 'decide-count');
+    count.append(create('b', '', String(items.length)), create('span', '', items.length === 1 ? 'item' : 'items'));
+    tile.append(count, create('span', 'decide-name', label), create('small', '', note));
+    tile.addEventListener('click', () => openGroup(key));
+    grid.append(tile);
   });
 }
+
+function showGroup() {
+  const [key, label, note] = GROUPS.find(([name]) => name === state.group);
+  const items = list.filter((item) => item.group === key);
+  const view = document.getElementById('decide-view');
+  view.dataset.flag = key;
+  document.getElementById('decide-group-title').textContent = label;
+  document.getElementById('decide-group-note').textContent = note;
+
+  const holder = document.getElementById('decision-list');
+  holder.replaceChildren(...items.map(decisionCard));
+}
+
+function openGroup(key) {
+  state.group = key;
+  remember('decide-group', key);
+  render();
+  document.getElementById('decide-group-title').focus();
+}
+
+function render() {
+  document.getElementById('decide-count').textContent = `${list.length} ${list.length === 1 ? 'item' : 'items'} in three groups`;
+  document.getElementById('summary-decisions').textContent = String(list.length);
+  document.getElementById('summary-decisions-note').textContent = list.length === 1 ? 'item' : 'items';
+  document.getElementById('decide-grid').hidden = Boolean(state.group);
+  document.getElementById('decide-view').hidden = !state.group;
+  if (state.group) showGroup();
+  else showGroupTiles();
+}
+
+const backButton = document.getElementById('back-to-groups');
+backButton.prepend(icon(ICONS.back, 16));
+backButton.addEventListener('click', () => {
+  const key = state.group;
+  state.group = null;
+  remember('decide-group', '');
+  render();
+  const tile = document.querySelector(`[data-focus="decide:${key}"]`);
+  if (tile) tile.focus();
+});
 
 function showStages() {
   const holder = document.getElementById('stage-list');
@@ -119,6 +154,7 @@ function showMail() {
 }
 
 document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
-showDecisions();
+state.group = groupsWithItems.some(([key]) => key === recall('decide-group')) ? recall('decide-group') : null;
+render();
 showStages();
 showMail();
