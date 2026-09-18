@@ -187,7 +187,7 @@ function donutChart(slices, { format = formatNumber } = {}) {
     if (!part) return;
     svg.append(svgNode('circle', {
       cx: size / 2, cy: size / 2, r: radius, fill: 'none',
-      stroke: `var(--slice-${(index % 5) + 1})`, 'stroke-width': stroke,
+      stroke: slice.colour || `var(--slice-${(index % 5) + 1})`, 'stroke-width': stroke,
       'stroke-dasharray': `${circumference * part} ${circumference}`,
       'stroke-dashoffset': -circumference * travelled,
       transform: `rotate(-90 ${size / 2} ${size / 2})`
@@ -202,7 +202,7 @@ function donutChart(slices, { format = formatNumber } = {}) {
   slices.forEach((slice, index) => {
     const item = create('li');
     const dot = create('span', 'donut-dot');
-    dot.style.background = `var(--slice-${(index % 5) + 1})`;
+    dot.style.background = slice.colour || `var(--slice-${(index % 5) + 1})`;
     const text = create('div');
     text.append(create('b', '', slice.label), create('small', '', `${format(slice.value)} · ${formatPercent(slice.value / total)}`));
     item.append(dot, text);
@@ -224,6 +224,7 @@ function pairedBars(rows, { format = formatNumber, first = 'Before', second = 'N
     item.append(create('i', ''), document.createTextNode(label));
     key.append(item);
   });
+  if (rows.some((row) => row.colour)) key.append(create('small', 'chart-key-note', 'Each college keeps its own colour.'));
 
   const list = create('ul', 'pair-list');
   rows.forEach((row) => {
@@ -238,6 +239,7 @@ function pairedBars(rows, { format = formatNumber, first = 'Before', second = 'N
       const track = create('div', `track track-small is-${which}`);
       const fill = create('span', 'track-fill');
       fill.style.width = `${(value / most) * 100}%`;
+      if (row.colour && which === 'second') fill.style.background = row.colour;
       track.append(fill);
       line.append(track, create('b', '', format(value)));
       pair.append(line);

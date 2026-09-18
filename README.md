@@ -48,6 +48,10 @@ Every page carries **Search the board** in its header. Type two letters or more 
 - **“The current period” always means 14 to 16 September.** Any figure counted over a longer run says so on the figure itself.
 - **Reading only.** The board never creates, schedules or sends a mailer, and never writes back to a tracker.
 
+## The college colours
+
+Skills Academy is teal, Matric College is red and Bellview is navy blue — the colours each college uses on its own material. Every chart that splits by college uses them, so a college looks the same wherever you meet it. Matric College's red means Matric College, not a problem: warnings and blocks are chips and tinted cards, never a bar or a slice.
+
 ## Picking rows to export
 
 On **Job pipeline** and **Campaign results** every row has a tick on the left, and the heading row has one that takes everything on screen. Tick a few and the button changes to **Export the 6 you picked**; the file then holds only those. Tick nothing and it saves every row on screen, filters and all. Changing a filter forgets anything that is no longer showing, so the file never holds a row you cannot see.

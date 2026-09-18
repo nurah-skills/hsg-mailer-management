@@ -508,13 +508,14 @@ function buildHeaderTools() {
 function buildStateCard(sidebar) {
   const read = create('span');
   read.id = 'mail-read';
-  read.textContent = SNAPSHOT.mailRead;
-  const detail = create('small', '', 'Sample figures. The mail tool was read ');
-  detail.append(read);
+  read.textContent = SNAPSHOT.mailReadShort;
+  read.title = SNAPSHOT.mailRead;
 
-  const card = create('div', 'board-card');
-  card.append(create('b', '', 'Not connected'), detail);
-  sidebar.querySelector('.sidebar-user').before(card);
+  const line = create('p', 'board-line');
+  const dot = create('span', 'board-dot');
+  dot.setAttribute('aria-hidden', 'true');
+  line.append(dot, document.createTextNode('Not connected · read '), read);
+  sidebar.querySelector('.sidebar-user').before(line);
 }
 
 function buildRelatedLinks(sidebar) {
@@ -540,6 +541,14 @@ function buildFooter() {
   const main = document.getElementById('main');
   if (!main || main.querySelector('.page-foot')) return;
   main.append(create('p', 'page-foot', 'HSG · SAST · a management view. The source workbooks stay in charge of the work itself.'));
+}
+
+function markCurrentPage(sidebar) {
+  const here = location.pathname.split('/').pop() || 'overview.html';
+  sidebar.querySelectorAll('.menu-item').forEach((item) => {
+    if (item.getAttribute('href') === here) item.setAttribute('aria-current', 'page');
+    else item.removeAttribute('aria-current');
+  });
 }
 
 function setUpShell() {
@@ -583,6 +592,7 @@ function setUpShell() {
     if (event.key === 'Escape' && app.classList.contains('menu-open')) setMenuOpen(false);
   });
 
+  markCurrentPage(sidebar);
   buildRelatedLinks(sidebar);
   buildStateCard(sidebar);
   buildHeaderTools();

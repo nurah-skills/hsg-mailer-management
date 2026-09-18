@@ -3,6 +3,7 @@
 
 const SNAPSHOT = {
   mailRead: '18 September 2026 at 13:08 SAST',
+  mailReadShort: '18 Sep, 13:08',
   salesRead: '17 September 2026 at 13:59 SAST',
   responsesRead: '17 September 2026 at 13:37 SAST',
   today: '18 September 2026'
@@ -16,6 +17,15 @@ const PERIOD = {
 
 const COLLEGES = ['SA', 'MC', 'BV', 'Multiple', 'Unclassified'];
 const COLLEGE_NAMES = { SA: 'Skills Academy', MC: 'Matric College', BV: 'Bellview', Multiple: 'More than one college', Unclassified: 'Not labelled yet' };
+
+// Each college is drawn in its own colour, the one it uses on its own material
+const COLLEGE_COLOURS = {
+  SA: 'var(--college-sa)',
+  MC: 'var(--college-mc)',
+  BV: 'var(--college-bv)',
+  Multiple: 'var(--college-multi)',
+  Unclassified: 'var(--college-none)'
+};
 const PURPOSES = ['Sales', 'Nurture', 'Collections', 'Service', 'Unclassified'];
 const FAMILIES = [
   'Childcare / education', 'Course matching', 'Employer funded', 'Free course', 'Funding options',

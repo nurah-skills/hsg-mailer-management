@@ -35,6 +35,11 @@
   --ring-warn: #B0563E;
   --chart-line: #17A57C;
   --chart-fill: rgba(23, 165, 124, .14);
+  --college-sa: #0E8C86;
+  --college-mc: #B3332A;
+  --college-bv: #29426B;
+  --college-multi: #6D6350;
+  --college-none: #77877F;
   --slice-1: #17A57C;
   --slice-2: #14352C;
   --slice-3: #6FC2A5;
@@ -70,6 +75,11 @@
     --ring-warn: #E89A87;
     --chart-line: #3FBF95;
     --chart-fill: rgba(63, 191, 149, .14);
+    --college-sa: #46B8B1;
+    --college-mc: #E2786A;
+    --college-bv: #7E9DC9;
+    --college-multi: #BCA98A;
+    --college-none: #93A39B;
     --slice-1: #3FBF95;
     --slice-2: #7FDCBB;
     --slice-3: #A8D8C4;
@@ -139,31 +149,48 @@ h1, h2, main { scroll-margin-top: 84px; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
 .brand-text small { font-family: var(--body); font-size: 12px; font-weight: 700; opacity: .75; letter-spacing: .02em; }
 
-/* Two columns on laptops: the navy panel sits beside the form */
+/* One card resting on the page: the green panel beside the form */
 .auth-layout {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  min-height: 100vh;
-  min-height: 100dvh;
+  width: min(1040px, 100%);
+  margin: auto;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(11, 33, 26, .06), 0 28px 60px -28px rgba(11, 33, 26, .35);
 }
-
 .auth-panel {
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 48px;
-  padding: 40px 48px;
-  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+  gap: 40px;
+  padding: 36px 40px;
+  background: linear-gradient(155deg, #1C5A46 0%, var(--navy) 52%, var(--navy-deep) 100%);
   color: var(--on-navy);
+}
+/* A few soft lights in the panel, the way a photograph carries highlights */
+.auth-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(150px 150px at 78% 18%, rgba(63, 191, 149, .30), transparent 70%),
+    radial-gradient(220px 220px at 12% 84%, rgba(63, 191, 149, .18), transparent 72%),
+    radial-gradient(3px 3px at 72% 34%, rgba(255, 255, 255, .55), transparent 60%),
+    radial-gradient(2px 2px at 30% 62%, rgba(255, 255, 255, .45), transparent 60%),
+    radial-gradient(2px 2px at 84% 72%, rgba(255, 255, 255, .40), transparent 60%);
+  pointer-events: none;
 }
 .auth-panel .brand { color: var(--on-navy); }
 
+.auth-panel .brand { position: relative; z-index: 1; }
 .auth-panel-copy { margin-block: auto; max-width: 440px; position: relative; z-index: 1; }
-.auth-lead { font-family: var(--heading); font-size: clamp(32px, 3.4vw, 44px); font-weight: 600; line-height: 1.1; letter-spacing: -.01em; text-wrap: balance; }
+.auth-lead { font-family: var(--heading); font-size: clamp(27px, 2.5vw, 36px); font-weight: 600; line-height: 1.15; letter-spacing: -.01em; text-wrap: balance; }
 .auth-panel-copy > p:not(.auth-lead) { margin-top: 16px; color: var(--on-navy-muted); font-size: 17px; }
 
-.auth-points { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.auth-points { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 15px; }
 .auth-points li { display: flex; align-items: flex-start; gap: 12px; color: var(--on-navy); }
 .auth-points svg { flex: none; margin-top: 3px; color: var(--accent); }
 
@@ -173,7 +200,15 @@ h1, h2, main { scroll-margin-top: 84px; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 44px 40px;
+}
+
+[data-page="auth"] body {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(16px, 4vh, 48px) clamp(16px, 4vw, 48px);
+  background: var(--page);
 }
 
 .auth-card { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 28px; }
@@ -279,7 +314,8 @@ select option, select optgroup { background-color: var(--card); color: var(--ink
 .input[aria-invalid='true'], .select[aria-invalid='true'] { border-color: var(--error); }
 
 @media (max-width: 900px) {
-  .auth-layout { grid-template-columns: minmax(0, 1fr); }
+  [data-page="auth"] body { padding: 0; }
+  .auth-layout { grid-template-columns: minmax(0, 1fr); width: 100%; border-radius: 0; box-shadow: none; }
   .auth-panel { display: none; }
   .auth-main { align-items: flex-start; padding: 32px 16px 48px; }
   .auth-card { gap: 24px; }
@@ -305,8 +341,8 @@ select option, select optgroup { background-color: var(--card); color: var(--ink
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 24px 16px;
+  gap: clamp(10px, 1.7vh, 24px);
+  padding: clamp(14px, 2.2vh, 24px) 16px;
   background: var(--card);
   border-right: 1px solid var(--line);
   color: var(--ink);
@@ -316,7 +352,7 @@ select option, select optgroup { background-color: var(--card); color: var(--ink
 
 .menu { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; }
 .menu-label {
-  margin: 16px 0 4px;
+  margin: clamp(4px, 1.1vh, 16px) 0 3px;
   padding: 0 12px;
   font-size: 12px;
   font-weight: 700;
@@ -328,7 +364,7 @@ select option, select optgroup { background-color: var(--card); color: var(--ink
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 44px;
+  min-height: clamp(36px, 4.4vh, 44px);
   padding: 0 12px;
   border-radius: var(--radius-control);
   color: var(--muted);
@@ -340,6 +376,37 @@ a.menu-item:hover { background: var(--field); color: var(--ink); }
 .menu-item[aria-current="page"] { background: var(--accent-soft); color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent); }
 .menu-item[aria-current="page"] svg { color: var(--accent-ink); }
 .menu { scrollbar-color: var(--line) transparent; }
+
+/* A short laptop screen holds the same menu, drawn tighter, so it never needs scrolling */
+@media (max-height: 700px) {
+  [data-page="auth"] body { padding: 12px; }
+  .auth-panel { padding: 24px 32px; gap: 24px; }
+  .auth-main { padding: 28px 32px; }
+}
+
+@media (max-height: 780px) {
+  .sidebar .brand img { width: 30px; height: 30px; }
+  .sidebar .brand { font-size: 16px; }
+  .menu-label { font-size: 11px; }
+  .board-line { font-size: 11px; padding: 0 8px; }
+}
+
+@media (max-height: 680px) {
+  .sidebar { gap: 8px; padding-top: 12px; padding-bottom: 12px; }
+  .menu-label { margin: 4px 0 2px; }
+  .menu-item { min-height: 32px; gap: 10px; }
+  .menu-item svg { width: 18px; height: 18px; }
+  .sidebar-link { min-height: 30px; }
+  .sidebar-links .menu-label { display: none; }
+  .sidebar-links { padding-top: 8px; border-top: 1px solid var(--line); }
+  .sidebar-user { padding-top: 8px; }
+  .sidebar-user .avatar { width: 32px; height: 32px; font-size: 13px; }
+}
+
+@media (pointer: coarse) {
+  .menu-item { min-height: 44px; }
+  .sidebar-link { min-height: 40px; }
+}
 .count {
   margin-left: auto;
   min-width: 24px;
@@ -358,7 +425,7 @@ a.menu-item:hover { background: var(--field); color: var(--ink); }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 8px 0;
+  padding: clamp(8px, 1.4vh, 14px) 8px 0;
   border-top: 1px solid var(--line);
 }
 .sidebar-user div { min-width: 0; flex: 1; }
@@ -921,12 +988,12 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 }
 
 /* Links to the other boards, the header tools and the overview grid */
-.sidebar-links { display: flex; flex-direction: column; gap: 2px; padding-bottom: 6px; }
+.sidebar-links { display: flex; flex-direction: column; gap: 1px; }
 .sidebar-link {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 36px;
+  min-height: clamp(32px, 4.2vh, 36px);
   padding: 0 12px;
   border-radius: var(--radius-control);
   color: var(--muted);
@@ -1223,20 +1290,18 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
   .tiles-five { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* The state of the board sits at the foot of the menu, the way a plan card would */
-.board-card {
+/* What state the board is in: one quiet line at the foot of the menu */
+.board-line {
   flex: none;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
-  padding: 14px 16px;
-  border-radius: var(--radius-control);
-  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
-  color: var(--on-navy);
+  margin: 0;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--muted);
 }
-.board-card b { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
-.board-card b::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: var(--accent); }
-.board-card small { font-size: 12px; line-height: 1.45; color: var(--on-navy-muted); }
+.board-line .board-dot { margin: 0; background: var(--accent); box-shadow: none; }
 
 /* One search for the whole board, in the page header */
 .board-search { position: relative; }
@@ -1283,7 +1348,7 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .spark { display: flex; align-items: flex-end; gap: 3px; flex: none; width: 74px; height: 38px; }
 .spark span { flex: 1; min-width: 0; border-radius: 2px 2px 0 0; background: var(--accent-soft); }
 .spark span.is-marked { background: var(--accent); }
-.tile-badge > span { display: inline-flex; align-items: center; gap: 6px; }
+.tile-badge > span:not(.tile-icon) { display: inline-flex; align-items: center; gap: 6px; }
 .tile-about-open {
   display: inline-grid;
   place-items: center;
@@ -1325,3 +1390,5 @@ tbody tr:has(.cell-pick input:checked) { background: var(--accent-soft); }
 .chart-tip small { display: block; font-size: 12px; color: var(--on-navy-muted); }
 
 .chart-tip.is-below { transform: translate(-50%, 14px); }
+
+.chart-key-note { color: var(--muted); }

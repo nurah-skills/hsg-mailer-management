@@ -31,6 +31,18 @@ Colours live as custom properties on `:root` in `assets/css/styles.css`, redefin
 
 A group applies them by setting `data-flag="blocked|waiting|testing"`, which maps them onto `--flag-soft`, `--flag-line` and `--flag-ink` for everything inside.
 
+**The colleges** each keep the colour they use on their own material, so a college looks the same in every chart:
+
+| College | Token | Light | Dark |
+| --- | --- | --- | --- |
+| Skills Academy | `--college-sa` | `#0E8C86` | `#46B8B1` |
+| Matric College | `--college-mc` | `#B3332A` | `#E2786A` |
+| Bellview | `--college-bv` | `#29426B` | `#7E9DC9` |
+| More than one college | `--college-multi` | `#6D6350` | `#BCA98A` |
+| Not labelled yet | `--college-none` | `#77877F` | `#93A39B` |
+
+`COLLEGE_COLOURS` in `assets/js/shared/data.js` maps a college to its token, and a chart row or slice carries it as `colour`. Matric College's red is a college colour, not a verdict — every chart that uses these names them in its key, and status still lives in chips and tinted cards, never in a chart fill.
+
 **Charts** take `--ring-accent`, `--ring-good`, `--ring-warn`, `--chart-line`, `--chart-fill` and `--slice-1` … `--slice-5`. These are darkened versions of the palette so a thin stroke still reads against `--card`.
 
 **Contrast.** Every text colour measures at least 4.5:1 against the surface behind it, in both themes. Chips and tinted cards are measured the same way, against their own tint rather than the page.
@@ -74,7 +86,9 @@ A full pill (`999px`) is reserved for status chips and progress tracks, and `50%
 
 ## Components
 
-- **The menu** — a light column on `--card`, held off the page by a single hairline. The page you are on is a soft green pill with a thin green ring, so it reads at a glance in both themes; everything else is `--muted` until you hover it. A dark green `.board-card` at the foot says **Not connected** and when the mail tool was read, which is the one piece of state that belongs to the board rather than to a page.
+- **The menu** — a light column on `--card`, held off the page by a single hairline. The page you are on is a soft green pill with a thin green ring, so it reads at a glance in both themes; everything else is `--muted` until you hover it. `markCurrentPage()` sets that mark from the page's own file name, so a page built from a copy of another cannot point at the wrong entry. At the foot, one quiet line says **Not connected** and when the mail tool was read.
+- **A menu that fits** — the whole column has to sit on the screen without scrolling, so its spacing is sized against the window: `clamp()` on the gaps, the padding and the row height, then two `max-height` steps that tighten the type and drop the second heading on short laptop screens. A finger still gets a 44px row through `@media (pointer: coarse)`. Below roughly 620px of window the menu scrolls, because there is nothing left to give.
+- **Sign in** — one card resting on `--page`: the green panel on the left carrying the brand, the lead line, three points and the college names; the form on the right on `--card`. The panel's soft lights are radial gradients on a `::after`, never images. Under 900px the panel drops away and the form fills the screen.
 - **The page header** — the page name and its one-line note on the left, the search field and the refresh button on the right, closed by a hairline. One row on a laptop, stacking on a phone.
 - **Search** — one field in the header covering jobs, campaigns, evidence checks, lessons and problems. Every result is a link to the page that holds it, built from the same addresses those pages put in the address bar themselves, so a result lands with the right tile open and the right filter set. Built by `buildSearch()`.
 - **`.tile`** — a figure with its name, an icon badge, a small chart of the run behind it, and a footer that can hold a change chip and a note. The **(i)** beside the name opens one sentence saying what the figure counts and what it does not. The small chart marks the newest day when the run is days, and the biggest group when the run is groups, so the dark bar never implies something the run does not say. Built by `statTile()` and `sparkline()`.

@@ -79,6 +79,7 @@ function showColleges() {
     const registrations = OUTCOMES.registrations.byCollege[college];
     rows.push({
       label: COLLEGE_NAMES[college],
+      colour: COLLEGE_COLOURS[college],
       first: previous.sent,
       second: current.sent,
       chip: statusChip(changeBetween(previous.sent, current.sent)),
@@ -86,7 +87,7 @@ function showColleges() {
         ? `Registrations ${formatNumber(registrations[1])}, ${formatNumber(registrations[0])} before`
         : 'Registrations not mapped to this college'
     });
-    if (current.sent) slices.push({ label: COLLEGE_NAMES[college], value: current.sent });
+    if (current.sent) slices.push({ label: COLLEGE_NAMES[college], value: current.sent, colour: COLLEGE_COLOURS[college] });
   });
 
   document.getElementById('college-chart').replaceChildren(pairedBars(rows, { first: 'Period before', second: 'This period' }));
