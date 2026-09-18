@@ -10,16 +10,16 @@ Colours live as custom properties on `:root` in `assets/css/styles.css`, redefin
 
 | Token | Light | Dark | Used for |
 | --- | --- | --- | --- |
-| `--page` | `#EDF1F5` | `#0E1319` | The ground behind everything |
-| `--card` | `#FFFFFF` | `#161D25` | Panels, tiles, the raised surfaces |
-| `--field` | `#E4EAF0` | `#1D262F` | Inputs, chip backgrounds, chart tracks |
-| `--ink` | `#16202B` | `#E9EDF1` | Body text |
-| `--muted` | `#55636F` | `#9AA7B4` | Second-line text, labels, captions |
-| `--line` | `#D3DCE5` | `#2A3541` | Hairlines and dividers |
-| `--navy` / `--navy-deep` | `#1E2A38` / `#141D26` | `#17212C` / `#111922` | The menu, and the art on the check tiles |
-| `--accent` | `#E8A33C` | `#E0AE55` | The amber the board is known by |
-| `--accent-ink` | `#8A5410` | `#F0C579` | Links, and text on amber |
-| `--focus` | `#2E6FA8` | `#8DB7E3` | The focus ring |
+| `--page` | `#F1F6F3` | `#0A130F` | The ground behind everything |
+| `--card` | `#FFFFFF` | `#12201A` | Panels, tiles, the raised surfaces |
+| `--field` | `#E6EEE9` | `#1A2B24` | Inputs, chip backgrounds, chart tracks |
+| `--ink` | `#11211B` | `#E7F0EB` | Body text |
+| `--muted` | `#52665D` | `#96A9A0` | Second-line text, labels, captions |
+| `--line` | `#D6E4DC` | `#26382F` | Hairlines and dividers |
+| `--navy` / `--navy-deep` | `#14352C` / `#0C211A` | `#143027` / `#0C1F19` | The menu gradient, and the art on the check tiles |
+| `--accent` | `#17A57C` | `#3FBF95` | The green the board is known by |
+| `--accent-ink` | `#0A6B50` | `#7FDCBB` | Links, and text on green |
+| `--focus` | `#0F766E` | `#6EE7C4` | The focus ring |
 
 **The three status colours** carry meaning and are used nowhere decorative:
 
@@ -31,7 +31,7 @@ Colours live as custom properties on `:root` in `assets/css/styles.css`, redefin
 
 A group applies them by setting `data-flag="blocked|waiting|testing"`, which maps them onto `--flag-soft`, `--flag-line` and `--flag-ink` for everything inside.
 
-**Charts** take `--ring-accent`, `--ring-good`, `--ring-warn`, `--chart-line` and `--chart-fill`. These are darkened versions of the palette so a thin stroke still reads against `--card`.
+**Charts** take `--ring-accent`, `--ring-good`, `--ring-warn`, `--chart-line`, `--chart-fill` and `--slice-1` … `--slice-5`. These are darkened versions of the palette so a thin stroke still reads against `--card`.
 
 **Contrast.** Every text colour measures at least 4.5:1 against the surface behind it, in both themes. Chips and tinted cards are measured the same way, against their own tint rather than the page.
 
@@ -57,9 +57,18 @@ Rules that hold everywhere: running text stops at **68 characters**; every figur
 
 ## Space and shape
 
-- `--radius: 14px` on panels, tiles and cards. Chips and pills are `999px`. Small marks (the icon badge) are `10px`.
+**Three shapes, and nothing else.** A square corner next to a rounded one is the fastest way to look unfinished, so every corner comes from one of these:
+
+| Token | Value | Used for |
+| --- | --- | --- |
+| `--radius` | `16px` | Panels, tiles, cards — anything that is a surface |
+| `--radius-control` | `10px` | Buttons, inputs, selects, the header tag, icon badges |
+| `--radius-mark` | `4px` | Colour swatches and legend dots |
+
+A full pill (`999px`) is reserved for status chips and progress tracks, and `50%` for an avatar. Nothing else may invent a corner.
+
 - Panels are padded `20px 22px`, tiles `18px`, the page `24px 16px` on a phone and up to `32px` above that.
-- Panels sit on a 12-column grid (`.span-4` … `.span-8`), collapsing to one column at 900px.
+- Panels sit on a 12-column grid (`.span-4` … `.span-12`) up to `1760px` wide, collapsing to one column at 900px. Panels in a row **stretch to the same height**, so a row never looks ragged.
 - **Elevation is declared once.** A raised surface takes `--shell` and no border: a soft shadow in light, a hairline ring in dark. A card never sits inside another card.
 
 ## Components
