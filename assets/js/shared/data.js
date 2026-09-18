@@ -2,7 +2,7 @@
 // The measures follow the current mailer board: sends, deliveries, clicks, unsubscribes, job phases and evidence checks.
 
 const SNAPSHOT = {
-  mailRead: '17 September 2026 at 13:38 SAST',
+  mailRead: '18 September 2026 at 13:08 SAST',
   salesRead: '17 September 2026 at 13:59 SAST',
   responsesRead: '17 September 2026 at 13:37 SAST',
   today: '18 September 2026'
@@ -365,15 +365,48 @@ const SOURCES = [
   { name: 'Phase E-2 actions tracker', rows: 16, range: 'Actions tracker A1:AA1000', read: '17 September, 13:38', scope: 'Second ICB wave.' },
   { name: 'Phase F actions tracker', rows: 24, range: 'Actions tracker A1:AA1000', read: '17 September, 13:38', scope: '2026 leads.' },
   { name: 'Phase G actions tracker', rows: 16, range: 'Sheet 1 A1:Z80', read: '17 September, 13:38', scope: 'Proof and call follow-up.' },
-  { name: 'Phase H and K trackers', rows: 14, range: 'Sheet 1 A1:Z200', read: '17 September, 13:38', scope: 'Newest waves, still being set up.' }
+  { name: 'Phase H actions tracker', rows: 4, range: 'Sheet 1 A1:AA1000', read: '17 September, 13:38', scope: 'Newest wave, still being set up.' },
+  { name: 'Phase K fresh build tracker', rows: 10, range: 'Actions tracker A1:AA30', read: '17 September, 13:38', scope: 'The rebuilt Phase K. The earlier Phase K build is not counted a second time.' }
 ];
 
 const COVERAGE = {
-  mailRecords: 4737,
+  mailRecords: 4782,
   sendLogRows: 1042,
   outcomesFilled: 0,
   since: '15 June 2026'
 };
+
+// What the board is allowed to do with each connection
+const CONNECTIONS = [
+  {
+    name: 'Mail tool',
+    status: 'Connected',
+    tone: 'good',
+    detail: 'The board reads campaigns and their reports. Refreshing never creates, loads, schedules or sends a mailer.'
+  },
+  {
+    name: 'Tracker sheets',
+    status: 'Dated snapshot',
+    tone: 'info',
+    detail: 'Tracker rows are a saved reading from 17 September. Editing a sheet does not change this board, and the board never writes back. Open a source below for its latest state.'
+  },
+  {
+    name: 'Job review assistant',
+    status: 'Not connected in this demo',
+    tone: 'waiting',
+    detail: 'In the real board this reviews a job’s management fields and suggests a next step, with its confidence shown. It never receives lead lists or contact details, and its suggestions never approve or send anything. No key is entered anywhere in this demo.'
+  }
+];
+
+// How to read what is on this board
+const READING_NOTES = [
+  ['Rows are not campaigns', 'Each job is identified by its workbook, tab and row. The same work can appear in more than one phase, so rows are not merged into one campaign.'],
+  ['“Sent” is a reported state', 'A tracker saying sent, an approval, a prepared file or a matching campaign name is not evidence that mail went out. Each phase keeps its own approval wording on the job.'],
+  ['Audience counts stay unknown when unclear', 'A count is only used when the column holds nothing but numbers. Where audience, status and import counts disagree, that difference is flagged for review rather than settled here.'],
+  ['Rates use different bases', 'Open and click rates use calculated deliveries. Hard bounce rates use sends. The same person can be counted in several campaigns, and automated scanning can look like opens and clicks.'],
+  ['Thresholds are prompts, not faults', 'A hard bounce rate above 3% or a click rate above 20% is worth a look. Neither proves anything is wrong.'],
+  ['What has not been checked', 'Ten trackers and the original send log were read, and campaign history covers 15 June 2026 onward. Individual briefs, every past email and recipient-level exports have not been audited here.']
+];
 
 const formatNumber = (value) => Math.round(value).toLocaleString('en-ZA').replace(/,/g, ' ');
 const formatPercent = (value, places = 2) => `${(value * 100).toFixed(places)}%`;

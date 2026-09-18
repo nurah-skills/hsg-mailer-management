@@ -9,7 +9,7 @@ const GAPS = [
 
 function showCoverage() {
   const tiles = [
-    ['Trackers read', formatNumber(SOURCES.length), 'Original plus each phase'],
+    ['Trackers read', formatNumber(SOURCES.length - 1), 'Original plus each phase, listed under the index'],
     ['Tracker rows', formatNumber(SOURCES.reduce((sum, source) => sum + source.rows, 0)), 'Named rows across all trackers'],
     ['Campaign records', formatNumber(COVERAGE.mailRecords), `Retrieved from ${COVERAGE.since}`],
     ['Two-week outcomes filled', formatNumber(COVERAGE.outcomesFilled), 'Cash and enrolment cells with an entry']
@@ -35,6 +35,28 @@ function showSources() {
   });
 }
 
+function showConnections() {
+  const holder = document.getElementById('connection-list');
+  holder.replaceChildren();
+  CONNECTIONS.forEach((connection) => {
+    const item = create('li');
+    const top = create('div', 'decision-top');
+    top.append(create('h3', '', connection.name), statusChip({ tone: connection.tone, text: connection.status }));
+    item.append(top, create('p', '', connection.detail));
+    holder.append(item);
+  });
+}
+
+function showReading() {
+  const holder = document.getElementById('reading-list');
+  holder.replaceChildren();
+  READING_NOTES.forEach(([title, detail]) => {
+    const item = create('li');
+    item.append(create('b', '', title), create('p', '', detail));
+    holder.append(item);
+  });
+}
+
 function showGaps() {
   const holder = document.getElementById('gap-list');
   holder.replaceChildren();
@@ -47,5 +69,7 @@ function showGaps() {
 
 document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
 showCoverage();
+showConnections();
 showSources();
+showReading();
 showGaps();

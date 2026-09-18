@@ -16,7 +16,9 @@ const state = {
   sortDirection: -1
 };
 
-const AVERAGE_BOUNCE = totalsFor(CAMPAIGNS).bounceRate;
+// The board prompts a look above these; neither proves a fault
+const BOUNCE_PROMPT = 0.03;
+const CLICK_PROMPT = 0.2;
 
 function fillSelect(id, label, options, value, onChange) {
   const select = document.getElementById(id);
@@ -82,7 +84,7 @@ function sortHeader(key, label, className = '') {
 function campaignRow(campaign) {
   const row = create('tr');
   const bounceRate = campaign.sent ? campaign.hardBounces / campaign.sent : 0;
-  const flagged = bounceRate > AVERAGE_BOUNCE * 3;
+  const clickRate = campaign.delivered ? campaign.clickers / campaign.delivered : 0;
 
   const first = create('th', 'cell-name');
   first.scope = 'row';
@@ -90,14 +92,18 @@ function campaignRow(campaign) {
 
   const bounce = create('td', 'cell-cash');
   bounce.append(create('b', '', formatPercent(bounceRate)));
-  if (flagged) bounce.append(statusChip({ tone: 'changed', text: 'Check this list' }));
+  if (bounceRate > BOUNCE_PROMPT) bounce.append(statusChip({ tone: 'changed', text: 'Worth a look' }));
+
+  const clicked = create('td', 'cell-best');
+  clicked.append(create('b', '', formatPercent(clickRate)));
+  if (clickRate > CLICK_PROMPT) clicked.append(statusChip({ tone: 'info', text: 'Worth a look' }));
 
   row.append(
     first,
     create('td', '', `${campaign.date.slice(8)} Sept · ${campaign.college}`),
     create('td', 'cell-best', formatNumber(campaign.sent)),
     create('td', 'cell-best', formatPercent(campaign.delivered ? campaign.openers / campaign.delivered : 0)),
-    create('td', 'cell-best', formatPercent(campaign.delivered ? campaign.clickers / campaign.delivered : 0)),
+    clicked,
     bounce
   );
   return row;
