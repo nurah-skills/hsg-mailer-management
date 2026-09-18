@@ -99,6 +99,14 @@ Plain HTML, CSS and JavaScript, with nothing to build. Headings and figures are 
 npx.cmd serve .
 ```
 
+Before committing a change to anything in `assets/`, run:
+
+```
+node tools/stamp-assets.js
+```
+
+GitHub Pages lets a browser keep a stylesheet or a script for ten minutes. Without that step a visitor can load the new page beside the old script, and a control that is on screen does nothing. The script puts `?v=` and a short hash of each file on every link to it, so a file that changed gets a new address and a file that did not stays cached. It says "nothing to stamp" when everything is already current.
+
 Changes pushed to the `main` branch go live on GitHub Pages within a few minutes.
 
 ## Still to do
