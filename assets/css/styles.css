@@ -1392,3 +1392,9 @@ tbody tr:has(.cell-pick input:checked) { background: var(--accent-soft); }
 .chart-tip.is-below { transform: translate(-50%, 14px); }
 
 .chart-key-note { color: var(--muted); }
+/* On a phone the filters sit two to a row, so the page itself starts sooner */
+@media (max-width: 560px) {
+  .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+  .controls .select, .controls .search { width: 100%; min-width: 0; }
+  .controls .search, .controls .button { grid-column: 1 / -1; }
+}

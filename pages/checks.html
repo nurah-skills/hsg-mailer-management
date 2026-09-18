@@ -96,6 +96,18 @@
           <span>These checks compare what the tracker rows record. They do not check the audience, the copy, the routing or the built email.</span>
         </p>
 
+        <div class="controls">
+          <label class="sr-only" for="check-college">College</label>
+          <select class="select" id="check-college"></select>
+          <label class="sr-only" for="check-phase">Phase</label>
+          <select class="select" id="check-phase"></select>
+          <label class="sr-only" for="check-search">Search the checks</label>
+          <input class="search" id="check-search" type="search" placeholder="Search job, code or owner" autocomplete="off">
+          <button class="button button-secondary button-inline" id="checks-clear" type="button" hidden>Show every check</button>
+        </div>
+
+        <p class="panel-note" id="checks-note"></p>
+
         <section id="check-list" aria-labelledby="check-list-title">
           <h2 class="sr-only" id="check-list-title">Choose a kind of problem</h2>
           <div class="category-grid" id="check-grid"></div>

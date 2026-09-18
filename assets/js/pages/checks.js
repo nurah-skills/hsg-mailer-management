@@ -1,16 +1,67 @@
 setUpShell();
 
-const state = { type: null };
+const state = {
+  type: null,
+  college: Params.get('college', 'All'),
+  phase: Params.get('phase', 'All'),
+  search: Params.get('search', '')
+};
 
-const groupFor = (key) => CHECKS.filter(({ type }) => type[0] === key);
+function fillSelect(id, label, options, value, onChange) {
+  const select = document.getElementById(id);
+  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => new Option(option, option)));
+  select.value = value;
+  select.addEventListener('change', (event) => onChange(event.target.value));
+}
+
+// The filters narrow every check, so the tiles and the list inside them always agree
+function matching() {
+  const search = state.search.trim().toLowerCase();
+  return CHECKS.filter(({ job }) =>
+    (state.college === 'All' || job.college === state.college)
+    && (state.phase === 'All' || job.phase === state.phase)
+    && (!search || `${job.code} ${job.title} ${job.owner}`.toLowerCase().includes(search)));
+}
+
+const groupFor = (key) => matching().filter(({ type }) => type[0] === key);
+
+function activeFilters() {
+  return [
+    state.college !== 'All' ? COLLEGE_NAMES[state.college] || state.college : null,
+    state.phase !== 'All' ? `Phase ${state.phase}` : null,
+    state.search.trim() ? `“${state.search.trim()}”` : null
+  ].filter(Boolean);
+}
+
+function showNote() {
+  const rows = matching().length;
+  const filters = activeFilters();
+  document.getElementById('checks-note').textContent = filters.length
+    ? `${formatNumber(rows)} of ${formatNumber(CHECKS.length)} checks, filtered by ${filters.join(' and ')}`
+    : `All ${formatNumber(CHECKS.length)} checks · one row can raise more than one`;
+  document.getElementById('checks-clear').hidden = !filters.length;
+}
+
+function clearFilters() {
+  state.college = 'All';
+  state.phase = 'All';
+  state.search = '';
+  Params.set({ college: '', phase: '', search: '' });
+  ['check-college', 'check-phase'].forEach((id) => { document.getElementById(id).value = 'All'; });
+  document.getElementById('check-search').value = '';
+  render();
+  document.getElementById('check-college').focus();
+}
 
 function showTypes() {
   const grid = document.getElementById('check-grid');
   grid.replaceChildren();
 
+  let drawn = 0;
   CHECK_TYPES.forEach((type) => {
     const group = groupFor(type[0]);
     if (!group.length) return;
+    drawn += 1;
     const tile = create('button', 'category-tile');
     tile.type = 'button';
     tile.dataset.focus = `check:${type[0]}`;
@@ -29,6 +80,8 @@ function showTypes() {
     });
     grid.append(tile);
   });
+
+  if (!drawn) grid.append(create('p', 'empty', 'No check matches this selection.'));
 }
 
 function showType() {
@@ -51,6 +104,13 @@ function showType() {
   head.append(headRow);
 
   const body = create('tbody');
+  if (!group.length) {
+    const line = create('tr');
+    const cell = create('td', 'is-empty', 'No row of this kind matches the filters above.');
+    cell.colSpan = 5;
+    line.append(cell);
+    body.append(line);
+  }
   group.forEach(({ job }) => {
     const row = create('tr');
     const first = create('th', 'cell-name');
@@ -66,6 +126,7 @@ function showType() {
 }
 
 function render() {
+  showNote();
   document.getElementById('check-list').hidden = Boolean(state.type);
   document.getElementById('check-view').hidden = !state.type;
   if (state.type) showType();
@@ -85,6 +146,27 @@ function readUrl(moveFocus) {
     if (tile) tile.focus();
   }
 }
+
+fillSelect('check-college', 'All colleges', COLLEGES, state.college, (value) => {
+  state.college = value;
+  Params.set({ college: value });
+  render();
+});
+fillSelect('check-phase', 'All phases', PHASES, state.phase, (value) => {
+  state.phase = value;
+  Params.set({ phase: value });
+  render();
+});
+
+const checkSearch = document.getElementById('check-search');
+checkSearch.value = state.search;
+checkSearch.addEventListener('input', (event) => {
+  state.search = event.target.value;
+  Params.set({ search: state.search });
+  render();
+});
+
+document.getElementById('checks-clear').addEventListener('click', clearFilters);
 
 Trail.watch(() => readUrl(true));
 readUrl(false);

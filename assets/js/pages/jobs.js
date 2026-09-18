@@ -1,6 +1,7 @@
 setUpShell();
 
 const state = {
+  college: Params.get('college', 'All'),
   phase: Params.get('phase', 'All'),
   stage: Params.get('stage', 'All'),
   owner: Params.get('owner', 'All'),
@@ -26,7 +27,8 @@ function fillSelect(id, label, options, value, onChange) {
 function shown() {
   const search = state.search.trim().toLowerCase();
   return JOBS.filter((job) =>
-    (state.phase === 'All' || job.phase === state.phase)
+    (state.college === 'All' || job.college === state.college)
+    && (state.phase === 'All' || job.phase === state.phase)
     && (state.stage === 'All' || job.stage === state.stage)
     && (state.owner === 'All' || job.owner === state.owner)
     && (!search || `${job.code} ${job.title} ${job.owner}`.toLowerCase().includes(search)));
@@ -35,6 +37,7 @@ function shown() {
 // Naming the filter, and one button back to the whole list
 function activeFilters() {
   return [
+    state.college !== 'All' ? COLLEGE_NAMES[state.college] || state.college : null,
     state.phase !== 'All' ? `Phase ${state.phase}` : null,
     state.stage !== 'All' ? state.stage : null,
     state.owner !== 'All' ? state.owner : null,
@@ -43,12 +46,13 @@ function activeFilters() {
 }
 
 function clearFilters() {
+  state.college = 'All';
   state.phase = 'All';
   state.stage = 'All';
   state.owner = 'All';
   state.search = '';
-  Params.set({ phase: '', stage: '', owner: '', search: '' });
-  ['phase-filter', 'stage-filter', 'owner-filter'].forEach((id) => { document.getElementById(id).value = 'All'; });
+  Params.set({ college: '', phase: '', stage: '', owner: '', search: '' });
+  ['college-filter', 'phase-filter', 'stage-filter', 'owner-filter'].forEach((id) => { document.getElementById(id).value = 'All'; });
   document.getElementById('job-search').value = '';
   render();
   const tile = document.querySelector('.status-tile');
@@ -178,6 +182,11 @@ function render() {
   showPicked();
 }
 
+fillSelect('college-filter', 'All colleges', COLLEGES, state.college, (value) => {
+  state.college = value;
+  Params.set({ college: value });
+  render();
+});
 fillSelect('phase-filter', 'All phases', PHASES.map((phase) => phase), state.phase, (value) => {
   state.phase = value;
   Params.set({ phase: value });

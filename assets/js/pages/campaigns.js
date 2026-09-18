@@ -14,6 +14,7 @@ const SORT_KEYS = Object.keys(SORTS);
 const state = {
   college: Params.get('college', 'All'),
   purpose: Params.get('purpose', 'All'),
+  family: Params.get('family', 'All'),
   search: Params.get('search', ''),
   sortKey: SORT_KEYS.includes(Params.get('sort', '')) ? Params.get('sort', '') : 'date',
   sortDirection: -1
@@ -36,6 +37,7 @@ function shown() {
     .filter((campaign) =>
       (state.college === 'All' || campaign.college === state.college)
       && (state.purpose === 'All' || campaign.purpose === state.purpose)
+      && (state.family === 'All' || campaign.family === state.family)
       && (!search || campaign.name.toLowerCase().includes(search)))
     .sort((a, b) => {
       const first = SORTS[state.sortKey](a);
@@ -69,6 +71,7 @@ function activeFilters() {
   return [
     state.college !== 'All' ? COLLEGE_NAMES[state.college] || state.college : null,
     state.purpose !== 'All' ? state.purpose : null,
+    state.family !== 'All' ? state.family : null,
     state.search.trim() ? `“${state.search.trim()}”` : null
   ].filter(Boolean);
 }
@@ -76,9 +79,10 @@ function activeFilters() {
 function clearFilters() {
   state.college = 'All';
   state.purpose = 'All';
+  state.family = 'All';
   state.search = '';
-  Params.set({ college: '', purpose: '', search: '' });
-  ['campaign-college', 'campaign-purpose'].forEach((id) => { document.getElementById(id).value = 'All'; });
+  Params.set({ college: '', purpose: '', family: '', search: '' });
+  ['campaign-college', 'campaign-purpose', 'campaign-family'].forEach((id) => { document.getElementById(id).value = 'All'; });
   document.getElementById('campaign-search').value = '';
   render();
   document.getElementById('campaign-college').focus();
@@ -237,6 +241,11 @@ fillSelect('campaign-college', 'All colleges', COLLEGES, state.college, (value) 
 fillSelect('campaign-purpose', 'All purposes', PURPOSES, state.purpose, (value) => {
   state.purpose = value;
   Params.set({ purpose: value });
+  render();
+});
+fillSelect('campaign-family', 'All families', FAMILIES, state.family, (value) => {
+  state.family = value;
+  Params.set({ family: value });
   render();
 });
 
