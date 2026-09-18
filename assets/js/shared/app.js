@@ -117,7 +117,10 @@ function buildTabBar(sidebar) {
   more.type = 'button';
   more.setAttribute('aria-controls', 'sidebar');
   more.setAttribute('aria-expanded', 'false');
-  if (!pages.some(([href]) => href === current)) more.classList.add('is-current');
+  if (!pages.some(([href]) => href === current)) {
+    more.classList.add('is-current');
+    more.setAttribute('aria-current', 'page');
+  }
   more.append(icon(ICONS.menu, 20), create('span', '', 'More'));
   nav.append(more);
 
@@ -125,8 +128,22 @@ function buildTabBar(sidebar) {
   return more;
 }
 
+// Phones hide the heading row, so every cell takes its heading with it
+function labelCells(table) {
+  const headings = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent);
+  table.querySelectorAll('tbody tr').forEach((row) => {
+    [...row.children].forEach((cell, index) => {
+      if (cell.colSpan > 1 || cell.tagName !== 'TD') return;
+      if (headings[index]) cell.dataset.label = headings[index];
+    });
+  });
+}
+
 function statusChip(pace) {
-  return create('span', `status status-${pace.tone}`, pace.text);
+  const chip = create('span', `status status-${pace.tone}`);
+  if (pace.direction) chip.append(icon(ICONS[pace.direction], 13), create('span', 'sr-only', pace.direction === 'up' ? 'up ' : 'down '));
+  chip.append(create('span', '', pace.text));
+  return chip;
 }
 
 // The other two boards sit beside this one, and the mail tool can be read again from here
@@ -142,7 +159,7 @@ function buildHeaderTools() {
   const refresh = create('button', 'button button-secondary button-inline');
   refresh.type = 'button';
   refresh.append(icon(ICONS.refresh, 16), document.createTextNode('Refresh the mail tool'));
-  refresh.addEventListener('click', () => showToast('These are sample figures, so nothing refreshes. On the real board this reads the mail tool again.'));
+  refresh.addEventListener('click', () => showToast(`Sample figures, so nothing refreshes. The mail tool was read at ${SNAPSHOT.mailRead} and that reading is fixed.`));
   const tag = header.querySelector('.tag');
   tools.append(refresh);
   if (tag) tools.append(tag);
@@ -153,12 +170,11 @@ function buildRelatedLinks(sidebar) {
   const holder = create('div', 'sidebar-links');
   holder.append(create('p', 'menu-label', 'Other boards'));
   RELATED.forEach(([href, label]) => {
-    const link = create('a', 'sidebar-link', label);
-    link.href = href;
+    const link = create(href === '#' ? 'span' : 'a', 'sidebar-link', label);
     if (href === '#') {
-      link.setAttribute('aria-disabled', 'true');
       link.append(create('span', 'tag', 'Soon'));
     } else {
+      link.href = href;
       link.target = '_blank';
       link.rel = 'noreferrer';
       link.append(icon(ICONS.external, 14));
@@ -175,6 +191,7 @@ function setUpShell() {
   document.getElementById('user-role').textContent = `${user.role} · ${user.team}`;
 
   const app = document.getElementById('app');
+  const body = document.querySelector('.app-body');
   const sidebar = document.getElementById('sidebar');
   const menuButton = document.getElementById('menu-button');
   const moreButton = buildTabBar(sidebar);
@@ -187,12 +204,14 @@ function setUpShell() {
     menuButton.setAttribute('aria-expanded', String(open));
     moreButton.setAttribute('aria-expanded', String(open));
     sidebar.inert = smallScreen.matches && !open;
+    body.inert = smallScreen.matches && open;
     if (smallScreen.matches) (open ? sidebar.querySelector('.menu-item') : opener).focus({ preventScroll: true });
   };
   sidebar.inert = smallScreen.matches;
   smallScreen.addEventListener('change', () => {
     app.classList.remove('menu-open');
     sidebar.inert = smallScreen.matches;
+    body.inert = false;
   });
 
   const openFrom = (button) => {

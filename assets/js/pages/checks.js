@@ -65,6 +65,7 @@ function showType() {
     body.append(row);
   });
   table.append(head, body);
+  labelCells(table);
 }
 
 function render() {

@@ -89,6 +89,7 @@ function render() {
   }
   rows.forEach((job) => body.append(...jobRow(job)));
   table.append(body);
+  labelCells(table);
 }
 
 fillSelect('phase-filter', 'All phases', PHASES.map((phase) => phase), state.phase, (value) => {

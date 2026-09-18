@@ -22,7 +22,7 @@ function lessonCard(lesson) {
   panel.append(head, create('p', 'panel-note', lesson.scope));
 
   [['What the evidence shows', lesson.shows], ['What it does not prove', lesson.limits], ['What to do', lesson.action]].forEach(([label, text]) => {
-    panel.append(create('p', 'subheading', label), create('p', '', text));
+    panel.append(create('h3', 'subheading', label), create('p', '', text));
   });
 
   panel.append(create('p', 'panel-note', `Updated ${lesson.updated}`));

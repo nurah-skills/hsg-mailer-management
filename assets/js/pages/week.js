@@ -86,6 +86,7 @@ function showColleges() {
     ]));
   });
   table.append(body);
+  labelCells(table);
 }
 
 function showOutcomes() {
@@ -132,10 +133,15 @@ function showFamilies() {
     body.append(row);
   }
   table.append(body);
+  labelCells(table);
 }
 
+// A reading counts towards the window it sits closest to, so an empty window is visible before it is chosen
+const nearestWindow = (age) => CHECKPOINT_WINDOWS.reduce((best, hours) => (Math.abs(hours - age) < Math.abs(best - age) ? hours : best));
+const readingsAt = (hours) => CHECKPOINTS.filter((point) => nearestWindow(point.age) === hours);
+
 function showCheckpoints() {
-  buildSegmented(document.getElementById('window-picker'), CHECKPOINT_WINDOWS.map((hours) => [String(hours), `${hours} hours`]), String(state.window), (hours) => {
+  buildSegmented(document.getElementById('window-picker'), CHECKPOINT_WINDOWS.map((hours) => [String(hours), `${hours} hours · ${readingsAt(hours).length}`]), String(state.window), (hours) => {
     state.window = Number(hours);
     showCheckpoints();
   });
@@ -143,11 +149,12 @@ function showCheckpoints() {
   const table = document.getElementById('checkpoint-table');
   table.replaceChildren(headRow(['Campaign', 'Sent', 'Measured', 'Actual age', 'Clickers of delivered']));
   const body = create('tbody');
-  const rows = state.window === 24 ? CHECKPOINTS : [];
+  const rows = readingsAt(state.window);
 
   if (!rows.length) {
+    const withReadings = CHECKPOINT_WINDOWS.filter((hours) => readingsAt(hours).length);
     const row = create('tr');
-    const cell = create('td', 'is-empty', `No readings were taken ${state.window} hours after sending in this period.`);
+    const cell = create('td', 'is-empty', `No readings were taken ${state.window} hours after sending in this period.${withReadings.length ? ` ${withReadings.join(' and ')} hours has readings.` : ''}`);
     cell.colSpan = 5;
     row.append(cell);
     body.append(row);
@@ -161,6 +168,7 @@ function showCheckpoints() {
     `${formatNumber(point.clickers)} of ${formatNumber(point.delivered)}`
   ])));
   table.append(body);
+  labelCells(table);
 }
 
 function showAttention() {
@@ -197,6 +205,9 @@ function render() {
     render();
   });
 
+  const comparison = state.view === 'comparison';
+  document.getElementById('week-filters').hidden = !comparison;
+  document.getElementById('filters-off').hidden = comparison;
   document.getElementById('view-comparison').hidden = state.view !== 'comparison';
   document.getElementById('view-sameage').hidden = state.view !== 'sameage';
   document.getElementById('view-attention').hidden = state.view !== 'attention';

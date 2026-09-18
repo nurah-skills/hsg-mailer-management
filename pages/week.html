@@ -89,17 +89,21 @@
         </div>
 
         <div class="controls">
-          <div class="segmented" id="view-picker" role="group" aria-label="View"></div>
-          <label class="sr-only" for="college-filter">College</label>
-          <select class="select" id="college-filter"></select>
-          <label class="sr-only" for="purpose-filter">Email purpose</label>
-          <select class="select" id="purpose-filter"></select>
-          <label class="sr-only" for="family-filter">Campaign family</label>
-          <select class="select" id="family-filter"></select>
+          <div class="segmented segmented-three" id="view-picker" role="group" aria-label="View"></div>
+          <div class="filter-set" id="week-filters">
+            <label class="sr-only" for="college-filter">College</label>
+            <select class="select" id="college-filter"></select>
+            <label class="sr-only" for="purpose-filter">Email purpose</label>
+            <select class="select" id="purpose-filter"></select>
+            <label class="sr-only" for="family-filter">Campaign family</label>
+            <select class="select" id="family-filter"></select>
+          </div>
+          <p class="panel-note" id="filters-off" hidden>The filters above apply to the comparison only.</p>
         </div>
 
         <section id="view-comparison">
           <section class="tiles tiles-four" id="week-tiles" aria-label="Totals"></section>
+          <p class="panel-note">Arrows show which way a figure moved against the period before. Up or down, not better or worse.</p>
 
           <div class="grid">
             <section class="panel span-8" aria-labelledby="mail-college-title">

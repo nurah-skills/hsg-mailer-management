@@ -21,10 +21,10 @@ The board is for the marketing managers, so there is one kind of account. On a p
 | Page | What it does |
 | --- | --- |
 | `pages/overview.html` | The landing page: tracker rows, rows needing a check, emails sent and click rate, the work by phase, the problems to resolve first, and the mail figures against the period before. |
-| `pages/decisions.html` | Opens on what needs a management call: contradictions in the records, findings that are blocked or waiting, and lessons still being tested. The period’s mail figures and the job stages sit alongside. |
+| `pages/decisions.html` | The job stages and the period’s mail figures, then what needs a management call. “Decide first” is grouped into **Blocked** (red), **Waiting** (yellow) and **Being tested** (green), and each card takes the colour of its group. |
 | `pages/week.html` | The period against the same weekdays before, with filters for college, purpose and family. Three views: **Comparison** (sends, campaigns, click rate, unsubscribes, plus registrations and responses alongside), **Same age** (results measured the same number of hours after each send) and **Needs attention** (dated findings from the lead-source audit). |
 | `pages/jobs.html` | Every work item from the trackers: phase, stage, owner, audience, next check and the note, with filters and search. |
-| `pages/campaigns.html` | Every campaign with sends, deliveries, opens, clicks and hard bounces. Sortable, searchable, and anything above the review thresholds is marked “worth a look”. |
+| `pages/campaigns.html` | Every campaign with sends, deliveries, opens, clicks and hard bounces. Every campaign counted in the heading is on the page. Sort by clicking a column heading, or with the **Sort by** control on a phone. Anything above the review thresholds is marked “worth a look”. |
 | `pages/checks.html` | Rows whose record contradicts itself or is missing something, grouped by the kind of problem. Choose one to see those rows. |
 | `pages/lessons.html` | What to repeat and what to change, each with the evidence, what it does not prove, and what to do. Marked Observed, Being tested, Confirmed or Retired. |
 | `pages/sources.html` | What the board is connected to and what each connection may do, the workbooks it reads and when they were read, how to read the figures, and what is still not joined up. |
@@ -39,6 +39,8 @@ The board is for the marketing managers, so there is one kind of account. On a p
 - **Registrations and cash are never joined to campaigns** on this board, so no conversion rate is shown.
 - **A tracker saying “sent” is a reported state,** not evidence that mail went out.
 - **A hard bounce rate above 3% or a click rate above 20%** is marked “worth a look”. Neither proves a fault.
+- **A change is a direction, not a verdict.** The arrow on a figure says which way it moved against the period before. Up is not automatically good: fewer unsubscribes is an improvement, more sends is neither.
+- **“The current period” always means 14 to 16 September.** Any figure counted over a longer run says so on the figure itself.
 - **Reading only.** The board never creates, schedules or sends a mailer, and never writes back to a tracker.
 
 ## Sample data
@@ -59,6 +61,10 @@ assets/js/shared/      used by several pages
   auth.js              sign-in buttons
 assets/js/pages/       one script per page, named after the page
 ```
+
+## On a phone
+
+Tables have no room for a heading row on a phone, so each figure is printed with its own heading beside it. Nothing is dropped and no number is left unlabelled. The three most used pages sit in a bar along the bottom, and the rest are under **More**.
 
 ## Working on it
 

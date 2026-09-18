@@ -259,9 +259,9 @@ const LESSONS = [
     id: 'lesson-unclassified',
     verdict: 'bad',
     status: 'Observed',
-    title: 'A third of sends are still not labelled',
-    scope: 'All colleges · 14 to 16 September',
-    shows: '469 603 of 1 732 914 sends sit under an unclassified purpose and family, so they cannot be compared with anything.',
+    title: 'A quarter of sends are still not labelled',
+    scope: 'All colleges · since 15 June',
+    shows: '469 603 of the 1 732 914 sends since 15 June sit under an unclassified purpose and family, so they cannot be compared with anything.',
     limits: 'The mail may have been fine. The gap is in the labelling, not necessarily the campaign.',
     action: 'Label purpose and family at build time, not afterwards. Start with the biggest recent sends.',
     updated: '17 September 2026'
@@ -283,7 +283,7 @@ const LESSONS = [
     status: 'Confirmed',
     title: 'Results are read at different ages, so weeks are not comparable',
     scope: 'All campaigns · since 15 June',
-    shows: 'Only 1 of 188 campaigns in the current period has a recorded checkpoint, against 0 of 319 in the previous one.',
+    shows: 'Only 1 of the 188 campaigns sent since 15 June has a recorded checkpoint. None of the 319 sent before that have one either.',
     limits: 'This is about measurement, not the mail. Nothing here says the campaigns did badly.',
     action: 'Take a reading 24 hours after every send so that like is compared with like.',
     updated: '17 September 2026'
@@ -337,10 +337,10 @@ const ATTENTION = [
   },
   {
     id: 'attention-labels',
-    title: 'Purpose and family labels missing on recent sends',
+    title: 'Purpose and family labels missing on a quarter of sends',
     status: 'Waiting',
     date: '16 September 2026',
-    detail: '469 603 sends in the current period carry no purpose or family label, so they cannot be compared with earlier weeks.',
+    detail: '469 603 sends since 15 June carry no purpose or family label, so they cannot be compared with earlier weeks.',
     next: 'Label at build time. Start with the biggest sends from 14 to 16 September.'
   }
 ];
@@ -412,11 +412,12 @@ const formatNumber = (value) => Math.round(value).toLocaleString('en-ZA').replac
 const formatPercent = (value, places = 2) => `${(value * 100).toFixed(places)}%`;
 
 function changeBetween(previous, current) {
-  if (!previous) return { text: 'No earlier figure', tone: 'waiting' };
+  if (!previous) return { text: 'No earlier figure', tone: 'move' };
   const difference = (current - previous) / previous;
-  if (Math.abs(difference) < 0.005) return { text: 'No change', tone: 'waiting' };
+  if (Math.abs(difference) < 0.005) return { text: 'No change', tone: 'move' };
   return {
-    text: `${difference > 0 ? '+' : '−'}${Math.abs(difference * 100).toFixed(1)}%`,
-    tone: difference > 0 ? 'good' : 'waiting'
+    text: `${Math.abs(difference * 100).toFixed(1)}%`,
+    tone: 'move',
+    direction: difference > 0 ? 'up' : 'down'
   };
 }

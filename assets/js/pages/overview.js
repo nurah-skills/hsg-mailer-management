@@ -92,6 +92,7 @@ function showMailTable() {
   });
 
   table.append(head, body);
+  labelCells(table);
 }
 
 function showOutcomes() {

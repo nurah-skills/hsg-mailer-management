@@ -81,6 +81,19 @@ function sortHeader(key, label, className = '') {
   return cell;
 }
 
+const SORT_LABELS = [['date', 'Newest first'], ['sent', 'Most sent'], ['open', 'Highest opened'], ['click', 'Highest clicked'], ['bounce', 'Highest hard bounces']];
+
+function fillSortPicker() {
+  const select = document.getElementById('sort-select');
+  select.replaceChildren(...SORT_LABELS.map(([key, label]) => new Option(label, key)));
+  select.value = state.sortKey;
+  select.addEventListener('change', (event) => {
+    state.sortKey = event.target.value;
+    state.sortDirection = -1;
+    render();
+  });
+}
+
 function campaignRow(campaign) {
   const row = create('tr');
   const bounceRate = campaign.sent ? campaign.hardBounces / campaign.sent : 0;
@@ -114,7 +127,9 @@ function render() {
   const rows = shown();
   showTiles(rows);
   document.getElementById('campaigns-note').textContent =
-    `${formatNumber(rows.length)} of ${formatNumber(CAMPAIGNS.length)} campaigns · sent since ${PERIOD.previous.label}`;
+    `${formatNumber(rows.length)} of ${formatNumber(CAMPAIGNS.length)} campaigns, sent between 7 and 16 September`;
+
+  document.getElementById('sort-select').value = state.sortKey;
 
   const table = document.getElementById('campaign-table');
   table.replaceChildren();
@@ -141,9 +156,12 @@ function render() {
     line.append(cell);
     body.append(line);
   }
-  rows.slice(0, 60).forEach((campaign) => body.append(campaignRow(campaign)));
+  rows.forEach((campaign) => body.append(campaignRow(campaign)));
   table.append(body);
+  labelCells(table);
 }
+
+fillSortPicker();
 
 fillSelect('campaign-college', 'All colleges', COLLEGES, state.college, (value) => {
   state.college = value;
