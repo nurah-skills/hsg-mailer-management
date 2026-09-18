@@ -23,7 +23,7 @@
   --error: #B03A2E;
   --on-navy: #FFFFFF;
   --on-navy-muted: rgba(255, 255, 255, .8);
-  --heading: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --heading: "Archivo", "Segoe UI", system-ui, sans-serif;
   --body: "Nunito", "Segoe UI", system-ui, sans-serif;
   --radius: 10px;
 }
@@ -513,8 +513,8 @@ a.menu-item:hover { background: rgba(255, 255, 255, .08); color: var(--on-navy);
 .college-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-weight: 700; }
 .college-top b { font-family: var(--heading); font-weight: 600; font-variant-numeric: tabular-nums; }
 
-.about { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 2px 24px; }
-.about summary { display: flex; align-items: center; min-height: 54px; font-family: var(--heading); font-weight: 500; list-style: none; cursor: pointer; }
+.about { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 24px; }
+.about summary { display: flex; align-items: center; min-height: 46px; font-family: var(--heading); font-weight: 500; list-style: none; cursor: pointer; }
 .about summary::-webkit-details-marker { display: none; }
 .about summary::after { content: ""; flex: none; width: 18px; height: 18px; margin-left: auto; background: var(--muted); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s ease; }
 .about[open] summary::after { transform: rotate(180deg); }

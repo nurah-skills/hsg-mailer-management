@@ -79,7 +79,7 @@ Tables have no room for a heading row on a phone, so each figure is printed with
 
 ## Working on it
 
-Plain HTML, CSS and JavaScript, with nothing to build. To run it on your own computer, open a terminal in this folder and run:
+Plain HTML, CSS and JavaScript, with nothing to build. Headings and figures are set in Archivo, running text in Nunito, both from Google Fonts. To run it on your own computer, open a terminal in this folder and run:
 
 ```
 npx.cmd serve .
