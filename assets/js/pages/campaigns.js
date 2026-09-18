@@ -3,6 +3,7 @@ setUpShell();
 const SORTS = {
   date: (campaign) => campaign.date,
   sent: (campaign) => campaign.sent,
+  delivered: (campaign) => campaign.delivered,
   open: (campaign) => (campaign.delivered ? campaign.openers / campaign.delivered : 0),
   click: (campaign) => (campaign.delivered ? campaign.clickers / campaign.delivered : 0),
   bounce: (campaign) => (campaign.sent ? campaign.hardBounces / campaign.sent : 0)
@@ -106,7 +107,7 @@ function sortHeader(key, label, className = '') {
   return cell;
 }
 
-const SORT_LABELS = [['date', 'Newest first'], ['sent', 'Most sent'], ['open', 'Highest opened'], ['click', 'Highest clicked'], ['bounce', 'Highest hard bounces']];
+const SORT_LABELS = [['date', 'Newest first'], ['sent', 'Most sent'], ['delivered', 'Most delivered'], ['open', 'Highest opened'], ['click', 'Highest clicked'], ['bounce', 'Highest hard bounces']];
 
 function fillSortPicker() {
   const select = document.getElementById('sort-select');
@@ -141,6 +142,7 @@ function campaignRow(campaign) {
     first,
     create('td', '', `${campaign.date.slice(8)} Sept · ${campaign.college}`),
     create('td', 'cell-best', formatNumber(campaign.sent)),
+    create('td', 'cell-best', formatNumber(campaign.delivered)),
     create('td', 'cell-best', formatPercent(campaign.delivered ? campaign.openers / campaign.delivered : 0)),
     clicked,
     bounce
@@ -168,6 +170,7 @@ function render() {
     create('th', 'cell-name', 'Campaign'),
     sortHeader('date', 'Date'),
     sortHeader('sent', 'Sent', 'cell-best'),
+    sortHeader('delivered', 'Delivered', 'cell-best'),
     sortHeader('open', 'Opened', 'cell-best'),
     sortHeader('click', 'Clicked', 'cell-best'),
     sortHeader('bounce', 'Hard bounces', 'cell-cash')
@@ -180,7 +183,7 @@ function render() {
   if (!rows.length) {
     const line = create('tr');
     const cell = create('td', 'is-empty', 'No campaigns match this selection.');
-    cell.colSpan = 6;
+    cell.colSpan = 7;
     line.append(cell);
     body.append(line);
   }
@@ -188,6 +191,18 @@ function render() {
   table.append(body);
   labelCells(table);
 }
+
+document.querySelector('[aria-labelledby="campaigns-title"] .panel-head').append(
+  exportButton('Export these rows', () => downloadRows(
+    'campaign-results',
+    ['Campaign', 'Reference', 'Date', 'College', 'Purpose', 'Family', 'Sent', 'Delivered', 'Openers', 'Clickers', 'Hard bounces', 'Unsubscribes'],
+    shown().map((campaign) => [
+      campaign.name, campaign.id, campaign.date, COLLEGE_NAMES[campaign.college] || campaign.college,
+      campaign.purpose, campaign.family, campaign.sent, campaign.delivered,
+      campaign.openers, campaign.clickers, campaign.hardBounces, campaign.unsubscribes
+    ])
+  ))
+);
 
 const campaignsClear = document.getElementById('campaigns-clear');
 campaignsClear.textContent = `Show all ${formatNumber(CAMPAIGNS.length)}`;

@@ -116,6 +116,30 @@ const CAMPAIGNS = (() => {
 
 const inPeriod = (date, period) => date >= period.from && date <= period.to;
 
+// The comparison runs over three weekdays ending on a chosen completed day, against the
+// same three weekdays a week earlier. Only days the board has actually read can be chosen.
+const COMPLETED_DAYS = SEND_DATES.filter((date) => date >= '2026-09-11');
+
+const dayName = (date) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date(date + 'T00:00:00Z').getUTCDay()];
+const shiftDays = (date, days) => new Date(Date.parse(date + 'T00:00:00Z') + days * 86400000).toISOString().slice(0, 10);
+const readable = (date) => `${Number(date.slice(8))} ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][Number(date.slice(5, 7)) - 1]}`;
+
+// Two dates in the same month name it once: 14 to 16 September, not 14 September to 16 September
+const spanLabel = (from, to) => (from.slice(0, 7) === to.slice(0, 7)
+  ? `${Number(from.slice(8))} to ${readable(to)}`
+  : `${readable(from)} to ${readable(to)}`);
+
+function periodThrough(endDate) {
+  const from = shiftDays(endDate, -2);
+  const previousEnd = shiftDays(endDate, -7);
+  const previousFrom = shiftDays(previousEnd, -2);
+  return {
+    current: { from, to: endDate, label: spanLabel(from, endDate) },
+    previous: { from: previousFrom, to: previousEnd, label: spanLabel(previousFrom, previousEnd) },
+    note: `Same weekdays, ${dayName(from)} to ${dayName(endDate)}`
+  };
+}
+
 function campaignsIn(period, filters = {}) {
   return CAMPAIGNS.filter((campaign) =>
     inPeriod(campaign.date, period)
@@ -344,6 +368,120 @@ const ATTENTION = [
     next: 'Label at build time. Start with the biggest sends from 14 to 16 September.'
   }
 ];
+
+
+// A dated register of findings and what was done about them. Every name and figure here is made up.
+const PROBLEM_STATUSES = [
+  ['Needs checking', 'info', 'An open question. Nobody has confirmed a fault yet.'],
+  ['Confirmed', 'changed', 'The finding has been checked and it holds.'],
+  ['Being fixed', 'waiting', 'Someone is working on it now.'],
+  ['Awaiting verification', 'info', 'A fix went in and is waiting for evidence that it worked.'],
+  ['Resolved', 'good', 'Settled, with the evidence that settled it. Kept as a record.']
+];
+
+const PROBLEM_CATEGORIES = ['Records and reporting', 'Lead delivery', 'Access', 'Ownership', 'Our analysis'];
+
+const PROBLEMS = [
+  {
+    id: 'PF-01',
+    title: 'Three enquiries from January to July are not in the checked workbook',
+    status: 'Confirmed',
+    category: 'Lead delivery',
+    found: '18 September 2026',
+    owner: 'Not assigned',
+    due: 'Not agreed',
+    affects: 'How complete the historical record is. Three enquiries could not be found by submission number anywhere in this workbook, or by email or phone in its main tab. That does not prove they were never worked, or that they are missing from every list.',
+    evidence: '1 947 completed submission numbers were exported against 1 944 rows in the main tab. Four completed numbers are absent and one is a partial entry. All six tabs of the original workbook were checked and no September numbers are missing. Three older enquiries remain absent: one from 21 January, one from 27 February where the email was recorded as three letters, and one from 6 July.',
+    next: 'Confirm who owns each of the three records and what contact history exists before anyone restores or contacts them. Check the February enquiry against the original phone number rather than a name that merely looks similar. Then decide whether the submissions need restoring.',
+    changed: 'Cross-checked the three against the other lead sheets. Two matching contact records were found in the mail tool and one older voicemail note was dated before the enquiry, so it cannot be the follow-up. No contact was made, nothing was restored, and no source row was edited.',
+    verification: 'Cell-by-cell checks covered four further tabs in this workbook and nine populated tabs across five related workbooks; one further tab was empty. Phone and email searches with matching formats returned no rows. Staff mailboxes, call recordings and message histories were not looked at.',
+    lesson: 'A missing form submission is not proof of a missing person or of poor follow-up. Match the exact contact details, date any contact history against the enquiry, and confirm who owns a record before restoring or contacting anyone.',
+    history: 3
+  },
+  {
+    id: 'PF-02',
+    title: 'A difference of 16 responses is explained, but the reporting still needs cleaning',
+    status: 'Confirmed',
+    category: 'Records and reporting',
+    found: '18 September 2026',
+    owner: 'Nomsa Khumalo',
+    due: 'Not agreed',
+    affects: 'Whether the historical counts can be trusted. The gap between the export and the sheet is explained by test entries, staff entries, placeholders, one partial and one duplicate. It is not evidence of 16 lost leads.',
+    evidence: 'The export holds 1 846 completed submission numbers. The sheet holds 1 830 rows and 1 829 unique numbers. Eighteen completed numbers are absent across all four tabs: eleven carry an explicit test marker, five use a staff address and two hold one-letter placeholder details. One main-tab entry appears in the partial export and one number is duplicated across two rows. 1 846 − 18 + 1 partial + 1 duplicate = 1 830.',
+    next: 'Keep the reconciliation as evidence. Agree how the five staff-address entries should be classified. Compare the duplicate rows in full and keep the notes before anything is removed, and separate partial responses in reporting.',
+    changed: 'Replaced an unexplained difference of 16 with an exact, number-by-number explanation, and found the duplicate and the partial that account for the last two.',
+    verification: 'Each absent number was looked up in all four tabs. The arithmetic was checked against the raw export rather than the summary formulas. No rows were deleted.',
+    lesson: 'A net difference between two counts is a question, not a finding. Explain it entry by entry before anyone calls it lost work.',
+    history: 2
+  },
+  {
+    id: 'PF-03',
+    title: 'Mail still goes out under a staff member who has left',
+    status: 'Being fixed',
+    category: 'Ownership',
+    found: '17 September 2026',
+    owner: 'Refiloe Sibanda',
+    due: '25 September 2026',
+    affects: 'Who answers the replies. Departure was confirmed on 17 September, and 19 049 sends from 14 to 16 September still used that stored sender identity. Twelve dated submissions came back to the same workbook.',
+    evidence: 'The sender identity appears on four campaigns in the period. The reply address still routes to a mailbox nobody is named against. Twelve responses arrived after the departure date.',
+    next: 'Name an owner for the address, change the sender on the next build, and decide what happens to replies already sitting in that mailbox.',
+    changed: 'The sender was changed on the two campaigns still in preparation. The two already reported sent keep the old identity in their record.',
+    verification: 'Checked the sender field on every campaign in the period rather than the campaign names. The mailbox itself was not opened.',
+    lesson: 'A departure is a mail change as well as an access change. Check sender identities in the same week, not at the next build.',
+    history: 4
+  },
+  {
+    id: 'PF-04',
+    title: 'Two Bellview aptitude sheets opened with headings and no rows',
+    status: 'Needs checking',
+    category: 'Records and reporting',
+    found: '18 September 2026',
+    owner: 'Not assigned',
+    due: 'Not agreed',
+    affects: 'Whether aptitude results exist for Bellview at all. Both sheets that should hold them were read successfully and returned only their heading row.',
+    affectsNote: '',
+    evidence: 'Both sheets were read at 13:38 on 17 September. Each returned a heading row and no data rows. No error was returned, so the read itself worked.',
+    next: 'Ask the owner whether the results live somewhere else before any mail is planned around them. An empty sheet that reads cleanly is not the same as a missing sheet.',
+    changed: 'Nothing yet. The finding is recorded so that nobody plans a send on the assumption the data is there.',
+    verification: 'The read was repeated once with the same result. Other tabs in the same workbook returned rows normally, so the connection is fine.',
+    lesson: 'A clean read of an empty sheet looks identical to a clean read of a full one in a summary count. Check row counts, not just whether the read succeeded.',
+    history: 1
+  },
+  {
+    id: 'PF-05',
+    title: 'A quarter of sends carry no purpose or family label',
+    status: 'Awaiting verification',
+    category: 'Our analysis',
+    found: '16 September 2026',
+    owner: 'Megan Fourie',
+    due: '30 September 2026',
+    affects: 'Every comparison by purpose or family. 469 603 of the 1 732 914 sends since 15 June sit under an unclassified label, so they cannot be compared with anything.',
+    evidence: 'Labels are read from the campaign name. Where the name does not carry a recognisable purpose or family, the board records it as unclassified rather than guessing.',
+    next: 'Label purpose and family at build time rather than afterwards. Start with the biggest recent sends, since those move the totals most.',
+    changed: 'A naming rule was agreed on 16 September and applied to builds from that date. The backlog before it is untouched.',
+    verification: 'Waiting on the next full period to see whether the unclassified share falls. Nothing yet confirms the rule is being followed.',
+    lesson: 'A label the board has to infer from a name is a label that will be wrong sometimes. Record it where the work is done.',
+    history: 2
+  },
+  {
+    id: 'PF-06',
+    title: 'The tracker index pointed at a retired copy of the Phase G sheet',
+    status: 'Resolved',
+    category: 'Access',
+    found: '11 September 2026',
+    owner: 'Thandeka Zulu',
+    due: '15 September 2026',
+    affects: 'Which rows the board read for Phase G. For four days the index pointed at a copy that had stopped being updated on 2 September.',
+    evidence: 'The index row for Phase G held a link to a file last edited on 2 September, while the working copy had been edited that morning. Sixteen rows differed between them.',
+    next: 'Nothing outstanding. The index points at the working copy and the read time confirms it.',
+    changed: 'The index link was corrected on 15 September and the board re-read the working copy. The four days of readings taken from the retired copy are marked in the source register.',
+    verification: 'The row counts from both files were compared after the change, and the sixteen differing rows now appear. The read time moved to 17 September as expected.',
+    lesson: 'An index is a source in its own right. A stale link fails quietly, because every read succeeds.',
+    history: 5
+  }
+];
+
+const problemsAt = (status) => PROBLEMS.filter((problem) => problem.status === status);
 
 // Results measured a set number of hours after each send, so a new campaign is not compared with an old one
 const CHECKPOINT_WINDOWS = [24, 72, 168, 336];

@@ -8,8 +8,8 @@
   <meta name="theme-color" content="#11161D" media="(prefers-color-scheme: dark)">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex">
-  <meta name="description" content="The workbooks this board reads and what is still not joined up.">
-  <title>Sources and coverage · Mailer board</title>
+  <meta name="description" content="A dated record of findings, what was done about them, and the evidence that a fix worked.">
+  <title>Problems and fixes · Mailer board</title>
   <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,11 +54,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 4.3 2.8 17.4a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 16.5v.4"/></svg>
           <span>Problems and fixes</span>
         </a>
-        <a class="menu-item" href="lessons.html">
+        <a class="menu-item" href="lessons.html" aria-current="page">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5.9 1.1 1 1.6h5c.1-.5.4-1.1 1-1.6A6 6 0 0 0 12 3z"/></svg>
           <span>Lessons learnt</span>
         </a>
-        <a class="menu-item" href="sources.html" aria-current="page">
+        <a class="menu-item" href="sources.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
           <span>Sources</span>
         </a>
@@ -86,43 +86,36 @@
       <main class="app-main" id="main" tabindex="-1">
         <div class="page-header">
           <div>
-            <h1>Sources and coverage</h1>
-            <p class="page-note">What this board reads, when it was read, and what is still missing.</p>
+            <h1>Problems and fixes</h1>
+            <p class="page-note">A dated record of findings, what was done about them, and the evidence that a fix worked.</p>
           </div>
         </div>
 
-        <section class="tiles tiles-five" id="coverage-tiles" aria-label="Coverage"></section>
+        <p class="notice">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+          <span>“Needs checking” is an open question, not a confirmed fault. A mistake in the records is not a mistake by a person. Settled findings stay here with their history, because the record is the point.</span>
+        </p>
 
-        <div class="grid">
-          <section class="panel span-5" aria-labelledby="connections-title">
-            <div class="panel-head">
-              <h2 id="connections-title">Connections</h2>
-            </div>
-            <ul class="source-list" id="connection-list"></ul>
-            <p class="panel-note">Reading is all this board does. It never creates, schedules or sends a mailer, and it never writes back to a tracker.</p>
-          </section>
+        <div class="status-grid" id="problem-grid"></div>
 
-          <section class="panel span-7" aria-labelledby="reading-title">
-            <div class="panel-head">
-              <h2 id="reading-title">How to read the figures</h2>
+        <div id="problem-view" hidden>
+          <div class="category-head">
+            <nav class="trail" id="problem-trail" aria-label="Where you are"></nav>
+            <div class="category-heading">
+              <h2 id="problem-title" tabindex="-1"></h2>
+              <p class="panel-note" id="problem-note"></p>
             </div>
-            <ul class="gap-list is-split" id="reading-list"></ul>
-          </section>
+          </div>
 
-          <section class="panel span-8" aria-labelledby="sources-title">
-            <div class="panel-head">
-              <h2 id="sources-title">Where the figures come from</h2>
-            </div>
-            <ul class="source-list is-split" id="source-list"></ul>
-            <p class="panel-note">Tracker rows are saved readings. Editing a sheet does not change this board until it is read again.</p>
-          </section>
+          <div class="controls">
+            <label class="sr-only" for="category-filter">Category</label>
+            <select class="select" id="category-filter"></select>
+            <label class="sr-only" for="problem-search">Search findings</label>
+            <input class="search" id="problem-search" type="search" placeholder="Search findings" autocomplete="off">
+            <button class="button button-secondary button-inline" id="problems-clear" type="button" hidden>Clear</button>
+          </div>
 
-          <section class="panel span-4" aria-labelledby="gaps-title">
-            <div class="panel-head">
-              <h2 id="gaps-title">Not joined up yet</h2>
-            </div>
-            <ul class="gap-list" id="gap-list"></ul>
-          </section>
+          <div class="grid" id="problem-list"></div>
         </div>
       </main>
     </div>
@@ -132,6 +125,6 @@
 
   <script src="../assets/js/shared/data.js"></script>
   <script src="../assets/js/shared/app.js"></script>
-  <script src="../assets/js/pages/sources.js"></script>
+  <script src="../assets/js/pages/problems.js"></script>
 </body>
 </html>

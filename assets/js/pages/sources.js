@@ -11,10 +11,11 @@ function showCoverage() {
   const tiles = [
     ['Trackers read', formatNumber(SOURCES.length - 1), 'Original plus each phase, listed under the index'],
     ['Tracker rows', formatNumber(SOURCES.reduce((sum, source) => sum + source.rows, 0)), 'Named rows across all trackers'],
+    ['Send log entries', formatNumber(COVERAGE.sendLogRows), 'Named rows in the original send log snapshot'],
     ['Campaign records', formatNumber(COVERAGE.mailRecords), `Retrieved from ${COVERAGE.since}`],
     ['Two-week outcomes filled', formatNumber(COVERAGE.outcomesFilled), 'Cash and enrolment cells with an entry']
   ];
-  const marks = [[ICONS.rows, 'is-info'], [ICONS.rows, ''], [ICONS.mail, ''], [ICONS.alert, 'is-warn']];
+  const marks = [[ICONS.rows, 'is-info'], [ICONS.rows, ''], [ICONS.rows, ''], [ICONS.mail, ''], [ICONS.alert, 'is-warn']];
   document.getElementById('coverage-tiles').replaceChildren(
     ...tiles.map(([label, value, note], index) => statTile({ label, value, note, icon: marks[index][0], tone: marks[index][1] }))
   );

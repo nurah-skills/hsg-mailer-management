@@ -76,6 +76,7 @@ const ICONS = {
   up: ['M12 19V5', 'M6 11l6-6 6 6'],
   down: ['M12 5v14', 'M6 13l6 6 6-6'],
   menu: ['M4 7h16', 'M4 12h16', 'M4 17h16'],
+  download: ['M12 4v10', 'm7.5 10.5 4.5 4.5 4.5-4.5', 'M5 19h14'],
   rows: ['M4 7h16', 'M4 12h16', 'M4 17h10'],
   alert: ['M12 8v5', 'M12 16.5v.5', 'M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'],
   mail: ['M3 6.5h18v11H3z', 'm4 7.5 8 5.5 8-5.5'],
@@ -215,6 +216,32 @@ function buildTrail(container, steps, onStep) {
   });
 }
 
+// Downloads exactly the rows on screen, so a filtered view exports filtered
+function downloadRows(name, headings, rows) {
+  const quote = (value) => `"${String(value).replace(/"/g, '""')}"`;
+  const lines = [headings, ...rows].map((row) => row.map(quote).join(','));
+  const file = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(file);
+
+  const link = create('a');
+  link.href = url;
+  link.download = `${name}.csv`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  showToast(`${formatNumber(rows.length)} ${rows.length === 1 ? 'row' : 'rows'} saved to ${name}.csv`);
+}
+
+function exportButton(label, build) {
+  const button = create('button', 'button button-secondary button-inline');
+  button.type = 'button';
+  button.append(icon(ICONS.download, 16), document.createTextNode(label));
+  button.addEventListener('click', build);
+  return button;
+}
+
 function statTile({ label, value, note, icon: paths, tone = '', change }) {
   const tile = create('div', 'tile');
   const badge = create('div', 'tile-badge');
@@ -295,6 +322,13 @@ function buildRelatedLinks(sidebar) {
   sidebar.querySelector('.sidebar-user').before(holder);
 }
 
+// One line at the foot of every page, saying what this board is and is not
+function buildFooter() {
+  const main = document.getElementById('main');
+  if (!main || main.querySelector('.page-foot')) return;
+  main.append(create('p', 'page-foot', 'HSG · SAST · a management view. The source workbooks stay in charge of the work itself.'));
+}
+
 function setUpShell() {
   const user = readSession();
   document.getElementById('user-initials').textContent = initials(user.name);
@@ -338,6 +372,7 @@ function setUpShell() {
 
   buildRelatedLinks(sidebar);
   buildHeaderTools();
+  buildFooter();
 
   document.getElementById('sign-out').addEventListener('click', () => {
     endSession();

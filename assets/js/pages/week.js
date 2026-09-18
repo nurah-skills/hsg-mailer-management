@@ -4,6 +4,7 @@ const VIEWS = [['comparison', 'Comparison'], ['sameage', 'Same age'], ['attentio
 const ATTENTION_FILTERS = [['all', 'All'], ['Blocked', 'Blocked'], ['Waiting', 'Waiting'], ['Confirmed', 'Confirmed']];
 
 const state = {
+  through: COMPLETED_DAYS.includes(Params.get('through', '')) ? Params.get('through', '') : PERIOD.current.to,
   view: VIEWS.some(([key]) => key === Params.get('view', '')) ? Params.get('view', '') : 'comparison',
   college: Params.get('college', 'All'),
   purpose: Params.get('purpose', 'All'),
@@ -20,10 +21,11 @@ function fillSelect(id, label, options, value, onChange) {
 }
 
 const filters = () => ({ college: state.college, purpose: state.purpose, family: state.family });
+const period = () => periodThrough(state.through);
 
 function showTiles() {
-  const current = totalsFor(campaignsIn(PERIOD.current, filters()));
-  const previous = totalsFor(campaignsIn(PERIOD.previous, filters()));
+  const current = totalsFor(campaignsIn(period().current, filters()));
+  const previous = totalsFor(campaignsIn(period().previous, filters()));
 
   const tiles = [
     { label: 'Emails sent', value: formatNumber(current.sent), note: `${formatNumber(previous.sent)} in the period before`, icon: ICONS.mail, change: changeBetween(previous.sent, current.sent) },
@@ -63,8 +65,8 @@ function showColleges() {
   const slices = [];
 
   COLLEGES.forEach((college) => {
-    const current = totalsFor(campaignsIn(PERIOD.current, { ...filters(), college }));
-    const previous = totalsFor(campaignsIn(PERIOD.previous, { ...filters(), college }));
+    const current = totalsFor(campaignsIn(period().current, { ...filters(), college }));
+    const previous = totalsFor(campaignsIn(period().previous, { ...filters(), college }));
     if (!current.sent && !previous.sent) return;
     const registrations = OUTCOMES.registrations.byCollege[college];
     rows.push({
@@ -106,8 +108,8 @@ function showFamilies() {
 
   PURPOSES.forEach((purpose) => {
     FAMILIES.forEach((family) => {
-      const current = totalsFor(campaignsIn(PERIOD.current, { ...filters(), purpose, family }));
-      const previous = totalsFor(campaignsIn(PERIOD.previous, { ...filters(), purpose, family }));
+      const current = totalsFor(campaignsIn(period().current, { ...filters(), purpose, family }));
+      const previous = totalsFor(campaignsIn(period().previous, { ...filters(), purpose, family }));
       if (!current.sent && !previous.sent) return;
       rows.push({
         label: family,
@@ -187,6 +189,12 @@ function showAttention() {
 }
 
 function render() {
+  const span = period();
+  document.getElementById('period-note').textContent =
+    `${span.current.label} compared with ${span.previous.label}. ${span.note}.`;
+  document.getElementById('share-note').textContent =
+    `Each college's part of the mail that went out from ${span.current.label}.`;
+
   buildSegmented(document.getElementById('view-picker'), VIEWS, state.view, (view) => {
     state.view = view;
     Params.set({ view: view === 'comparison' ? '' : view });
@@ -211,6 +219,16 @@ function render() {
     showAttention();
   }
 }
+
+const throughSelect = document.getElementById('through-filter');
+throughSelect.replaceChildren(...[...COMPLETED_DAYS].reverse().map((date) =>
+  new Option(`Through ${readable(date)}`, date)));
+throughSelect.value = state.through;
+throughSelect.addEventListener('change', (event) => {
+  state.through = event.target.value;
+  Params.set({ through: state.through === PERIOD.current.to ? '' : state.through });
+  render();
+});
 
 fillSelect('college-filter', 'All colleges', COLLEGES, state.college, (value) => {
   state.college = value;

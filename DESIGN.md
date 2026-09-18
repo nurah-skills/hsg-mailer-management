@@ -79,6 +79,8 @@ A full pill (`999px`) is reserved for status chips and progress tracks, and `50%
 - **`.status`** — a chip. `status-up` / `status-down` carry a direction arrow and the green/red pair; `status-well` / `status-poor` say whether a lesson is good news; `status-good`, `-info`, `-waiting`, `-changed` are the neutral states. A chip never carries a verdict the figure does not support.
 - **Drill-down tiles** — `.decide-tile` (colour-filled, urgency) and `.status-tile` / `.category-tile` (plain, a stage or a kind). Opening one puts the step in the address bar; a `.trail` above the heading names the way back.
 - **Charts**, in `assets/js/shared/charts.js`, drawn as plain SVG with no library: `ringChart()` for one rate, `donutChart()` for a share of a whole, `areaChart()` for a run over time, `pairedBars()` for before against now, `columnChart()` for a long set read across the panel, `barList()` for a ranked set. Every chart prints its scale or its legend, so each mark names a value the chart reaches. Donut slices take `--slice-1` to `--slice-5`.
+- **The page footer** — one line under every page: *HSG · SAST · a management view. The source workbooks stay in charge of the work itself.* Built by `buildFooter()`, so no page can forget it.
+- **Export** — `exportButton()` and `downloadRows()` in `assets/js/shared/app.js`. It saves exactly the rows on screen, so a filtered view exports filtered, and says how many rows it wrote.
 - **Tables** (`.results`) show a heading row on a laptop. On a phone the heading row is hidden and each cell carries its own heading through `data-label`, set by `labelCells()`.
 
 ## Motion

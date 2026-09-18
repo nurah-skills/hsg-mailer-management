@@ -50,6 +50,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.4-3.2 7.9-8 9-4.8-1.1-8-4.6-8-9V6z"/><path d="M9.5 12.2l1.8 1.8 3.4-3.6"/></svg>
           <span>Evidence checks</span>
         </a>
+        <a class="menu-item" href="problems.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 4.3 2.8 17.4a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 16.5v.4"/></svg>
+          <span>Problems and fixes</span>
+        </a>
         <a class="menu-item" href="lessons.html">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5.9 1.1 1 1.6h5c.1-.5.4-1.1 1-1.6A6 6 0 0 0 12 3z"/></svg>
           <span>Lessons learnt</span>
@@ -83,12 +87,14 @@
         <div class="page-header">
           <div>
             <h1>This week</h1>
-            <p class="page-note">14 to 16 September compared with the same weekdays the week before.</p>
+            <p class="page-note" id="period-note"></p>
           </div>
         </div>
 
         <div class="controls">
           <div class="segmented segmented-three" id="view-picker" role="group" aria-label="View"></div>
+          <label class="sr-only" for="through-filter">Compare through</label>
+          <select class="select" id="through-filter"></select>
           <div class="filter-set" id="week-filters">
             <label class="sr-only" for="college-filter">College</label>
             <select class="select" id="college-filter"></select>
@@ -109,7 +115,7 @@
                 <h2 id="share-title">Share of the sends</h2>
               </div>
               <div id="college-share"></div>
-              <p class="panel-note">Each college's part of the mail that went out from 14 to 16 September.</p>
+              <p class="panel-note" id="share-note"></p>
             </section>
 
             <section class="panel span-7" aria-labelledby="mail-college-title">

@@ -179,6 +179,17 @@ fillSelect('owner-filter', 'All owners', [...new Set(JOBS.map((job) => job.owner
   render();
 });
 
+document.getElementById('jobs-panel').querySelector('.panel-head').append(
+  exportButton('Export these rows', () => downloadRows(
+    'job-pipeline',
+    ['Job', 'Code', 'Tracker row', 'Phase', 'Stage', 'Owner', 'College', 'Audience', 'Next check', 'Note'],
+    shown().map((job) => [
+      job.title, job.code, job.row, `Phase ${job.phase}`, job.stage, job.owner,
+      COLLEGE_NAMES[job.college], job.audience, job.nextCheck || 'Not set', job.note
+    ])
+  ))
+);
+
 const jobsClear = document.getElementById('jobs-clear');
 jobsClear.textContent = 'Back to the stages';
 jobsClear.addEventListener('click', clearFilters);
