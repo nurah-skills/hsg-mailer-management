@@ -31,6 +31,10 @@ The board is for the marketing managers, so there is one kind of account. On a p
 | `pages/sources.html` | What the board is connected to and what each connection may do, the workbooks it reads and when they were read, how to read the figures, and what is still not joined up. |
 | `index.html` | Sign in, or look around as a manager. |
 
+## Finding one thing
+
+Every page carries **Search the board** in its header. Type two letters or more and it looks through the jobs, the campaigns, the evidence checks, the lessons and the problems at once. Each result says what kind of thing it is, and clicking it opens the page with that thing already showing — the right tile open, the right filter set. Escape clears it.
+
 ## What the figures mean
 
 - **Sends are emails, not people.** Somebody mailed twice counts twice.
@@ -43,6 +47,10 @@ The board is for the marketing managers, so there is one kind of account. On a p
 - **A change chip is green when the figure went up and red when it went down,** against the period before. It reports the direction, not a verdict: on unsubscribes and hard bounces, up is not the good news.
 - **“The current period” always means 14 to 16 September.** Any figure counted over a longer run says so on the figure itself.
 - **Reading only.** The board never creates, schedules or sends a mailer, and never writes back to a tracker.
+
+## Picking rows to export
+
+On **Job pipeline** and **Campaign results** every row has a tick on the left, and the heading row has one that takes everything on screen. Tick a few and the button changes to **Export the 6 you picked**; the file then holds only those. Tick nothing and it saves every row on screen, filters and all. Changing a filter forgets anything that is no longer showing, so the file never holds a row you cannot see.
 
 ## Sample data
 

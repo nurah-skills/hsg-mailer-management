@@ -28,10 +28,18 @@ function showTiles() {
   const previous = totalsFor(campaignsIn(period().previous, filters()));
 
   const tiles = [
-    { label: 'Emails sent', value: formatNumber(current.sent), note: `${formatNumber(previous.sent)} in the period before`, icon: ICONS.mail, change: changeBetween(previous.sent, current.sent) },
-    { label: 'Campaigns', value: formatNumber(current.campaigns), note: `${formatNumber(previous.campaigns)} before · sends, not people`, icon: ICONS.rows, tone: 'is-info', change: changeBetween(previous.campaigns, current.campaigns) },
-    { label: 'Click rate', value: formatPercent(current.clickRate), note: `${formatPercent(previous.clickRate)} before · newer mail has had less time to collect clicks`, icon: ICONS.click, tone: 'is-good' },
-    { label: 'Unsubscribes', value: formatNumber(current.unsubscribes), note: `${formatPercent(current.unsubscribeRate)} of deliveries`, icon: ICONS.alert, tone: 'is-warn', change: changeBetween(previous.unsubscribes, current.unsubscribes) }
+    { label: 'Emails sent', value: formatNumber(current.sent), note: `${formatNumber(previous.sent)} in the period before`, icon: ICONS.mail, change: changeBetween(previous.sent, current.sent),
+      spark: dailyTotals('sent', 10, state.through, filters()), sparkLabel: 'Emails sent on each of the ten days up to the day you are comparing through',
+      about: 'What the mail tool reports as sent over the three weekdays in this period, after the filters above. The small chart runs over the ten days up to the day you compare through.' },
+    { label: 'Campaigns', value: formatNumber(current.campaigns), note: `${formatNumber(previous.campaigns)} before · sends, not people`, icon: ICONS.rows, tone: 'is-info', change: changeBetween(previous.campaigns, current.campaigns),
+      spark: dailyTotals('campaigns', 10, state.through, filters()), sparkLabel: 'Campaigns sent on each of the ten days up to the day you are comparing through',
+      about: 'Sends, not people. One mail sent to three colleges counts three times, because the mail tool records it three times.' },
+    { label: 'Click rate', value: formatPercent(current.clickRate), note: `${formatPercent(previous.clickRate)} before · newer mail has had less time to collect clicks`, icon: ICONS.click, tone: 'is-good',
+      spark: dailyTotals('clickers', 10, state.through, filters()), sparkLabel: 'People who clicked on each of the ten days up to the day you are comparing through',
+      about: 'People who clicked, as a share of mail that was delivered. Newer mail has had less time to collect clicks, so a period that ends today reads lower than one that ended a week ago.' },
+    { label: 'Unsubscribes', value: formatNumber(current.unsubscribes), note: `${formatPercent(current.unsubscribeRate)} of deliveries`, icon: ICONS.alert, tone: 'is-warn', change: changeBetween(previous.unsubscribes, current.unsubscribes),
+      spark: dailyTotals('unsubscribes', 10, state.through, filters()), sparkLabel: 'Unsubscribes on each of the ten days up to the day you are comparing through',
+      about: 'People who asked to stop hearing from us. The arrow is coloured the same way as on the other figures, so read this one with that in mind: up here is not good news.' }
   ];
 
   document.getElementById('week-tiles').replaceChildren(...tiles.map(statTile));

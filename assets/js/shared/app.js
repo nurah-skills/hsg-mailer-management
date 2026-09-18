@@ -77,6 +77,7 @@ const ICONS = {
   down: ['M12 5v14', 'M6 13l6 6 6-6'],
   menu: ['M4 7h16', 'M4 12h16', 'M4 17h16'],
   download: ['M12 4v10', 'm7.5 10.5 4.5 4.5 4.5-4.5', 'M5 19h14'],
+  about: ['M12 11v5.5', 'M12 7.6v.4', 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17z'],
   rows: ['M4 7h16', 'M4 12h16', 'M4 17h10'],
   alert: ['M12 8v5', 'M12 16.5v.5', 'M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'],
   mail: ['M3 6.5h18v11H3z', 'm4 7.5 8 5.5 8-5.5'],
@@ -140,7 +141,7 @@ function labelCells(table) {
   const headings = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent);
   table.querySelectorAll('tbody tr').forEach((row) => {
     [...row.children].forEach((cell, index) => {
-      if (cell.colSpan > 1 || cell.tagName !== 'TD') return;
+      if (cell.colSpan > 1 || cell.tagName !== 'TD' || cell.classList.contains('cell-pick')) return;
       if (headings[index]) cell.dataset.label = headings[index];
     });
   });
@@ -234,29 +235,138 @@ function downloadRows(name, headings, rows) {
   showToast(`${formatNumber(rows.length)} ${rows.length === 1 ? 'row' : 'rows'} saved to ${name}.csv`);
 }
 
+function rowPicker(onChange) {
+  const chosen = new Set();
+  let shownIds = [];
+  let head = null;
+  let boxes = 0;
+
+  const syncHead = () => {
+    if (!head) return;
+    head.checked = shownIds.length > 0 && shownIds.every((id) => chosen.has(id));
+    head.indeterminate = !head.checked && shownIds.some((id) => chosen.has(id));
+  };
+
+  const changed = () => {
+    syncHead();
+    onChange();
+  };
+
+  const box = (label) => {
+    boxes += 1;
+    const field = create('input');
+    field.type = 'checkbox';
+    field.id = `pick-${boxes}`;
+    const wrap = create('label', 'pick');
+    wrap.htmlFor = field.id;
+    wrap.append(field, create('span', 'sr-only', label));
+    return { field, wrap };
+  };
+
+  return {
+    get size() { return chosen.size; },
+    has(id) { return chosen.has(id); },
+    clear() { chosen.clear(); changed(); },
+    // Forget anything that has scrolled out of the current filter
+    keepOnly(ids) {
+      shownIds = ids;
+      [...chosen].forEach((id) => { if (!ids.includes(id)) chosen.delete(id); });
+    },
+    headCell() {
+      const cell = create('th', 'cell-pick');
+      cell.scope = 'col';
+      const { field, wrap } = box('Pick every row on screen');
+      head = field;
+      syncHead();
+      field.addEventListener('change', () => {
+        shownIds.forEach((id) => (field.checked ? chosen.add(id) : chosen.delete(id)));
+        document.querySelectorAll('.cell-pick input').forEach((other) => {
+          if (other !== field) other.checked = field.checked;
+        });
+        changed();
+      });
+      cell.append(wrap);
+      return cell;
+    },
+    cell(id, label) {
+      const cell = create('td', 'cell-pick');
+      const { field, wrap } = box(`Pick ${label}`);
+      field.checked = chosen.has(id);
+      field.addEventListener('change', () => {
+        if (field.checked) chosen.add(id); else chosen.delete(id);
+        changed();
+      });
+      cell.append(wrap);
+      return cell;
+    }
+  };
+}
+
 function exportButton(label, build) {
   const button = create('button', 'button button-secondary button-inline');
   button.type = 'button';
-  button.append(icon(ICONS.download, 16), document.createTextNode(label));
+  button.append(icon(ICONS.download, 16), create('span', '', label));
   button.addEventListener('click', build);
   return button;
 }
 
-function statTile({ label, value, note, icon: paths, tone = '', change }) {
+let tileCount = 0;
+function statTile({ label, value, note, icon: paths, tone = '', change, spark, sparkLabel, sparkMark = 'newest', about }) {
   const tile = create('div', 'tile');
   const badge = create('div', 'tile-badge');
-  badge.append(create('span', '', label));
+  const name = create('span', '', label);
+  badge.append(name);
+
+  if (about) {
+    tileCount += 1;
+    const id = `tile-about-${tileCount}`;
+    const ask = create('button', 'tile-about-open');
+    ask.type = 'button';
+    ask.setAttribute('aria-expanded', 'false');
+    ask.setAttribute('aria-controls', id);
+    ask.setAttribute('aria-label', `What "${label}" counts`);
+    ask.append(icon(ICONS.about, 15));
+    name.append(ask);
+
+    const explain = create('p', 'tile-about', about);
+    explain.id = id;
+    explain.hidden = true;
+    ask.addEventListener('click', () => {
+      explain.hidden = !explain.hidden;
+      ask.setAttribute('aria-expanded', String(!explain.hidden));
+    });
+    tile.dataset.hasAbout = 'true';
+    tile.append(badge);
+    if (paths) {
+      const mark = create('span', ('tile-icon ' + tone).trim());
+      mark.append(icon(paths, 18));
+      badge.append(mark);
+    }
+    const figure = create('div', 'tile-figure');
+    figure.append(create('b', '', value));
+    if (spark) figure.append(sparkline(spark, sparkLabel || label, sparkMark));
+    const foot = create('div', 'tile-foot');
+    if (change) foot.append(statusChip(change));
+    if (note) foot.append(create('small', '', note));
+    tile.append(figure, foot, explain);
+    return tile;
+  }
+
   if (paths) {
     const mark = create('span', ('tile-icon ' + tone).trim());
     mark.append(icon(paths, 18));
     badge.append(mark);
   }
 
+  const figure = create('div', 'tile-figure');
+  figure.append(create('b', '', value));
+  if (spark) figure.append(sparkline(spark, sparkLabel || label, sparkMark));
+
   const foot = create('div', 'tile-foot');
   if (change) foot.append(statusChip(change));
   if (note) foot.append(create('small', '', note));
 
-  tile.append(badge, create('b', '', value), foot);
+  tile.append(badge, figure, foot);
   return tile;
 }
 
@@ -275,6 +385,109 @@ const RELATED = [
 
 // The header is built here rather than read out of the page, so a browser holding an older
 // copy of the HTML still gets the right header from the current script.
+// One search across the whole board. Every result is a link to the page that holds it,
+// using the same addresses the pages themselves use.
+function boardResults(term) {
+  const text = term.trim().toLowerCase();
+  if (text.length < 2) return [];
+  const has = (...parts) => parts.join(' ').toLowerCase().includes(text);
+  const found = [];
+
+  JOBS.forEach((job) => {
+    if (has(job.title, job.code, job.owner, job.stage)) {
+      found.push({ group: 'Job', label: job.title, detail: `${job.code} · ${job.stage}`, href: `jobs.html?stage=${encodeURIComponent(job.stage)}&search=${encodeURIComponent(job.code)}` });
+    }
+  });
+
+  CAMPAIGNS.forEach((campaign) => {
+    if (has(campaign.name, campaign.id)) {
+      found.push({ group: 'Campaign', label: campaign.name, detail: `${campaign.id} · ${campaign.purpose} · ${campaign.family}`, href: `campaigns.html?search=${encodeURIComponent(campaign.name)}` });
+    }
+  });
+
+  CHECK_TYPES.forEach((type) => {
+    if (has(type[1], type[2])) {
+      found.push({ group: 'Evidence check', label: type[1], detail: type[2], href: `checks.html#${type[0]}` });
+    }
+  });
+
+  LESSONS.forEach((lesson) => {
+    if (has(lesson.title, lesson.shows, lesson.action)) {
+      found.push({ group: 'Lesson', label: lesson.title, detail: `${lesson.status} · ${lesson.scope}`, href: `lessons.html#${encodeURIComponent(lesson.status)}/${lesson.verdict}` });
+    }
+  });
+
+  PROBLEMS.forEach((problem) => {
+    if (has(problem.title, problem.id, problem.affects, problem.owner)) {
+      found.push({ group: 'Problem', label: problem.title, detail: `${problem.id} · ${problem.status} · ${problem.category}`, href: `problems.html#${encodeURIComponent(problem.status)}` });
+    }
+  });
+
+  return found;
+}
+
+function buildSearch() {
+  const holder = create('div', 'board-search');
+
+  const label = create('label', 'sr-only', 'Search the board');
+  label.htmlFor = 'board-search-input';
+  const field = create('input', 'search');
+  field.id = 'board-search-input';
+  field.type = 'search';
+  field.placeholder = 'Search the board';
+  field.autocomplete = 'off';
+  field.setAttribute('role', 'combobox');
+  field.setAttribute('aria-expanded', 'false');
+  field.setAttribute('aria-controls', 'board-search-results');
+
+  const list = create('ul', 'search-results');
+  list.id = 'board-search-results';
+  list.hidden = true;
+
+  const close = () => {
+    list.hidden = true;
+    field.setAttribute('aria-expanded', 'false');
+  };
+
+  const draw = () => {
+    const results = boardResults(field.value);
+    list.replaceChildren();
+    if (!field.value.trim() || field.value.trim().length < 2) return close();
+
+    if (!results.length) {
+      list.append(create('li', 'search-empty', 'Nothing on the board matches that.'));
+    } else {
+      results.slice(0, 8).forEach((result) => {
+        const item = create('li');
+        const link = create('a');
+        link.href = result.href;
+        link.append(create('span', 'search-group', result.group), create('b', '', result.label), create('small', '', result.detail));
+        item.append(link);
+        list.append(item);
+      });
+      if (results.length > 8) list.append(create('li', 'search-empty', `${results.length - 8} more match. Keep typing to narrow it.`));
+    }
+    list.hidden = false;
+    field.setAttribute('aria-expanded', 'true');
+  };
+
+  field.addEventListener('input', draw);
+  field.addEventListener('focus', draw);
+  field.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') { field.value = ''; close(); }
+    if (event.key === 'ArrowDown' && !list.hidden) {
+      const first = list.querySelector('a');
+      if (first) { event.preventDefault(); first.focus(); }
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (!holder.contains(event.target)) close();
+  });
+
+  holder.append(label, field, list);
+  return holder;
+}
+
 function buildHeaderTools() {
   const header = document.querySelector('.page-header');
   if (!header) return;
@@ -286,22 +499,22 @@ function buildHeaderTools() {
   refresh.append(icon(ICONS.refresh, 16), document.createTextNode('Refresh the mail tool'));
   refresh.addEventListener('click', () => showToast(`Sample figures, so nothing refreshes. The mail tool was read at ${SNAPSHOT.mailRead} and that reading is fixed.`));
 
-  const dot = create('span', 'board-dot');
-  dot.setAttribute('aria-hidden', 'true');
+  const tools = create('div', 'header-tools');
+  tools.append(buildSearch(), refresh);
+  header.append(tools);
+}
+
+// What state the board is in, at the foot of the menu where it stays out of the way
+function buildStateCard(sidebar) {
   const read = create('span');
   read.id = 'mail-read';
   read.textContent = SNAPSHOT.mailRead;
-  const lines = create('div');
-  const detail = create('small', '', 'Sample figures · read ');
+  const detail = create('small', '', 'Sample figures. The mail tool was read ');
   detail.append(read);
-  lines.append(create('b', '', 'Not connected'), detail);
 
-  const state = create('div', 'board-state');
-  state.append(dot, lines);
-
-  const tools = create('div', 'header-tools');
-  tools.append(refresh, state);
-  header.append(tools);
+  const card = create('div', 'board-card');
+  card.append(create('b', '', 'Not connected'), detail);
+  sidebar.querySelector('.sidebar-user').before(card);
 }
 
 function buildRelatedLinks(sidebar) {
@@ -371,6 +584,7 @@ function setUpShell() {
   });
 
   buildRelatedLinks(sidebar);
+  buildStateCard(sidebar);
   buildHeaderTools();
   buildFooter();
 

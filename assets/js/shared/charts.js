@@ -39,7 +39,7 @@ function ringChart(fraction, label, caption, tone = 'accent') {
 }
 
 // A run of figures over time. The scale is printed, so every line on the chart names a value.
-function areaChart(points, { format = formatNumber, label = 'value' } = {}) {
+function areaChart(points, { format = formatNumber, label = 'value', key = 'Emails sent' } = {}) {
   const width = 640;
   const height = 190;
   const top = 14;
@@ -74,12 +74,62 @@ function areaChart(points, { format = formatNumber, label = 'value' } = {}) {
     stroke: 'var(--chart-line)', 'stroke-width': 2
   })));
 
+  const guide = svgNode('line', {
+    x1: 0, x2: 0, y1: top, y2: bottom, stroke: 'var(--chart-line)',
+    'stroke-width': 1, 'stroke-dasharray': '4 5', opacity: 0
+  });
+  const pointer = svgNode('circle', {
+    r: 6, cx: 0, cy: 0, fill: 'var(--chart-line)', stroke: 'var(--card)', 'stroke-width': 2, opacity: 0
+  });
+  svg.append(guide, pointer);
+
   const chart = create('div', 'chart');
   const scale = create('div', 'chart-scale');
   scale.append(create('span', '', format(most)), create('span', '', format(Math.round(most / 2))), create('span', '', '0'));
 
   const plot = create('div', 'chart-plot');
-  plot.append(scale, svg);
+  const tip = create('div', 'chart-tip');
+  tip.hidden = true;
+  plot.append(scale, svg, tip);
+
+  // Reading the chart with the pointer: the nearest day lights up and says its figure
+  const readAt = (event) => {
+    const box = svg.getBoundingClientRect();
+    if (!box.width) return;
+    const across = (event.clientX - box.left) / box.width;
+    const index = Math.min(points.length - 1, Math.max(0, Math.round(across * (points.length - 1))));
+    const [x, y] = spots[index];
+
+    guide.setAttribute('x1', x);
+    guide.setAttribute('x2', x);
+    guide.setAttribute('opacity', 1);
+    pointer.setAttribute('cx', x);
+    pointer.setAttribute('cy', y);
+    pointer.setAttribute('opacity', 1);
+
+    tip.replaceChildren(create('b', '', format(points[index].value)), create('small', '', `${points[index].label} · ${key.toLowerCase()}`));
+    tip.hidden = false;
+
+    const inside = plot.getBoundingClientRect();
+    const size = tip.getBoundingClientRect();
+    const half = size.width / 2;
+    const wanted = box.left - inside.left + (x / width) * box.width;
+    tip.style.left = `${Math.min(Math.max(wanted, half + 4), inside.width - half - 4)}px`;
+
+    const above = (y / height) * box.height;
+    const room = above - size.height - 12 > 0;
+    tip.classList.toggle('is-below', !room);
+    tip.style.top = `${above}px`;
+  };
+
+  const rest = () => {
+    guide.setAttribute('opacity', 0);
+    pointer.setAttribute('opacity', 0);
+    tip.hidden = true;
+  };
+
+  plot.addEventListener('pointermove', readAt);
+  plot.addEventListener('pointerleave', rest);
 
   const marks = create('div', 'chart-marks');
   points.forEach((point, index) => {
@@ -88,7 +138,14 @@ function areaChart(points, { format = formatNumber, label = 'value' } = {}) {
     marks.append(mark);
   });
 
-  chart.append(plot, marks);
+  const legend = create('div', 'chart-key');
+  const series = create('span', 'chart-key-item');
+  series.append(create('i', 'key-line'), document.createTextNode(key));
+  const peak = create('span', 'chart-key-item');
+  peak.append(create('i', 'key-dot'), document.createTextNode(`Highest day · ${points[highest].label}`));
+  legend.append(series, peak);
+
+  chart.append(legend, plot, marks);
   return chart;
 }
 
@@ -240,4 +297,19 @@ function columnChart(rows, { format = formatNumber, groups = [] } = {}) {
   plot.append(scale, list);
   chart.append(plot);
   return chart;
+}
+
+// The breakdown behind a figure, small enough to sit inside its card
+function sparkline(values, label, mark = 'newest') {
+  const most = Math.max(...values, 1);
+  const marked = mark === 'newest' ? values.length - 1 : values.indexOf(most);
+  const holder = create('span', 'spark');
+  holder.setAttribute('role', 'img');
+  holder.setAttribute('aria-label', label);
+  values.forEach((value, index) => {
+    const bar = create('span', index === marked ? 'is-marked' : '');
+    bar.style.height = `${Math.max(8, (value / most) * 100)}%`;
+    holder.append(bar);
+  });
+  return holder;
 }

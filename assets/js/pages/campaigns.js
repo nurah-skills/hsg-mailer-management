@@ -121,6 +121,17 @@ function fillSortPicker() {
   });
 }
 
+const picker = rowPicker(() => showPicked());
+
+function showPicked() {
+  const button = document.getElementById('campaigns-export');
+  if (!button) return;
+  const label = button.querySelector('span');
+  label.textContent = picker.size
+    ? `Export the ${formatNumber(picker.size)} you picked`
+    : 'Export these rows';
+}
+
 function campaignRow(campaign) {
   const row = create('tr');
   const bounceRate = campaign.sent ? campaign.hardBounces / campaign.sent : 0;
@@ -139,6 +150,7 @@ function campaignRow(campaign) {
   if (clickRate > CLICK_PROMPT) clicked.append(statusChip({ tone: 'info', text: 'Worth a look' }));
 
   row.append(
+    picker.cell(campaign.id, campaign.name),
     first,
     create('td', '', `${campaign.date.slice(8)} Sept · ${campaign.college}`),
     create('td', 'cell-best', formatNumber(campaign.sent)),
@@ -164,9 +176,12 @@ function render() {
   const table = document.getElementById('campaign-table');
   table.replaceChildren();
 
+  picker.keepOnly(rows.map((campaign) => campaign.id));
+
   const head = create('thead');
   const headRow = create('tr');
   headRow.append(
+    picker.headCell(),
     create('th', 'cell-name', 'Campaign'),
     sortHeader('date', 'Date'),
     sortHeader('sent', 'Sent', 'cell-best'),
@@ -175,7 +190,7 @@ function render() {
     sortHeader('click', 'Clicked', 'cell-best'),
     sortHeader('bounce', 'Hard bounces', 'cell-cash')
   );
-  headRow.firstChild.scope = 'col';
+  headRow.children[1].scope = 'col';
   head.append(headRow);
   table.append(head);
 
@@ -183,26 +198,30 @@ function render() {
   if (!rows.length) {
     const line = create('tr');
     const cell = create('td', 'is-empty', 'No campaigns match this selection.');
-    cell.colSpan = 7;
+    cell.colSpan = 8;
     line.append(cell);
     body.append(line);
   }
   rows.forEach((campaign) => body.append(campaignRow(campaign)));
   table.append(body);
   labelCells(table);
+  showPicked();
 }
 
-document.querySelector('[aria-labelledby="campaigns-title"] .panel-head').append(
-  exportButton('Export these rows', () => downloadRows(
+const campaignsExport = exportButton('Export these rows', () => {
+  const rows = picker.size ? shown().filter((campaign) => picker.has(campaign.id)) : shown();
+  downloadRows(
     'campaign-results',
     ['Campaign', 'Reference', 'Date', 'College', 'Purpose', 'Family', 'Sent', 'Delivered', 'Openers', 'Clickers', 'Hard bounces', 'Unsubscribes'],
-    shown().map((campaign) => [
+    rows.map((campaign) => [
       campaign.name, campaign.id, campaign.date, COLLEGE_NAMES[campaign.college] || campaign.college,
       campaign.purpose, campaign.family, campaign.sent, campaign.delivered,
       campaign.openers, campaign.clickers, campaign.hardBounces, campaign.unsubscribes
     ])
-  ))
-);
+  );
+});
+campaignsExport.id = 'campaigns-export';
+document.querySelector('[aria-labelledby="campaigns-title"] .panel-head').append(campaignsExport);
 
 const campaignsClear = document.getElementById('campaigns-clear');
 campaignsClear.textContent = `Show all ${formatNumber(CAMPAIGNS.length)}`;

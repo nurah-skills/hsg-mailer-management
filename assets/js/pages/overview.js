@@ -9,24 +9,36 @@ function showTiles() {
     {
       label: 'Tracker rows', icon: ICONS.rows, tone: 'is-info',
       value: formatNumber(JOBS.length),
-      note: `${formatNumber(JOBS.filter((job) => job.stage === 'Ready for AC build').length)} ready for the build`
+      note: `${formatNumber(JOBS.filter((job) => job.stage === 'Ready for AC build').length)} ready for the build`,
+      spark: STAGES.map((stage) => JOBS.filter((job) => job.stage === stage).length),
+      sparkLabel: 'Rows in each stage, in stage order', sparkMark: 'biggest',
+      about: 'Every row on the mailer trackers, whatever state it is in. The small chart shows how those rows sit across the six stages.'
     },
     {
       label: 'Rows needing a check', icon: ICONS.alert, tone: 'is-warn',
       value: formatNumber(needsCheck),
-      note: `${formatNumber(JOBS.filter((job) => job.stage === 'Paused / blocked').length)} paused or blocked`
+      note: `${formatNumber(JOBS.filter((job) => job.stage === 'Paused / blocked').length)} paused or blocked`,
+      spark: CHECK_TYPES.map((type) => CHECKS.filter((check) => check.type[0] === type[0]).length),
+      sparkLabel: 'Checks raised of each kind', sparkMark: 'biggest',
+      about: 'Rows where something is missing or does not agree with itself. One row can raise more than one check, so the checks add up to more than this number.'
     },
     {
       label: 'Emails sent', icon: ICONS.mail, tone: '',
       value: formatNumber(current.sent),
       note: `${formatNumber(current.campaigns)} campaigns · ${PERIOD.current.label}`,
-      change: changeBetween(previous.sent, current.sent)
+      change: changeBetween(previous.sent, current.sent),
+      spark: dailyTotals('sent'),
+      sparkLabel: 'Emails sent on each of the last ten days',
+      about: 'What the mail tool reports as sent over the three days in the period, not what the trackers plan to send. The small chart runs over the last ten days.'
     },
     {
       label: 'People who clicked', icon: ICONS.click, tone: 'is-good',
       value: formatNumber(current.clickers),
       note: `${formatPercent(current.clickRate)} of deliveries`,
-      change: changeBetween(previous.clickers, current.clickers)
+      change: changeBetween(previous.clickers, current.clickers),
+      spark: dailyTotals('clickers'),
+      sparkLabel: 'People who clicked on each of the last ten days',
+      about: 'People, not clicks: one person who clicks four links counts once. Newer mail has had less time to collect clicks, so the newest days sit low.'
     }
   ];
 

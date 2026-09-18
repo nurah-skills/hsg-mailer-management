@@ -16,7 +16,7 @@ Colours live as custom properties on `:root` in `assets/css/styles.css`, redefin
 | `--ink` | `#11211B` | `#E7F0EB` | Body text |
 | `--muted` | `#52665D` | `#96A9A0` | Second-line text, labels, captions |
 | `--line` | `#D6E4DC` | `#26382F` | Hairlines and dividers |
-| `--navy` / `--navy-deep` | `#14352C` / `#0C211A` | `#143027` / `#0C1F19` | The menu gradient, and the art on the check tiles |
+| `--navy` / `--navy-deep` | `#14352C` / `#0C211A` | `#143027` / `#0C1F19` | The dark green cards, the sign-in panel, and the art on the check tiles |
 | `--accent` | `#17A57C` | `#3FBF95` | The green the board is known by |
 | `--accent-ink` | `#0A6B50` | `#7FDCBB` | Links, and text on green |
 | `--focus` | `#0F766E` | `#6EE7C4` | The focus ring |
@@ -74,13 +74,17 @@ A full pill (`999px`) is reserved for status chips and progress tracks, and `50%
 
 ## Components
 
-- **The page header** — the page name and its one-line note on the left, the refresh button and the board state on the right, closed by a hairline. The state is a dot, **Not connected**, and when the board was last read. One row on a laptop, stacking on a phone.
-- **`.tile`** — a figure with its name, an icon badge, and a footer that can hold a change chip and a note. Built by `statTile()` in `assets/js/shared/app.js`, used on Overview, This week and Campaigns.
+- **The menu** — a light column on `--card`, held off the page by a single hairline. The page you are on is a soft green pill with a thin green ring, so it reads at a glance in both themes; everything else is `--muted` until you hover it. A dark green `.board-card` at the foot says **Not connected** and when the mail tool was read, which is the one piece of state that belongs to the board rather than to a page.
+- **The page header** — the page name and its one-line note on the left, the search field and the refresh button on the right, closed by a hairline. One row on a laptop, stacking on a phone.
+- **Search** — one field in the header covering jobs, campaigns, evidence checks, lessons and problems. Every result is a link to the page that holds it, built from the same addresses those pages put in the address bar themselves, so a result lands with the right tile open and the right filter set. Built by `buildSearch()`.
+- **`.tile`** — a figure with its name, an icon badge, a small chart of the run behind it, and a footer that can hold a change chip and a note. The **(i)** beside the name opens one sentence saying what the figure counts and what it does not. The small chart marks the newest day when the run is days, and the biggest group when the run is groups, so the dark bar never implies something the run does not say. Built by `statTile()` and `sparkline()`.
 - **`.status`** — a chip. `status-up` / `status-down` carry a direction arrow and the green/red pair; `status-well` / `status-poor` say whether a lesson is good news; `status-good`, `-info`, `-waiting`, `-changed` are the neutral states. A chip never carries a verdict the figure does not support.
 - **Drill-down tiles** — `.decide-tile` (colour-filled, urgency) and `.status-tile` / `.category-tile` (plain, a stage or a kind). Opening one puts the step in the address bar; a `.trail` above the heading names the way back.
-- **Charts**, in `assets/js/shared/charts.js`, drawn as plain SVG with no library: `ringChart()` for one rate, `donutChart()` for a share of a whole, `areaChart()` for a run over time, `pairedBars()` for before against now, `columnChart()` for a long set read across the panel, `barList()` for a ranked set. Every chart prints its scale or its legend, so each mark names a value the chart reaches. Donut slices take `--slice-1` to `--slice-5`.
+- **Charts**, in `assets/js/shared/charts.js`, drawn as plain SVG with no library: `ringChart()` for one rate, `donutChart()` for a share of a whole, `areaChart()` for a run over time, `pairedBars()` for before against now, `columnChart()` for a long set read across the panel, `barList()` for a ranked set, `sparkline()` for the run inside a tile. Every chart prints its scale or its legend, so each mark names a value the chart reaches. Donut slices take `--slice-1` to `--slice-5`.
+- **Reading a chart** — `areaChart()` carries a key above it naming the line and the highest day, and follows the pointer: the nearest day gets a dashed guide, a filled point and a dark reading giving the figure and the date. The reading slides in at the ends and drops below the line near the top, so it is never cut off by the panel. It is decoration on top of the `<title>` the chart already carries, never the only way to get the numbers.
 - **The page footer** — one line under every page: *HSG · SAST · a management view. The source workbooks stay in charge of the work itself.* Built by `buildFooter()`, so no page can forget it.
 - **Export** — `exportButton()` and `downloadRows()` in `assets/js/shared/app.js`. It saves exactly the rows on screen, so a filtered view exports filtered, and says how many rows it wrote.
+- **Picking rows** — the Job pipeline and Campaign results tables carry a tick in the first column, and one in the heading row that takes everything on screen. Picked rows tint, the export button changes to **Export the 6 you picked**, and a pick that falls outside the filter is forgotten rather than quietly exported. Built by `rowPicker()`. On a phone the tick sits in the corner of each stacked card.
 - **Tables** (`.results`) show a heading row on a laptop. On a phone the heading row is hidden and each cell carries its own heading through `data-label`, set by `labelCells()`.
 
 ## Motion

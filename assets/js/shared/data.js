@@ -166,6 +166,21 @@ function totalsFor(campaigns) {
   };
 }
 
+// The last few days of one figure, oldest first, for the small charts inside the cards
+function dailyTotals(key, days = 10, endDate = PERIOD.current.to, filters = {}) {
+  const dates = shiftDays(endDate, -(days - 1));
+  const list = [];
+  for (let step = 0; step < days; step += 1) {
+    const date = shiftDays(dates, step);
+    const onDay = CAMPAIGNS.filter((campaign) => campaign.date === date
+      && (!filters.college || filters.college === 'All' || campaign.college === filters.college)
+      && (!filters.purpose || filters.purpose === 'All' || campaign.purpose === filters.purpose)
+      && (!filters.family || filters.family === 'All' || campaign.family === filters.family));
+    list.push(key === 'campaigns' ? onDay.length : onDay.reduce((sum, campaign) => sum + campaign[key], 0));
+  }
+  return list;
+}
+
 // Registrations and survey responses come from other sources and are never joined to campaigns here
 const OUTCOMES = {
   registrations: { previous: 499, current: 416, byCollege: { SA: [251, 191], MC: [125, 97], BV: [123, 128] } },

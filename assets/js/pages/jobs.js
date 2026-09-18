@@ -56,6 +56,17 @@ function clearFilters() {
   else document.getElementById('phase-filter').focus();
 }
 
+const picker = rowPicker(() => showPicked());
+
+function showPicked() {
+  const button = document.getElementById('jobs-export');
+  if (!button) return;
+  const label = button.querySelector('span');
+  label.textContent = picker.size
+    ? `Export the ${formatNumber(picker.size)} you picked`
+    : 'Export these rows';
+}
+
 function jobRow(job) {
   const row = create('tr');
 
@@ -76,11 +87,11 @@ function jobRow(job) {
 
   const note = create('tr', 'job-note');
   const noteCell = create('td');
-  noteCell.colSpan = 6;
+  noteCell.colSpan = 7;
   noteCell.append(create('p', 'panel-note', job.note));
   note.append(noteCell);
 
-  row.append(first, create('td', '', `Phase ${job.phase}`), stage, owner, audience, next);
+  row.append(picker.cell(job.code, job.title), first, create('td', '', `Phase ${job.phase}`), stage, owner, audience, next);
   return [row, note];
 }
 
@@ -140,8 +151,11 @@ function render() {
   const table = document.getElementById('jobs-table');
   table.replaceChildren();
 
+  picker.keepOnly(rows.map((job) => job.code));
+
   const head = create('thead');
   const headRow = create('tr');
+  headRow.append(picker.headCell());
   ['Job', 'Phase', 'Stage', 'Owner', 'Audience', 'Next check'].forEach((label) => {
     const cell = create('th', '', label);
     cell.scope = 'col';
@@ -154,13 +168,14 @@ function render() {
   if (!rows.length) {
     const line = create('tr');
     const cell = create('td', 'is-empty', 'No jobs match this selection.');
-    cell.colSpan = 6;
+    cell.colSpan = 7;
     line.append(cell);
     body.append(line);
   }
   rows.forEach((job) => body.append(...jobRow(job)));
   table.append(body);
   labelCells(table);
+  showPicked();
 }
 
 fillSelect('phase-filter', 'All phases', PHASES.map((phase) => phase), state.phase, (value) => {
@@ -179,16 +194,19 @@ fillSelect('owner-filter', 'All owners', [...new Set(JOBS.map((job) => job.owner
   render();
 });
 
-document.getElementById('jobs-panel').querySelector('.panel-head').append(
-  exportButton('Export these rows', () => downloadRows(
+const jobsExport = exportButton('Export these rows', () => {
+  const rows = picker.size ? shown().filter((job) => picker.has(job.code)) : shown();
+  downloadRows(
     'job-pipeline',
     ['Job', 'Code', 'Tracker row', 'Phase', 'Stage', 'Owner', 'College', 'Audience', 'Next check', 'Note'],
-    shown().map((job) => [
+    rows.map((job) => [
       job.title, job.code, job.row, `Phase ${job.phase}`, job.stage, job.owner,
       COLLEGE_NAMES[job.college], job.audience, job.nextCheck || 'Not set', job.note
     ])
-  ))
-);
+  );
+});
+jobsExport.id = 'jobs-export';
+document.getElementById('jobs-panel').querySelector('.panel-head').append(jobsExport);
 
 const jobsClear = document.getElementById('jobs-clear');
 jobsClear.textContent = 'Back to the stages';
