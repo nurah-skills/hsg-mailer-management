@@ -28,7 +28,7 @@ function showTiles() {
   const tiles = [
     ['Emails sent', formatNumber(current.sent), `${formatNumber(previous.sent)} in the period before`, changeBetween(previous.sent, current.sent)],
     ['Campaigns', formatNumber(current.campaigns), `${formatNumber(previous.campaigns)} before · sends, not people`, changeBetween(previous.campaigns, current.campaigns)],
-    ['Click rate', formatPercent(current.clickRate), `${formatPercent(previous.clickRate)} before · newer mail has had less time`, null],
+    ['Click rate', formatPercent(current.clickRate), `${formatPercent(previous.clickRate)} before · newer mail has had less time to collect clicks`, null],
     ['Unsubscribes', formatNumber(current.unsubscribes), `${formatPercent(current.unsubscribeRate)} of deliveries`, changeBetween(previous.unsubscribes, current.unsubscribes)]
   ];
 
@@ -36,9 +36,10 @@ function showTiles() {
   holder.replaceChildren();
   tiles.forEach(([label, value, note, change]) => {
     const tile = create('div', 'tile');
-    tile.append(create('span', '', label), create('b', '', value));
-    if (change) tile.append(statusChip(change));
-    tile.append(create('small', '', note));
+    const top = create('div', 'tile-top');
+    top.append(create('b', '', value));
+    if (change) top.append(statusChip(change));
+    tile.append(create('span', '', label), top, create('small', '', note));
     holder.append(tile);
   });
 }
@@ -68,7 +69,7 @@ function headRow(labels) {
 
 function showColleges() {
   const table = document.getElementById('college-table');
-  table.replaceChildren(headRow(['College', 'Sends before', 'Sends now', 'Change', 'Registrations now']));
+  table.replaceChildren(headRow(['College', 'Before', 'Now', 'Change', 'Registrations']));
   const body = create('tbody');
 
   COLLEGES.forEach((college) => {
@@ -77,7 +78,7 @@ function showColleges() {
     if (!current.sent && !previous.sent) return;
     const registrations = OUTCOMES.registrations.byCollege[college];
     body.append(tableRow([
-      `${college} · ${COLLEGE_NAMES[college]}`,
+      COLLEGE_NAMES[college],
       formatNumber(previous.sent),
       formatNumber(current.sent),
       statusChip(changeBetween(previous.sent, current.sent)),

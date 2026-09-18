@@ -39,7 +39,7 @@ const pageType = document.documentElement.dataset.page;
 const signedIn = readSession();
 // The signed-in pages live in pages/, so the way back out is one level up
 const SIGN_IN_PAGE = '../index.html';
-const HOME_PAGE = pageType === 'app' ? 'decisions.html' : 'pages/decisions.html';
+const HOME_PAGE = pageType === 'app' ? 'overview.html' : 'pages/overview.html';
 
 if (pageType === 'app' && !signedIn) location.replace(SIGN_IN_PAGE);
 if (pageType === 'auth' && signedIn) location.replace(HOME_PAGE);

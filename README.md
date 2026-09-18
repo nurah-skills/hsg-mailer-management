@@ -14,12 +14,13 @@ This is a working design. It follows the same measures and rules as the current 
 2. Choose **Look around as a manager**.
 3. Sign out from the bottom of the menu.
 
-The board is for the marketing managers, so there is one kind of account. On a phone the menu sits behind the menu button, with Decisions, This week and Jobs along the bottom.
+The board is for the marketing managers, so there is one kind of account. On a phone the menu sits behind the menu button, with Overview, Decisions and This week along the bottom. The menu also links to the other boards, and every page has a **Refresh the mail tool** button, which explains that sample figures don’t refresh.
 
 ## Pages
 
 | Page | What it does |
 | --- | --- |
+| `pages/overview.html` | The landing page: tracker rows, rows needing a check, emails sent and click rate, the work by phase, the problems to resolve first, and the mail figures against the period before. |
 | `pages/decisions.html` | Opens on what needs a management call: contradictions in the records, findings that are blocked or waiting, and lessons still being tested. The period’s mail figures and the job stages sit alongside. |
 | `pages/week.html` | The period against the same weekdays before, with filters for college, purpose and family. Three views: **Comparison** (sends, campaigns, click rate, unsubscribes, plus registrations and responses alongside), **Same age** (results measured the same number of hours after each send) and **Needs attention** (dated findings from the lead-source audit). |
 | `pages/jobs.html` | Every work item from the trackers: phase, stage, owner, audience, next check and the note, with filters and search. |

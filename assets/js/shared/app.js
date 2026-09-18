@@ -70,6 +70,8 @@ function icon(paths, size = 18) {
 
 const ICONS = {
   check: ['M4 12.5l5 5L20 6.5'],
+  refresh: ['M20 11a8 8 0 0 0-13.7-5.6L3 8', 'M4 13a8 8 0 0 0 13.7 5.6L21 16', 'M3 4v4h4', 'M21 20v-4h-4'],
+  external: ['M14 4h6v6', 'M20 4l-8 8', 'M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'],
   up: ['M12 19V5', 'M6 11l6-6 6 6'],
   down: ['M12 5v14', 'M6 13l6 6 6-6'],
   menu: ['M4 7h16', 'M4 12h16', 'M4 17h16']
@@ -99,8 +101,8 @@ function showToast(message, action) {
 function buildTabBar(sidebar) {
   const nav = create('nav', 'tabbar');
   nav.setAttribute('aria-label', 'Quick menu');
-  const current = location.pathname.split('/').pop() || 'decisions.html';
-  const pages = [['decisions.html', 'Decisions'], ['week.html', 'This week'], ['jobs.html', 'Jobs']];
+  const current = location.pathname.split('/').pop() || 'overview.html';
+  const pages = [['overview.html', 'Overview'], ['decisions.html', 'Decisions'], ['week.html', 'This week']];
 
   pages.forEach(([href, label]) => {
     const link = create('a', 'tab');
@@ -124,6 +126,45 @@ function buildTabBar(sidebar) {
 
 function statusChip(pace) {
   return create('span', `status status-${pace.tone}`, pace.text);
+}
+
+// The other two boards sit beside this one, and the mail tool can be read again from here
+const RELATED = [
+  ['https://nurah-skills.github.io/every-sale-matters/', 'Sales scoreboard'],
+  ['#', 'Lead tracker']
+];
+
+function buildHeaderTools() {
+  const header = document.querySelector('.page-header');
+  if (!header) return;
+  const tools = create('div', 'header-tools');
+  const refresh = create('button', 'button button-secondary button-inline');
+  refresh.type = 'button';
+  refresh.append(icon(ICONS.refresh, 16), document.createTextNode('Refresh the mail tool'));
+  refresh.addEventListener('click', () => showToast('These are sample figures, so nothing refreshes. On the real board this reads the mail tool again.'));
+  const tag = header.querySelector('.tag');
+  tools.append(refresh);
+  if (tag) tools.append(tag);
+  header.append(tools);
+}
+
+function buildRelatedLinks(sidebar) {
+  const holder = create('div', 'sidebar-links');
+  holder.append(create('p', 'menu-label', 'Other boards'));
+  RELATED.forEach(([href, label]) => {
+    const link = create('a', 'sidebar-link', label);
+    link.href = href;
+    if (href === '#') {
+      link.setAttribute('aria-disabled', 'true');
+      link.append(create('span', 'tag', 'Soon'));
+    } else {
+      link.target = '_blank';
+      link.rel = 'noreferrer';
+      link.append(icon(ICONS.external, 14));
+    }
+    holder.append(link);
+  });
+  sidebar.querySelector('.sidebar-user').before(holder);
 }
 
 function setUpShell() {
@@ -163,6 +204,9 @@ function setUpShell() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && app.classList.contains('menu-open')) setMenuOpen(false);
   });
+
+  buildRelatedLinks(sidebar);
+  buildHeaderTools();
 
   document.getElementById('sign-out').addEventListener('click', () => {
     endSession();
