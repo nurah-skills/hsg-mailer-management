@@ -6,39 +6,63 @@ const needsCheck = [...new Set(CHECKS.map(({ job }) => job.code))].length;
 
 function showTiles() {
   const tiles = [
-    ['Tracker rows', formatNumber(JOBS.length), `${formatNumber(JOBS.filter((job) => job.stage === 'Ready for AC build').length)} ready for the build`],
-    ['Rows needing a check', formatNumber(needsCheck), `${formatNumber(JOBS.filter((job) => job.stage === 'Paused / blocked').length)} paused or blocked`],
-    ['Emails sent', formatNumber(current.sent), `${formatNumber(current.campaigns)} campaigns · ${PERIOD.current.label}`],
-    ['Click rate', formatPercent(current.clickRate), `${formatNumber(current.clickers)} people clicked, of deliveries`]
+    {
+      label: 'Tracker rows', icon: ICONS.rows, tone: 'is-info',
+      value: formatNumber(JOBS.length),
+      note: `${formatNumber(JOBS.filter((job) => job.stage === 'Ready for AC build').length)} ready for the build`
+    },
+    {
+      label: 'Rows needing a check', icon: ICONS.alert, tone: 'is-warn',
+      value: formatNumber(needsCheck),
+      note: `${formatNumber(JOBS.filter((job) => job.stage === 'Paused / blocked').length)} paused or blocked`
+    },
+    {
+      label: 'Emails sent', icon: ICONS.mail, tone: '',
+      value: formatNumber(current.sent),
+      note: `${formatNumber(current.campaigns)} campaigns · ${PERIOD.current.label}`,
+      change: changeBetween(previous.sent, current.sent)
+    },
+    {
+      label: 'People who clicked', icon: ICONS.click, tone: 'is-good',
+      value: formatNumber(current.clickers),
+      note: `${formatPercent(current.clickRate)} of deliveries`,
+      change: changeBetween(previous.clickers, current.clickers)
+    }
   ];
-  const holder = document.getElementById('overview-tiles');
-  holder.replaceChildren();
-  tiles.forEach(([label, value, note]) => {
-    const tile = create('div', 'tile');
-    tile.append(create('span', '', label), create('b', '', value), create('small', '', note));
-    holder.append(tile);
-  });
+
+  document.getElementById('overview-tiles').replaceChildren(...tiles.map(statTile));
+}
+
+// Every campaign the board holds, grouped by the day it went out
+function showSends() {
+  const days = [...new Set(CAMPAIGNS.map((campaign) => campaign.date))].sort();
+  const points = days.map((date) => ({
+    label: `${Number(date.slice(8))} Sep`,
+    value: CAMPAIGNS.filter((campaign) => campaign.date === date).reduce((sum, campaign) => sum + campaign.sent, 0)
+  }));
+  document.getElementById('sends-chart').replaceChildren(areaChart(points, { label: 'Emails sent by day' }));
+}
+
+function showRates() {
+  const rates = [
+    [current.delivered ? current.openers / current.delivered : 0, 'Opened', `${formatNumber(current.openers)} of ${formatNumber(current.delivered)} deliveries`, 'accent'],
+    [current.clickRate, 'Clicked', `${formatNumber(current.clickers)} people`, 'good'],
+    [current.sent ? current.hardBounces / current.sent : 0, 'Hard bounces', `${formatNumber(current.hardBounces)} addresses that do not exist`, 'warn']
+  ];
+  const holder = document.getElementById('rate-rings');
+  holder.replaceChildren(...rates.map(([fraction, label, caption, tone]) => ringChart(fraction, label, caption, tone)));
 }
 
 function showPhases() {
-  const holder = document.getElementById('phase-grid');
-  holder.replaceChildren();
-  const most = Math.max(...PHASES.map((phase) => JOBS.filter((job) => job.phase === phase).length), 1);
-
-  PHASES.forEach((phase) => {
-    const jobs = JOBS.filter((job) => job.phase === phase);
-    if (!jobs.length) return;
-    const item = create('li');
-    const top = create('div', 'college-top');
-    top.append(create('span', '', `Phase ${phase}`), create('b', '', String(jobs.length)));
-    const track = create('div', 'track track-small');
-    const fill = create('span', 'track-fill');
-    fill.style.width = `${(jobs.length / most) * 100}%`;
-    track.append(fill);
-    const sent = jobs.filter((job) => job.stage === 'Reported sent / live').length;
-    item.append(top, track, create('p', 'panel-note', `${sent} reported sent · ${jobs.length - sent} still in progress`));
-    holder.append(item);
-  });
+  const rows = PHASES
+    .map((phase) => {
+      const jobs = JOBS.filter((job) => job.phase === phase);
+      const sent = jobs.filter((job) => job.stage === 'Reported sent / live').length;
+      return { label: `Phase ${phase}`, value: jobs.length, note: `${sent} reported sent · ${jobs.length - sent} still in progress` };
+    })
+    .filter((row) => row.value)
+    .sort((a, b) => b.value - a.value);
+  document.getElementById('phase-chart').replaceChildren(barList(rows, { split: true }));
 }
 
 function showSettle() {
@@ -117,6 +141,8 @@ function showOutcomes() {
 
 document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
 showTiles();
+showSends();
+showRates();
 showPhases();
 showSettle();
 showMailTable();

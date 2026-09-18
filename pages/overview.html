@@ -91,12 +91,29 @@
         <section class="tiles tiles-four" id="overview-tiles" aria-label="Totals"></section>
 
         <div class="grid">
+          <section class="panel span-8" aria-labelledby="sends-title">
+            <div class="panel-head">
+              <h2 id="sends-title">Emails sent by day</h2>
+              <a class="text-link" href="campaigns.html">Open the campaigns</a>
+            </div>
+            <div id="sends-chart"></div>
+            <p class="panel-note">Every campaign the board holds, 7 to 17 September, counted on the day it went out.</p>
+          </section>
+
+          <section class="panel span-4" aria-labelledby="rates-title">
+            <div class="panel-head">
+              <h2 id="rates-title">How the mail landed</h2>
+            </div>
+            <div class="ring-row" id="rate-rings"></div>
+            <p class="panel-note">Opens and clicks are of deliveries, hard bounces of sends. Opens can include automated scanning.</p>
+          </section>
+
           <section class="panel span-7" aria-labelledby="phase-title">
             <div class="panel-head">
               <h2 id="phase-title">Work by phase</h2>
               <a class="text-link" href="jobs.html">Open the job pipeline</a>
             </div>
-            <ul class="phase-grid" id="phase-grid"></ul>
+            <div id="phase-chart"></div>
             <p class="panel-note">Phases come from the tracker workbooks. A row marked sent is a reported state until it is matched to a campaign.</p>
           </section>
 
@@ -116,7 +133,6 @@
             <div class="table-wrap">
               <table class="results" id="overview-mail"></table>
             </div>
-            <p class="panel-note">Green means the figure went up against the period before, red that it went down. On unsubscribes, up is not the good news.</p>
           </section>
 
           <section class="panel span-5" aria-labelledby="outcome-title">
@@ -144,6 +160,7 @@
 
   <script src="../assets/js/shared/data.js"></script>
   <script src="../assets/js/shared/app.js"></script>
+  <script src="../assets/js/shared/charts.js"></script>
   <script src="../assets/js/pages/overview.js"></script>
 </body>
 </html>

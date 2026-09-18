@@ -26,22 +26,13 @@ function showTiles() {
   const previous = totalsFor(campaignsIn(PERIOD.previous, filters()));
 
   const tiles = [
-    ['Emails sent', formatNumber(current.sent), `${formatNumber(previous.sent)} in the period before`, changeBetween(previous.sent, current.sent)],
-    ['Campaigns', formatNumber(current.campaigns), `${formatNumber(previous.campaigns)} before · sends, not people`, changeBetween(previous.campaigns, current.campaigns)],
-    ['Click rate', formatPercent(current.clickRate), `${formatPercent(previous.clickRate)} before · newer mail has had less time to collect clicks`, null],
-    ['Unsubscribes', formatNumber(current.unsubscribes), `${formatPercent(current.unsubscribeRate)} of deliveries`, changeBetween(previous.unsubscribes, current.unsubscribes)]
+    { label: 'Emails sent', value: formatNumber(current.sent), note: `${formatNumber(previous.sent)} in the period before`, icon: ICONS.mail, change: changeBetween(previous.sent, current.sent) },
+    { label: 'Campaigns', value: formatNumber(current.campaigns), note: `${formatNumber(previous.campaigns)} before · sends, not people`, icon: ICONS.rows, tone: 'is-info', change: changeBetween(previous.campaigns, current.campaigns) },
+    { label: 'Click rate', value: formatPercent(current.clickRate), note: `${formatPercent(previous.clickRate)} before · newer mail has had less time to collect clicks`, icon: ICONS.click, tone: 'is-good' },
+    { label: 'Unsubscribes', value: formatNumber(current.unsubscribes), note: `${formatPercent(current.unsubscribeRate)} of deliveries`, icon: ICONS.alert, tone: 'is-warn', change: changeBetween(previous.unsubscribes, current.unsubscribes) }
   ];
 
-  const holder = document.getElementById('week-tiles');
-  holder.replaceChildren();
-  tiles.forEach(([label, value, note, change]) => {
-    const tile = create('div', 'tile');
-    const top = create('div', 'tile-top');
-    top.append(create('b', '', value));
-    if (change) top.append(statusChip(change));
-    tile.append(create('span', '', label), top, create('small', '', note));
-    holder.append(tile);
-  });
+  document.getElementById('week-tiles').replaceChildren(...tiles.map(statTile));
 }
 
 function tableRow(cells, tag = 'td') {

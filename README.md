@@ -20,7 +20,7 @@ The board is for the marketing managers, so there is one kind of account. On a p
 
 | Page | What it does |
 | --- | --- |
-| `pages/overview.html` | The landing page: tracker rows, rows needing a check, emails sent and click rate, the work by phase, the problems to resolve first, and the mail figures against the period before. |
+| `pages/overview.html` | The landing page: four figures with how each moved, emails sent by day, how the mail landed as three rings, the work by phase, the problems to resolve first, and the mail figures against the period before. |
 | `pages/decisions.html` | The job stages and the period’s mail figures, then what needs a management call. “Decide first” shows three tiles — **Blocked** (red), **Waiting** (yellow) and **Being tested** (green) — with a count on each. Open one to read its items; the cards take the colour of the group. |
 | `pages/week.html` | The period against the same weekdays before, with filters for college, purpose and family. Three views: **Comparison** (sends, campaigns, click rate, unsubscribes, plus registrations and responses alongside), **Same age** (results measured the same number of hours after each send) and **Needs attention** (dated findings from the lead-source audit). |
 | `pages/jobs.html` | Every work item from the trackers: phase, stage, owner, audience, next check and the note, with filters and search. The count above the table says what is filtering the list, and **Show all** puts every row back. |
@@ -58,6 +58,7 @@ assets/js/shared/      used by several pages
   session.js           demo sign-in and sign-out (loads first on every page)
   data.js              sample campaigns, jobs, checks, lessons and sources
   app.js               menu, bottom bar, messages and small helpers
+  charts.js            rings, the run over time and the ranked bars, drawn as plain SVG
   auth.js              sign-in buttons
 assets/js/pages/       one script per page, named after the page
 ```

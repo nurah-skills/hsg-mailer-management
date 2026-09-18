@@ -52,13 +52,15 @@ function showTiles(rows) {
     ['Click rate', formatPercent(totals.clickRate), 'People who clicked, of deliveries'],
     ['Hard bounce rate', formatPercent(totals.bounceRate), `${formatNumber(totals.hardBounces)} addresses that do not exist`]
   ];
-  const holder = document.getElementById('campaign-tiles');
-  holder.replaceChildren();
-  tiles.forEach(([label, value, note]) => {
-    const tile = create('div', 'tile');
-    tile.append(create('span', '', label), create('b', '', value), create('small', '', note));
-    holder.append(tile);
-  });
+  const marks = [
+    [ICONS.mail, ''],
+    [ICONS.check, 'is-good'],
+    [ICONS.click, 'is-good'],
+    [ICONS.alert, 'is-warn']
+  ];
+  document.getElementById('campaign-tiles').replaceChildren(
+    ...tiles.map(([label, value, note], index) => statTile({ label, value, note, icon: marks[index][0], tone: marks[index][1] }))
+  );
 }
 
 // Naming the filter, and one button back to the whole list

@@ -75,7 +75,11 @@ const ICONS = {
   external: ['M14 4h6v6', 'M20 4l-8 8', 'M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'],
   up: ['M12 19V5', 'M6 11l6-6 6 6'],
   down: ['M12 5v14', 'M6 13l6 6 6-6'],
-  menu: ['M4 7h16', 'M4 12h16', 'M4 17h16']
+  menu: ['M4 7h16', 'M4 12h16', 'M4 17h16'],
+  rows: ['M4 7h16', 'M4 12h16', 'M4 17h10'],
+  alert: ['M12 8v5', 'M12 16.5v.5', 'M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'],
+  mail: ['M3 6.5h18v11H3z', 'm4 7.5 8 5.5 8-5.5'],
+  click: ['M9 4v3', 'M4 9h3', 'M5.6 5.6 7.7 7.7', 'm10 10 9 3.4-3.9 1.7L13.4 19z']
 };
 
 // One message area per page. An action like Undo keeps the message up a little longer.
@@ -209,6 +213,24 @@ function buildTrail(container, steps, onStep) {
     button.addEventListener('click', () => onStep(step.path));
     container.append(button);
   });
+}
+
+function statTile({ label, value, note, icon: paths, tone = '', change }) {
+  const tile = create('div', 'tile');
+  const badge = create('div', 'tile-badge');
+  badge.append(create('span', '', label));
+  if (paths) {
+    const mark = create('span', ('tile-icon ' + tone).trim());
+    mark.append(icon(paths, 18));
+    badge.append(mark);
+  }
+
+  const foot = create('div', 'tile-foot');
+  if (change) foot.append(statusChip(change));
+  if (note) foot.append(create('small', '', note));
+
+  tile.append(badge, create('b', '', value), foot);
+  return tile;
 }
 
 function statusChip(pace) {
