@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-page="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; form-action 'self'; base-uri 'self'; object-src 'none'">
+  <meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#11161D" media="(prefers-color-scheme: dark)">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Mail activity for the period, results at a comparable age, and what needs attention.">
+  <title>This week · Mailer board</title>
+  <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/shared/session.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar" aria-label="Main menu">
+      <a class="brand" href="decisions.html"><img src="../assets/img/logo.svg" width="36" height="36" alt=""><span class="brand-text"><b>Mailer board</b><small>HSG marketing</small></span></a>
+
+      <nav class="menu" aria-label="Pages">
+        <a class="menu-item" href="decisions.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+          <span>Decisions</span>
+        </a>
+        <a class="menu-item" href="week.html" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+          <span>This week</span>
+        </a>
+        <p class="menu-label">Mailers</p>
+        <a class="menu-item" href="jobs.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+          <span>Jobs</span>
+        </a>
+        <a class="menu-item" href="campaigns.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 5.5L20 7"/></svg>
+          <span>Campaigns</span>
+        </a>
+        <p class="menu-label">Evidence</p>
+        <a class="menu-item" href="checks.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.4-3.2 7.9-8 9-4.8-1.1-8-4.6-8-9V6z"/><path d="M9.5 12.2l1.8 1.8 3.4-3.6"/></svg>
+          <span>Evidence checks</span>
+        </a>
+        <a class="menu-item" href="lessons.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5.9 1.1 1 1.6h5c.1-.5.4-1.1 1-1.6A6 6 0 0 0 12 3z"/></svg>
+          <span>Lessons learnt</span>
+        </a>
+        <a class="menu-item" href="sources.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+          <span>Sources</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-user">
+        <span class="avatar" id="user-initials" aria-hidden="true"></span>
+        <div><b id="user-name"></b><small id="user-role"></small></div>
+        <button class="icon-button" id="sign-out" type="button" aria-label="Sign out" title="Sign out">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <div class="scrim" id="scrim"></div>
+
+    <div class="app-body">
+      <header class="topbar">
+        <button class="icon-button" id="menu-button" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <a class="brand" href="decisions.html"><img src="../assets/img/logo.svg" width="30" height="30" alt=""><span>Mailer board</span></a>
+      </header>
+
+      <main class="app-main" id="main" tabindex="-1">
+        <div class="page-header">
+          <div>
+            <h1>This week</h1>
+            <p class="page-note">14 to 16 September compared with the same weekdays the week before.</p>
+          </div>
+          <span class="tag">Sample figures · mail read <span id="mail-read"></span></span>
+        </div>
+
+        <div class="controls">
+          <div class="segmented" id="view-picker" role="group" aria-label="View"></div>
+          <label class="sr-only" for="college-filter">College</label>
+          <select class="select" id="college-filter"></select>
+          <label class="sr-only" for="purpose-filter">Email purpose</label>
+          <select class="select" id="purpose-filter"></select>
+          <label class="sr-only" for="family-filter">Campaign family</label>
+          <select class="select" id="family-filter"></select>
+        </div>
+
+        <section id="view-comparison">
+          <section class="tiles tiles-four" id="week-tiles" aria-label="Totals"></section>
+
+          <div class="grid">
+            <section class="panel span-7" aria-labelledby="mail-college-title">
+              <div class="panel-head">
+                <h2 id="mail-college-title">Mail and registrations by college</h2>
+              </div>
+              <div class="table-wrap">
+                <table class="results" id="college-table"></table>
+              </div>
+              <p class="panel-note">Registrations come from the sales sheets, not from the mail tool. They are not attributed to any campaign.</p>
+            </section>
+
+            <section class="panel span-5" aria-labelledby="outcomes-title">
+              <div class="panel-head">
+                <h2 id="outcomes-title">Alongside the mail</h2>
+              </div>
+              <dl class="figure-list" id="outcome-figures"></dl>
+              <p class="panel-note">Read from the sales and survey sheets. No campaign conversion rate is worked out from these.</p>
+            </section>
+          </div>
+
+          <section class="panel" aria-labelledby="family-title">
+            <div class="panel-head">
+              <h2 id="family-title">Mail by purpose and family</h2>
+            </div>
+            <div class="table-wrap">
+              <table class="results" id="family-table"></table>
+            </div>
+          </section>
+        </section>
+
+        <section id="view-sameage" hidden>
+          <section class="panel" aria-labelledby="sameage-title">
+            <div class="panel-head">
+              <h2 id="sameage-title">Results at the same age</h2>
+              <div class="segmented" id="window-picker" role="group" aria-label="Measurement window"></div>
+            </div>
+            <p class="panel-note">Every campaign is measured the same number of hours after it went out, so a new campaign is not compared with an old one. A reading only exists where a refresh ran at the right time.</p>
+            <div class="table-wrap">
+              <table class="results" id="checkpoint-table"></table>
+            </div>
+          </section>
+        </section>
+
+        <section id="view-attention" hidden>
+          <section class="panel" aria-labelledby="attention-title">
+            <div class="panel-head">
+              <h2 id="attention-title">Needs attention</h2>
+              <div class="segmented" id="attention-filter" role="group" aria-label="Status"></div>
+            </div>
+            <ul class="finding-list" id="attention-list"></ul>
+          </section>
+        </section>
+
+        <details class="about">
+          <summary>How these numbers are counted</summary>
+          <div class="about-body">
+            <p>Sends are emails, not people. The same person mailed twice counts twice.</p>
+            <p>Deliveries are sends minus hard and soft bounces. The click rate uses people who clicked, divided by deliveries.</p>
+            <p>Campaign counters are lifetime totals grouped by the date the campaign went out. A campaign sent yesterday has had less time to collect opens and clicks than one sent last week, which is what “results at the same age” is for.</p>
+            <p>Opens and clicks can include automated scanning by mail providers.</p>
+          </div>
+        </details>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="../assets/js/shared/data.js"></script>
+  <script src="../assets/js/shared/app.js"></script>
+  <script src="../assets/js/pages/week.js"></script>
+</body>
+</html>

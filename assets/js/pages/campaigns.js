@@ -1,0 +1,158 @@
+setUpShell();
+
+const SORTS = {
+  date: (campaign) => campaign.date,
+  sent: (campaign) => campaign.sent,
+  open: (campaign) => (campaign.delivered ? campaign.openers / campaign.delivered : 0),
+  click: (campaign) => (campaign.delivered ? campaign.clickers / campaign.delivered : 0),
+  bounce: (campaign) => (campaign.sent ? campaign.hardBounces / campaign.sent : 0)
+};
+
+const state = {
+  college: recall('campaigns-college') || 'All',
+  purpose: recall('campaigns-purpose') || 'All',
+  search: '',
+  sortKey: 'date',
+  sortDirection: -1
+};
+
+const AVERAGE_BOUNCE = totalsFor(CAMPAIGNS).bounceRate;
+
+function fillSelect(id, label, options, value, onChange) {
+  const select = document.getElementById(id);
+  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => new Option(option, option)));
+  select.value = value;
+  select.addEventListener('change', (event) => onChange(event.target.value));
+}
+
+function shown() {
+  const search = state.search.trim().toLowerCase();
+  return CAMPAIGNS
+    .filter((campaign) =>
+      (state.college === 'All' || campaign.college === state.college)
+      && (state.purpose === 'All' || campaign.purpose === state.purpose)
+      && (!search || campaign.name.toLowerCase().includes(search)))
+    .sort((a, b) => {
+      const first = SORTS[state.sortKey](a);
+      const second = SORTS[state.sortKey](b);
+      const order = typeof first === 'string' ? first.localeCompare(second) : first - second;
+      return order * state.sortDirection || a.name.localeCompare(b.name);
+    });
+}
+
+function showTiles(rows) {
+  const totals = totalsFor(rows);
+  const tiles = [
+    ['Sent', formatNumber(totals.sent), `${formatNumber(totals.campaigns)} campaigns in this selection`],
+    ['Delivered', formatNumber(totals.delivered), 'Sends minus hard and soft bounces'],
+    ['Click rate', formatPercent(totals.clickRate), 'People who clicked, of deliveries'],
+    ['Hard bounce rate', formatPercent(totals.bounceRate), `${formatNumber(totals.hardBounces)} addresses that do not exist`]
+  ];
+  const holder = document.getElementById('campaign-tiles');
+  holder.replaceChildren();
+  tiles.forEach(([label, value, note]) => {
+    const tile = create('div', 'tile');
+    tile.append(create('span', '', label), create('b', '', value), create('small', '', note));
+    holder.append(tile);
+  });
+}
+
+function sortHeader(key, label, className = '') {
+  const cell = create('th', className);
+  cell.scope = 'col';
+  const button = create('button', '', label);
+  button.type = 'button';
+  button.dataset.focus = `sort:${key}`;
+  if (state.sortKey === key) {
+    cell.setAttribute('aria-sort', state.sortDirection > 0 ? 'ascending' : 'descending');
+    button.append(icon(state.sortDirection > 0 ? ICONS.up : ICONS.down, 14));
+  }
+  button.addEventListener('click', () => {
+    if (state.sortKey === key) state.sortDirection *= -1;
+    else {
+      state.sortKey = key;
+      state.sortDirection = key === 'date' ? -1 : -1;
+    }
+    keepFocus(render);
+  });
+  cell.append(button);
+  return cell;
+}
+
+function campaignRow(campaign) {
+  const row = create('tr');
+  const bounceRate = campaign.sent ? campaign.hardBounces / campaign.sent : 0;
+  const flagged = bounceRate > AVERAGE_BOUNCE * 3;
+
+  const first = create('th', 'cell-name');
+  first.scope = 'row';
+  first.append(create('b', '', campaign.name), create('small', '', `${campaign.id} · ${campaign.purpose} · ${campaign.family}`));
+
+  const bounce = create('td', 'cell-cash');
+  bounce.append(create('b', '', formatPercent(bounceRate)));
+  if (flagged) bounce.append(statusChip({ tone: 'changed', text: 'Check this list' }));
+
+  row.append(
+    first,
+    create('td', '', `${campaign.date.slice(8)} Sept · ${campaign.college}`),
+    create('td', 'cell-best', formatNumber(campaign.sent)),
+    create('td', 'cell-best', formatPercent(campaign.delivered ? campaign.openers / campaign.delivered : 0)),
+    create('td', 'cell-best', formatPercent(campaign.delivered ? campaign.clickers / campaign.delivered : 0)),
+    bounce
+  );
+  return row;
+}
+
+function render() {
+  document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
+  const rows = shown();
+  showTiles(rows);
+  document.getElementById('campaigns-note').textContent =
+    `${formatNumber(rows.length)} of ${formatNumber(CAMPAIGNS.length)} campaigns · sent since ${PERIOD.previous.label}`;
+
+  const table = document.getElementById('campaign-table');
+  table.replaceChildren();
+
+  const head = create('thead');
+  const headRow = create('tr');
+  headRow.append(
+    create('th', 'cell-name', 'Campaign'),
+    sortHeader('date', 'Date'),
+    sortHeader('sent', 'Sent', 'cell-best'),
+    sortHeader('open', 'Opened', 'cell-best'),
+    sortHeader('click', 'Clicked', 'cell-best'),
+    sortHeader('bounce', 'Hard bounces', 'cell-cash')
+  );
+  headRow.firstChild.scope = 'col';
+  head.append(headRow);
+  table.append(head);
+
+  const body = create('tbody');
+  if (!rows.length) {
+    const line = create('tr');
+    const cell = create('td', 'is-empty', 'No campaigns match this selection.');
+    cell.colSpan = 6;
+    line.append(cell);
+    body.append(line);
+  }
+  rows.slice(0, 60).forEach((campaign) => body.append(campaignRow(campaign)));
+  table.append(body);
+}
+
+fillSelect('campaign-college', 'All colleges', COLLEGES, state.college, (value) => {
+  state.college = value;
+  remember('campaigns-college', value);
+  render();
+});
+fillSelect('campaign-purpose', 'All purposes', PURPOSES, state.purpose, (value) => {
+  state.purpose = value;
+  remember('campaigns-purpose', value);
+  render();
+});
+
+document.getElementById('campaign-search').addEventListener('input', (event) => {
+  state.search = event.target.value;
+  render();
+});
+
+render();
