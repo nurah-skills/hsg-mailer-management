@@ -231,7 +231,7 @@ function render() {
 
 const throughSelect = document.getElementById('through-filter');
 throughSelect.replaceChildren(...[...COMPLETED_DAYS].reverse().map((date) =>
-  new Option(`Through ${readable(date)}`, date)));
+  new Option(`Through ${readableShort(date)}`, date)));
 throughSelect.value = state.through;
 throughSelect.addEventListener('change', (event) => {
   state.through = event.target.value;

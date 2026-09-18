@@ -350,7 +350,7 @@ select option, select optgroup { background-color: var(--card); color: var(--ink
 .sidebar .brand { color: var(--ink); padding: 0 8px; font-size: 17px; }
 .sidebar .brand small { color: var(--muted); }
 
-.menu { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; }
+.menu { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; margin-top: clamp(2px, 1.4vh, 16px); }
 .menu-label {
   margin: clamp(4px, 1.1vh, 16px) 0 3px;
   padding: 0 12px;
@@ -1294,14 +1294,16 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .board-line {
   flex: none;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   margin: 0;
   padding: 0 12px;
   font-size: 12px;
+  line-height: 1.4;
   color: var(--muted);
 }
-.board-line .board-dot { margin: 0; background: var(--accent); box-shadow: none; }
+.board-line .board-dot { margin-top: 5px; background: var(--accent); box-shadow: none; }
+.board-line span:last-child { min-width: 0; }
 
 /* One search for the whole board, in the page header */
 .board-search { position: relative; }
@@ -1397,4 +1399,33 @@ tbody tr:has(.cell-pick input:checked) { background: var(--accent-soft); }
   .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
   .controls .select, .controls .search { width: 100%; min-width: 0; }
   .controls .search, .controls .button { grid-column: 1 / -1; }
+}
+
+/* Where to start: the counts that are waiting on a manager, each one a way in */
+.start-here { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.start-lead { flex: none; font-size: 15px; font-weight: 700; }
+.start-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 14px;
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.start-item b { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.start-item:hover { background: var(--field); border-color: var(--field-line); }
+.start-item.is-stop b { color: var(--red-ink); }
+.start-item.is-hold b { color: var(--yellow-ink); }
+.start-note, .start-empty { font-size: 14px; color: var(--muted); }
+
+@media (max-width: 560px) {
+  /* Two to a row, so what is waiting still fits above the first figure */
+  .start-here { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .start-lead, .start-note, .start-empty { grid-column: 1 / -1; }
+  .start-item { align-items: flex-start; gap: 6px; padding: 8px 12px; line-height: 1.3; }
 }

@@ -3,6 +3,7 @@ setUpShell();
 // College narrows the work and the mail; phase and the search are tracker fields,
 // so they narrow the work only. The note under the filters says so on screen.
 const state = {
+  through: COMPLETED_DAYS.includes(Params.get('through', '')) ? Params.get('through', '') : PERIOD.current.to,
   college: Params.get('college', 'All'),
   phase: Params.get('phase', 'All'),
   search: Params.get('search', '')
@@ -28,9 +29,10 @@ function checksShown() {
   return CHECKS.filter(({ job }) => codes.has(job.code));
 }
 
+const period = () => periodThrough(state.through);
 const mailFilters = () => ({ college: state.college });
-const mailNow = () => totalsFor(campaignsIn(PERIOD.current, mailFilters()));
-const mailBefore = () => totalsFor(campaignsIn(PERIOD.previous, mailFilters()));
+const mailNow = () => totalsFor(campaignsIn(period().current, mailFilters()));
+const mailBefore = () => totalsFor(campaignsIn(period().previous, mailFilters()));
 
 function activeFilters() {
   return [
@@ -58,6 +60,54 @@ function clearFilters() {
   document.getElementById('overview-search').value = '';
   render();
   document.getElementById('overview-college').focus();
+}
+
+// What is waiting for a manager, whatever the filters below are set to
+function showStartHere() {
+  const waiting = decisionsWaiting();
+  const open = PROBLEMS.filter((problem) => problem.status !== 'Resolved');
+  const recent = PROBLEMS.filter((problem) => problem.found === SNAPSHOT.today);
+
+  const items = [
+    {
+      count: waiting.filter((item) => item.group === 'blocked').length,
+      one: 'decision blocked', many: 'decisions blocked',
+      href: 'decisions.html#blocked', tone: 'is-stop'
+    },
+    {
+      count: waiting.filter((item) => item.group === 'waiting').length,
+      one: 'decision waiting on someone', many: 'decisions waiting on someone',
+      href: 'decisions.html#waiting', tone: 'is-hold'
+    },
+    {
+      count: [...new Set(CHECKS.map(({ job }) => job.code))].length,
+      one: 'row to settle', many: 'rows to settle',
+      href: 'checks.html', tone: 'is-hold'
+    },
+    {
+      count: open.length,
+      one: 'problem still open', many: 'problems still open',
+      href: 'problems.html', tone: 'is-stop'
+    }
+  ].filter((item) => item.count);
+
+  const holder = document.getElementById('start-here');
+  holder.replaceChildren();
+  if (!items.length) {
+    holder.append(create('p', 'start-empty', 'Nothing is waiting on a manager today.'));
+    return;
+  }
+
+  holder.append(create('b', 'start-lead', 'Where to start'));
+  items.forEach((item) => {
+    const link = create('a', `start-item ${item.tone}`);
+    link.href = item.href;
+    link.append(create('b', '', formatNumber(item.count)), create('span', '', item.count === 1 ? item.one : item.many));
+    holder.append(link);
+  });
+  if (recent.length) {
+    holder.append(create('small', 'start-note', `${recent.length === 1 ? 'One was' : `${recent.length} were`} first written up today.`));
+  }
 }
 
 function showTiles() {
@@ -88,9 +138,9 @@ function showTiles() {
     {
       label: 'Emails sent', icon: ICONS.mail, tone: '',
       value: formatNumber(current.sent),
-      note: `${formatNumber(current.campaigns)} campaigns · ${PERIOD.current.label}${where}`,
+      note: `${formatNumber(current.campaigns)} campaigns · ${period().current.label}${where}`,
       change: changeBetween(previous.sent, current.sent),
-      spark: dailyTotals('sent', 10, PERIOD.current.to, mailFilters()),
+      spark: dailyTotals('sent', 10, state.through, mailFilters()),
       sparkLabel: 'Emails sent on each of the last ten days',
       about: 'What the mail tool reports as sent over the three days in the period, not what the trackers plan to send. The college filter narrows this; phase and the search do not, because the mail tool does not carry them.'
     },
@@ -99,7 +149,7 @@ function showTiles() {
       value: formatNumber(current.clickers),
       note: `${formatPercent(current.clickRate)} of deliveries${where}`,
       change: changeBetween(previous.clickers, current.clickers),
-      spark: dailyTotals('clickers', 10, PERIOD.current.to, mailFilters()),
+      spark: dailyTotals('clickers', 10, state.through, mailFilters()),
       sparkLabel: 'People who clicked on each of the last ten days',
       about: 'People, not clicks: one person who clicks four links counts once. Newer mail has had less time to collect clicks, so the newest days sit low.'
     }
@@ -178,6 +228,9 @@ function showSettle() {
 function showMailTable() {
   const current = mailNow();
   const previous = mailBefore();
+  const span = period();
+  document.getElementById('mail-span').textContent =
+    `${span.current.label} against the same weekdays a week earlier, ${span.previous.label}.`;
   const table = document.getElementById('overview-mail');
   table.replaceChildren();
 
@@ -231,6 +284,7 @@ function showOutcomes() {
 }
 
 function render() {
+  showStartHere();
   showNote();
   showTiles();
   showSends();
@@ -239,6 +293,16 @@ function render() {
   showSettle();
   showMailTable();
 }
+
+const throughSelect = document.getElementById('overview-through');
+throughSelect.replaceChildren(...[...COMPLETED_DAYS].reverse().map((date) =>
+  new Option(`Through ${readableShort(date)}`, date)));
+throughSelect.value = state.through;
+throughSelect.addEventListener('change', (event) => {
+  state.through = event.target.value;
+  Params.set({ through: state.through === PERIOD.current.to ? '' : state.through });
+  render();
+});
 
 fillSelect('overview-college', 'All colleges', COLLEGES, state.college, (value) => {
   state.college = value;

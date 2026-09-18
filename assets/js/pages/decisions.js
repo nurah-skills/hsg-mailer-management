@@ -1,43 +1,6 @@
 setUpShell();
 
-// Anything a manager has to settle, kept in three groups so the worst is read first
-const GROUPS = [
-  ['blocked', 'Blocked', 'Stuck until someone makes a call.'],
-  ['waiting', 'Waiting', 'Moving, but waiting on an answer from someone else.'],
-  ['testing', 'Being tested', 'A change is running and the result is not in yet.']
-];
-
-function decisionsWaiting() {
-  const conflicts = CHECKS.filter(({ type }) => type[0] === 'sent-early');
-  const waitingLessons = LESSONS.filter((lesson) => lesson.status === 'Being tested');
-  const blocked = ATTENTION.filter((item) => item.status !== 'Confirmed');
-
-  const list = [];
-  if (conflicts.length) {
-    list.push({
-      group: 'blocked',
-      title: `${conflicts.length} jobs are marked as sent while the stage says otherwise`,
-      detail: 'The tracker row says the mail went out, but the same row still shows an earlier step. Until that is settled, "sent" cannot be trusted as a count.',
-      action: 'Agree who updates the stage after a send, then clear the backlog.',
-      link: ['checks.html#sent-early', 'Open these rows']
-    });
-  }
-  blocked.forEach((item) => list.push({
-    group: item.status === 'Blocked' ? 'blocked' : 'waiting',
-    title: item.title,
-    detail: item.detail,
-    action: item.next,
-    link: ['week.html?view=attention', 'Open needs attention']
-  }));
-  waitingLessons.forEach((lesson) => list.push({
-    group: 'testing',
-    title: lesson.title,
-    detail: lesson.shows,
-    action: lesson.action,
-    link: [`lessons.html#${encodeURIComponent(lesson.status)}/${lesson.verdict}`, 'Open this lesson']
-  }));
-  return list;
-}
+const GROUPS = DECISION_GROUPS;
 
 function decisionCard(item) {
   const entry = create('li', 'decision-card');

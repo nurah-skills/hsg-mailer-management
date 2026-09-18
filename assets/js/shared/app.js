@@ -511,10 +511,13 @@ function buildStateCard(sidebar) {
   read.textContent = SNAPSHOT.mailReadShort;
   read.title = SNAPSHOT.mailRead;
 
+  const words = create('span');
+  words.append(document.createTextNode('Not connected · read '), read);
+
   const line = create('p', 'board-line');
   const dot = create('span', 'board-dot');
   dot.setAttribute('aria-hidden', 'true');
-  line.append(dot, document.createTextNode('Not connected · read '), read);
+  line.append(dot, words);
   sidebar.querySelector('.sidebar-user').before(line);
 }
 

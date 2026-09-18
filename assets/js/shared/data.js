@@ -134,6 +134,8 @@ const dayName = (date) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday
 const shiftDays = (date, days) => new Date(Date.parse(date + 'T00:00:00Z') + days * 86400000).toISOString().slice(0, 10);
 const readable = (date) => `${Number(date.slice(8))} ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][Number(date.slice(5, 7)) - 1]}`;
 
+const readableShort = (date) => `${Number(date.slice(8))} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(date.slice(5, 7)) - 1]}`;
+
 // Two dates in the same month name it once: 14 to 16 September, not 14 September to 16 September
 const spanLabel = (from, to) => (from.slice(0, 7) === to.slice(0, 7)
   ? `${Number(from.slice(8))} to ${readable(to)}`
@@ -584,4 +586,43 @@ function changeBetween(previous, current) {
     tone: direction,
     direction
   };
+}
+
+// Anything a manager has to settle, kept in three groups so the worst is read first
+const DECISION_GROUPS = [
+  ['blocked', 'Blocked', 'Stuck until someone makes a call.'],
+  ['waiting', 'Waiting', 'Moving, but waiting on an answer from someone else.'],
+  ['testing', 'Being tested', 'A change is running and the result is not in yet.']
+];
+
+function decisionsWaiting() {
+  const conflicts = CHECKS.filter(({ type }) => type[0] === 'sent-early');
+  const waitingLessons = LESSONS.filter((lesson) => lesson.status === 'Being tested');
+  const blocked = ATTENTION.filter((item) => item.status !== 'Confirmed');
+
+  const list = [];
+  if (conflicts.length) {
+    list.push({
+      group: 'blocked',
+      title: `${conflicts.length} jobs are marked as sent while the stage says otherwise`,
+      detail: 'The tracker row says the mail went out, but the same row still shows an earlier step. Until that is settled, "sent" cannot be trusted as a count.',
+      action: 'Agree who updates the stage after a send, then clear the backlog.',
+      link: ['checks.html#sent-early', 'Open these rows']
+    });
+  }
+  blocked.forEach((item) => list.push({
+    group: item.status === 'Blocked' ? 'blocked' : 'waiting',
+    title: item.title,
+    detail: item.detail,
+    action: item.next,
+    link: ['week.html?view=attention', 'Open needs attention']
+  }));
+  waitingLessons.forEach((lesson) => list.push({
+    group: 'testing',
+    title: lesson.title,
+    detail: lesson.shows,
+    action: lesson.action,
+    link: [`lessons.html#${encodeURIComponent(lesson.status)}/${lesson.verdict}`, 'Open this lesson']
+  }));
+  return list;
 }
