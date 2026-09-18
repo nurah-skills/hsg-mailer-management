@@ -67,7 +67,7 @@ const SUBJECTS = [
   ['Unclassified', 'OHS', 'Health and safety course update']
 ];
 
-// Campaign records, the way ActiveCampaign reports them: lifetime counters grouped by send date
+// Campaign records, the way the mail tool reports them: lifetime counters grouped by send date
 const CAMPAIGNS = (() => {
   const random = seededRandom('hsg campaigns');
   const list = [];

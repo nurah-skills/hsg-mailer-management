@@ -23,7 +23,7 @@ The board is for the marketing managers, so there is one kind of account. On a p
 | `pages/decisions.html` | Opens on what needs a management call: contradictions in the records, findings that are blocked or waiting, and lessons still being tested. The period’s mail figures and the job stages sit alongside. |
 | `pages/week.html` | The period against the same weekdays before, with filters for college, purpose and family. Three views: **Comparison** (sends, campaigns, click rate, unsubscribes, plus registrations and responses alongside), **Same age** (results measured the same number of hours after each send) and **Needs attention** (dated findings from the lead-source audit). |
 | `pages/jobs.html` | Every work item from the trackers: phase, stage, owner, audience, next check and the note, with filters and search. |
-| `pages/campaigns.html` | Every campaign with sends, deliveries, opens, clicks and hard bounces. Sortable, searchable, and anything bouncing far above average is flagged. |
+| `pages/campaigns.html` | Every campaign with sends, deliveries, opens, clicks and hard bounces. Sortable, searchable, and anything above the review thresholds is marked “worth a look”. |
 | `pages/checks.html` | Rows whose record contradicts itself or is missing something, grouped by the kind of problem. Choose one to see those rows. |
 | `pages/lessons.html` | What to repeat and what to change, each with the evidence, what it does not prove, and what to do. Marked Observed, Being tested, Confirmed or Retired. |
 | `pages/sources.html` | What the board is connected to and what each connection may do, the workbooks it reads and when they were read, how to read the figures, and what is still not joined up. |
@@ -42,7 +42,7 @@ The board is for the marketing managers, so there is one kind of account. On a p
 
 ## Sample data
 
-Every campaign, job, owner, tracker and lesson here is made up, so no real staff names, addresses or figures are stored in this public repo. The sample period is 14 to 16 September 2026 against 7 to 9 September, with the mail read at 13:38 on 17 September.
+Every campaign, job, owner, tracker and lesson here is made up, so no real staff names, addresses or figures are stored in this public repo. The sample period is 14 to 16 September 2026 against 7 to 9 September, with the mail read at 13:08 on 18 September.
 
 ## Folders
 
