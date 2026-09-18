@@ -110,18 +110,18 @@ function showFamilies() {
       const previous = totalsFor(campaignsIn(PERIOD.previous, { ...filters(), purpose, family }));
       if (!current.sent && !previous.sent) return;
       rows.push({
-        label: `${purpose} · ${family}`,
+        label: family,
+        group: purpose,
         value: current.sent,
-        note: current.delivered
-          ? `${formatNumber(current.clickers)} clickers · ${formatPercent(current.clickRate)} click rate · ${formatNumber(previous.sent)} sent before`
-          : `No sends yet · ${formatNumber(previous.sent)} sent before`
+        note: current.delivered ? `${formatPercent(current.clickRate)} clicked` : 'No sends yet'
       });
     });
   });
 
   rows.sort((a, b) => b.value - a.value);
+  const used = PURPOSES.filter((purpose) => rows.some((row) => row.group === purpose));
   document.getElementById('family-chart').replaceChildren(
-    rows.length ? barList(rows) : create('p', 'empty', 'No mail in this selection.')
+    rows.length ? columnChart(rows, { groups: used }) : create('p', 'empty', 'No mail in this selection.')
   );
 }
 

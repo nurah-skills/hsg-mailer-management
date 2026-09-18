@@ -195,3 +195,49 @@ function pairedBars(rows, { format = formatNumber, first = 'Before', second = 'N
   chart.append(key, list);
   return chart;
 }
+
+// Bars standing on a baseline, read left to right. Groups take a colour and a key.
+function columnChart(rows, { format = formatNumber, groups = [] } = {}) {
+  const most = Math.max(...rows.map((row) => row.value), 1);
+  const chart = create('div', 'columns');
+
+  if (groups.length > 1) {
+    const key = create('div', 'chart-key');
+    groups.forEach((group, index) => {
+      const item = create('span', 'chart-key-item');
+      const swatch = create('i', '');
+      swatch.style.background = `var(--slice-${(index % 5) + 1})`;
+      item.append(swatch, document.createTextNode(group));
+      key.append(item);
+    });
+    chart.append(key);
+  }
+
+  const plot = create('div', 'column-plot');
+  const scale = create('div', 'column-scale');
+  scale.append(create('span', '', format(most)), create('span', '', format(Math.round(most / 2))), create('span', '', '0'));
+
+  const list = create('ul', 'column-list');
+  rows.forEach((row) => {
+    const item = create('li');
+    const index = Math.max(0, groups.indexOf(row.group));
+
+    const track = create('div', 'column-track');
+    const fill = create('span', 'column-fill');
+    fill.style.height = `${(row.value / most) * 100}%`;
+    fill.style.background = `var(--slice-${(index % 5) + 1})`;
+    track.append(fill);
+
+    const legend = create('div', 'column-label');
+    legend.append(create('b', '', row.label));
+    if (row.note) legend.append(create('small', '', row.note));
+
+    item.append(create('span', 'column-value', format(row.value)), track, legend);
+    item.title = `${row.group ? row.group + ' · ' : ''}${row.label}: ${format(row.value)}${row.note ? ' · ' + row.note : ''}`;
+    list.append(item);
+  });
+
+  plot.append(scale, list);
+  chart.append(plot);
+  return chart;
+}
