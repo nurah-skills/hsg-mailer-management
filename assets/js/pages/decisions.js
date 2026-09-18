@@ -19,7 +19,7 @@ function decisionsWaiting() {
       title: `${conflicts.length} jobs are marked as sent while the stage says otherwise`,
       detail: 'The tracker row says the mail went out, but the same row still shows an earlier step. Until that is settled, "sent" cannot be trusted as a count.',
       action: 'Agree who updates the stage after a send, then clear the backlog.',
-      link: ['checks.html', 'Open the evidence checks']
+      link: ['checks.html#sent-early', 'Open these rows']
     });
   }
   blocked.forEach((item) => list.push({
@@ -27,14 +27,14 @@ function decisionsWaiting() {
     title: item.title,
     detail: item.detail,
     action: item.next,
-    link: ['week.html', 'Open needs attention']
+    link: ['week.html?view=attention', 'Open needs attention']
   }));
   waitingLessons.forEach((lesson) => list.push({
     group: 'testing',
     title: lesson.title,
     detail: lesson.shows,
     action: lesson.action,
-    link: ['lessons.html', 'Open the lessons']
+    link: [`lessons.html#${encodeURIComponent(lesson.status)}/${lesson.verdict}`, 'Open this lesson']
   }));
   return list;
 }
@@ -65,7 +65,10 @@ function showGroupTiles() {
     const count = create('span', 'decide-count');
     count.append(create('b', '', String(items.length)), create('span', '', items.length === 1 ? 'item' : 'items'));
     tile.append(count, create('span', 'decide-name', label), create('small', '', note));
-    tile.addEventListener('click', () => openGroup(key));
+    tile.addEventListener('click', () => {
+      Trail.go([key]);
+      readUrl(true);
+    });
     grid.append(tile);
   });
 }
@@ -75,18 +78,10 @@ function showGroup() {
   const items = list.filter((item) => item.group === key);
   const view = document.getElementById('decide-view');
   view.dataset.flag = key;
+  buildTrail(document.getElementById('decide-trail'), [{ label: 'Decide first', path: [] }], (path) => Trail.back(path, () => readUrl(true)));
   document.getElementById('decide-group-title').textContent = label;
   document.getElementById('decide-group-note').textContent = note;
-
-  const holder = document.getElementById('decision-list');
-  holder.replaceChildren(...items.map(decisionCard));
-}
-
-function openGroup(key) {
-  state.group = key;
-  remember('decide-group', key);
-  render();
-  document.getElementById('decide-group-title').focus();
+  document.getElementById('decision-list').replaceChildren(...items.map(decisionCard));
 }
 
 function render() {
@@ -99,16 +94,21 @@ function render() {
   else showGroupTiles();
 }
 
-const backButton = document.getElementById('back-to-groups');
-backButton.prepend(icon(ICONS.back, 16));
-backButton.addEventListener('click', () => {
-  const key = state.group;
-  state.group = null;
-  remember('decide-group', '');
+// The address bar decides what is on screen, whichever way you got here
+function readUrl(moveFocus) {
+  const was = state.group;
+  const [key] = Trail.path();
+  state.group = groupsWithItems.some(([name]) => name === key) ? key : null;
   render();
-  const tile = document.querySelector(`[data-focus="decide:${key}"]`);
-  if (tile) tile.focus();
-});
+  if (!moveFocus || state.group === was) return;
+  if (state.group) document.getElementById('decide-group-title').focus();
+  else {
+    const tile = document.querySelector(`[data-focus="decide:${was}"]`);
+    if (tile) tile.focus();
+  }
+}
+
+Trail.watch(() => readUrl(true));
 
 function showStages() {
   const holder = document.getElementById('stage-list');
@@ -154,7 +154,6 @@ function showMail() {
 }
 
 document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
-state.group = groupsWithItems.some(([key]) => key === recall('decide-group')) ? recall('decide-group') : null;
-render();
+readUrl(false);
 showStages();
 showMail();

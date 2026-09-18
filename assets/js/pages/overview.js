@@ -53,7 +53,11 @@ function showSettle() {
   byType.forEach(([type, group]) => {
     const item = create('li');
     const top = create('div', 'decision-top');
-    top.append(create('h3', '', type[1]), statusChip({ tone: 'changed', text: `${group.length} rows` }));
+    const link = create('a', 'text-link', type[1]);
+    link.href = `checks.html#${type[0]}`;
+    const heading = create('h3');
+    heading.append(link);
+    top.append(heading, statusChip({ tone: 'changed', text: `${group.length} rows` }));
     item.append(top, create('p', '', type[2]));
     holder.append(item);
   });

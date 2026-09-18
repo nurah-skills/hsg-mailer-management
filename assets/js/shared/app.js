@@ -139,6 +139,76 @@ function labelCells(table) {
   });
 }
 
+// Where you are inside a page lives in the address bar, so the back button works and a link can be sent to someone.
+// Tiles you open go in the hash; filters go in the query, where they do not fill the history with every keystroke.
+const Trail = {
+  pushes: 0,
+
+  path() {
+    return location.hash.slice(1).split('/').filter(Boolean).map(decodeURIComponent);
+  },
+
+  href(path) {
+    return path.length ? `#${path.map(encodeURIComponent).join('/')}` : location.pathname + location.search;
+  },
+
+  go(path) {
+    history.pushState(null, '', Trail.href(path));
+    Trail.pushes += 1;
+  },
+
+  // The link on the page and the browser's own back button should do the same thing
+  back(parent, redraw) {
+    if (Trail.pushes > 0) {
+      Trail.pushes -= 1;
+      history.back();
+      return;
+    }
+    history.replaceState(null, '', Trail.href(parent));
+    redraw();
+  },
+
+  watch(redraw) {
+    window.addEventListener('popstate', () => {
+      Trail.pushes = Math.max(0, Trail.pushes - 1);
+      redraw();
+    });
+  }
+};
+
+const Params = {
+  get(key, fallback) {
+    return new URLSearchParams(location.search).get(key) || fallback;
+  },
+
+  set(values) {
+    const params = new URLSearchParams(location.search);
+    Object.entries(values).forEach(([key, value]) => {
+      if (!value || value === 'All') params.delete(key);
+      else params.set(key, value);
+    });
+    const query = params.toString();
+    history.replaceState(null, '', `${location.pathname}${query ? '?' + query : ''}${location.hash}`);
+  }
+};
+
+// The same way back on every page that opens into tiles: the page, then each step you took
+function buildTrail(container, steps, onStep) {
+  container.replaceChildren();
+  steps.forEach((step, index) => {
+    if (index) {
+      const mark = create('span', 'trail-mark', '›');
+      mark.setAttribute('aria-hidden', 'true');
+      container.append(mark);
+    }
+    const button = create('button', 'trail-step', step.label);
+    button.type = 'button';
+    if (!index) button.prepend(icon(ICONS.back, 15));
+    button.addEventListener('click', () => onStep(step.path));
+    container.append(button);
+  });
+}
+
 function statusChip(pace) {
   const chip = create('span', `status status-${pace.tone}`);
   if (pace.direction) chip.append(icon(ICONS[pace.direction], 13), create('span', 'sr-only', pace.direction === 'up' ? 'up ' : 'down '));

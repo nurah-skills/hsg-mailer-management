@@ -62,6 +62,17 @@ assets/js/shared/      used by several pages
 assets/js/pages/       one script per page, named after the page
 ```
 
+## Finding your way around
+
+Where you are inside a page is in the address bar, so the browser's back button and a phone's back gesture step back one level rather than leaving the page — and a link can be sent to someone:
+
+- `checks.html#no-owner` opens that kind of problem
+- `lessons.html#Observed/bad` opens what is going badly under Observed
+- `jobs.html?stage=Waiting+on+AC` opens the job list already filtered
+- `campaigns.html?college=BV&sort=bounce` opens Bellview sorted by hard bounces
+
+Every page that opens into tiles shows the same trail above the heading — the page name, then each step you took — and each step is a button back to that level. The counts on Overview and the cards under "Decide first" link straight to the rows they are about.
+
 ## On a phone
 
 Tables have no room for a heading row on a phone, so each figure is printed with its own heading beside it. Nothing is dropped and no number is left unlabelled. The three most used pages sit in a bar along the bottom, and the rest are under **More**.

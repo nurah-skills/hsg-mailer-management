@@ -4,10 +4,10 @@ const VIEWS = [['comparison', 'Comparison'], ['sameage', 'Same age'], ['attentio
 const ATTENTION_FILTERS = [['all', 'All'], ['Blocked', 'Blocked'], ['Waiting', 'Waiting'], ['Confirmed', 'Confirmed']];
 
 const state = {
-  view: VIEWS.some(([key]) => key === recall('week-view')) ? recall('week-view') : 'comparison',
-  college: recall('week-college') || 'All',
-  purpose: recall('week-purpose') || 'All',
-  family: recall('week-family') || 'All',
+  view: VIEWS.some(([key]) => key === Params.get('view', '')) ? Params.get('view', '') : 'comparison',
+  college: Params.get('college', 'All'),
+  purpose: Params.get('purpose', 'All'),
+  family: Params.get('family', 'All'),
   window: 24,
   attention: 'all'
 };
@@ -201,7 +201,7 @@ function render() {
   document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   buildSegmented(document.getElementById('view-picker'), VIEWS, state.view, (view) => {
     state.view = view;
-    remember('week-view', view);
+    Params.set({ view: view === 'comparison' ? '' : view });
     render();
   });
 
@@ -226,17 +226,17 @@ function render() {
 
 fillSelect('college-filter', 'All colleges', COLLEGES, state.college, (value) => {
   state.college = value;
-  remember('week-college', value);
+  Params.set({ college: value });
   render();
 });
 fillSelect('purpose-filter', 'All purposes', PURPOSES, state.purpose, (value) => {
   state.purpose = value;
-  remember('week-purpose', value);
+  Params.set({ purpose: value });
   render();
 });
 fillSelect('family-filter', 'All families', FAMILIES, state.family, (value) => {
   state.family = value;
-  remember('week-family', value);
+  Params.set({ family: value });
   render();
 });
 

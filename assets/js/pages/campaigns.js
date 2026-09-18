@@ -8,11 +8,13 @@ const SORTS = {
   bounce: (campaign) => (campaign.sent ? campaign.hardBounces / campaign.sent : 0)
 };
 
+const SORT_KEYS = Object.keys(SORTS);
+
 const state = {
-  college: recall('campaigns-college') || 'All',
-  purpose: recall('campaigns-purpose') || 'All',
-  search: '',
-  sortKey: 'date',
+  college: Params.get('college', 'All'),
+  purpose: Params.get('purpose', 'All'),
+  search: Params.get('search', ''),
+  sortKey: SORT_KEYS.includes(Params.get('sort', '')) ? Params.get('sort', '') : 'date',
   sortDirection: -1
 };
 
@@ -72,7 +74,7 @@ function clearFilters() {
   state.college = 'All';
   state.purpose = 'All';
   state.search = '';
-  ['campaigns-college', 'campaigns-purpose'].forEach((key) => remember(key, ''));
+  Params.set({ college: '', purpose: '', search: '' });
   ['campaign-college', 'campaign-purpose'].forEach((id) => { document.getElementById(id).value = 'All'; });
   document.getElementById('campaign-search').value = '';
   render();
@@ -93,8 +95,9 @@ function sortHeader(key, label, className = '') {
     if (state.sortKey === key) state.sortDirection *= -1;
     else {
       state.sortKey = key;
-      state.sortDirection = key === 'date' ? -1 : -1;
+      state.sortDirection = -1;
     }
+    Params.set({ sort: state.sortKey === 'date' ? '' : state.sortKey });
     keepFocus(render);
   });
   cell.append(button);
@@ -110,6 +113,7 @@ function fillSortPicker() {
   select.addEventListener('change', (event) => {
     state.sortKey = event.target.value;
     state.sortDirection = -1;
+    Params.set({ sort: state.sortKey === 'date' ? '' : state.sortKey });
     render();
   });
 }
@@ -192,17 +196,20 @@ fillSortPicker();
 
 fillSelect('campaign-college', 'All colleges', COLLEGES, state.college, (value) => {
   state.college = value;
-  remember('campaigns-college', value);
+  Params.set({ college: value });
   render();
 });
 fillSelect('campaign-purpose', 'All purposes', PURPOSES, state.purpose, (value) => {
   state.purpose = value;
-  remember('campaigns-purpose', value);
+  Params.set({ purpose: value });
   render();
 });
 
-document.getElementById('campaign-search').addEventListener('input', (event) => {
+const campaignSearch = document.getElementById('campaign-search');
+campaignSearch.value = state.search;
+campaignSearch.addEventListener('input', (event) => {
   state.search = event.target.value;
+  Params.set({ search: state.search });
   render();
 });
 

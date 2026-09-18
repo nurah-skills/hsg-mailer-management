@@ -1,10 +1,10 @@
 setUpShell();
 
 const state = {
-  phase: recall('jobs-phase') || 'All',
-  stage: recall('jobs-stage') || 'All',
-  owner: recall('jobs-owner') || 'All',
-  search: ''
+  phase: Params.get('phase', 'All'),
+  stage: Params.get('stage', 'All'),
+  owner: Params.get('owner', 'All'),
+  search: Params.get('search', '')
 };
 
 const STAGE_TONES = {
@@ -47,7 +47,7 @@ function clearFilters() {
   state.stage = 'All';
   state.owner = 'All';
   state.search = '';
-  ['jobs-phase', 'jobs-stage', 'jobs-owner'].forEach((key) => remember(key, ''));
+  Params.set({ phase: '', stage: '', owner: '', search: '' });
   ['phase-filter', 'stage-filter', 'owner-filter'].forEach((id) => { document.getElementById(id).value = 'All'; });
   document.getElementById('job-search').value = '';
   render();
@@ -120,17 +120,17 @@ function render() {
 
 fillSelect('phase-filter', 'All phases', PHASES.map((phase) => phase), state.phase, (value) => {
   state.phase = value;
-  remember('jobs-phase', value);
+  Params.set({ phase: value });
   render();
 });
 fillSelect('stage-filter', 'All stages', STAGES, state.stage, (value) => {
   state.stage = value;
-  remember('jobs-stage', value);
+  Params.set({ stage: value });
   render();
 });
 fillSelect('owner-filter', 'All owners', [...new Set(JOBS.map((job) => job.owner))].sort(), state.owner, (value) => {
   state.owner = value;
-  remember('jobs-owner', value);
+  Params.set({ owner: value });
   render();
 });
 
@@ -138,8 +138,11 @@ const jobsClear = document.getElementById('jobs-clear');
 jobsClear.textContent = `Show all ${formatNumber(JOBS.length)}`;
 jobsClear.addEventListener('click', clearFilters);
 
-document.getElementById('job-search').addEventListener('input', (event) => {
+const jobSearch = document.getElementById('job-search');
+jobSearch.value = state.search;
+jobSearch.addEventListener('input', (event) => {
   state.search = event.target.value;
+  Params.set({ search: state.search });
   render();
 });
 

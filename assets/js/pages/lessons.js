@@ -13,17 +13,14 @@ const VERDICTS = [
   ['bad', 'poor', 'Working badly', 'Something to change, and what the evidence does not prove.']
 ];
 
-const state = {
-  status: STATUSES.some(([name]) => name === recall('lessons-status')) ? recall('lessons-status') : null,
-  verdict: VERDICTS.some(([key]) => key === recall('lessons-verdict')) ? recall('lessons-verdict') : null
-};
+const state = { status: null, verdict: null };
 
 const lessonsAt = (status, verdict) =>
   LESSONS.filter((lesson) => lesson.status === status && (!verdict || lesson.verdict === verdict));
 
 const countText = (n) => `${n} ${n === 1 ? 'lesson' : 'lessons'}`;
 
-function tile(focusKey, count, chip, meaning, onClick) {
+function tile(focusKey, count, chip, meaning, path) {
   const button = create('button', 'status-tile');
   button.type = 'button';
   button.dataset.focus = focusKey;
@@ -31,9 +28,14 @@ function tile(focusKey, count, chip, meaning, onClick) {
   const holder = create('span', 'status-count');
   holder.append(create('b', '', String(count)), create('span', '', count === 1 ? 'lesson' : 'lessons'));
   button.append(holder, chip, create('small', '', meaning));
-  button.addEventListener('click', onClick);
+  button.addEventListener('click', () => {
+    Trail.go(path);
+    readUrl(true);
+  });
   return button;
 }
+
+const stepBack = (path) => Trail.back(path, () => readUrl(true));
 
 function showStatusTiles() {
   const grid = document.getElementById('status-grid');
@@ -41,13 +43,14 @@ function showStatusTiles() {
   STATUSES.forEach(([name, tone, meaning]) => {
     const lessons = lessonsAt(name);
     if (!lessons.length) return;
-    grid.append(tile(`status:${name}`, lessons.length, statusChip({ tone, text: name }), meaning, () => openStatus(name)));
+    grid.append(tile(`status:${name}`, lessons.length, statusChip({ tone, text: name }), meaning, [name]));
   });
 }
 
 function showVerdictTiles() {
   const [name, , meaning] = STATUSES.find(([status]) => status === state.status);
   const lessons = lessonsAt(name);
+  buildTrail(document.getElementById('verdict-trail'), [{ label: 'Lessons learnt', path: [] }], stepBack);
   document.getElementById('status-title').textContent = name;
   document.getElementById('status-note').textContent = `${countText(lessons.length)} · ${meaning}`;
 
@@ -56,7 +59,7 @@ function showVerdictTiles() {
   VERDICTS.forEach(([key, tone, label, note]) => {
     const group = lessonsAt(name, key);
     if (!group.length) return;
-    grid.append(tile(`verdict:${key}`, group.length, statusChip({ tone, text: label }), note, () => openVerdict(key)));
+    grid.append(tile(`verdict:${key}`, group.length, statusChip({ tone, text: label }), note, [name, key]));
   });
 }
 
@@ -75,26 +78,13 @@ function lessonCard(lesson) {
 function showLessons() {
   const [, , label] = VERDICTS.find(([key]) => key === state.verdict);
   const lessons = lessonsAt(state.status, state.verdict);
-  document.querySelector('#back-to-verdicts span').textContent = `Back to ${state.status}`;
-  document.getElementById('lesson-title').textContent = `${state.status} · ${label}`;
+  buildTrail(document.getElementById('lesson-trail'), [
+    { label: 'Lessons learnt', path: [] },
+    { label: state.status, path: [state.status] }
+  ], stepBack);
+  document.getElementById('lesson-title').textContent = label;
   document.getElementById('lesson-note').textContent = countText(lessons.length);
   document.getElementById('lesson-grid').replaceChildren(...lessons.map(lessonCard));
-}
-
-function openStatus(name) {
-  state.status = name;
-  state.verdict = null;
-  remember('lessons-status', name);
-  remember('lessons-verdict', '');
-  render();
-  document.getElementById('status-title').focus();
-}
-
-function openVerdict(key) {
-  state.verdict = key;
-  remember('lessons-verdict', key);
-  render();
-  document.getElementById('lesson-title').focus();
 }
 
 function render() {
@@ -109,28 +99,25 @@ function render() {
   else showStatusTiles();
 }
 
-function backTo(button, step) {
-  button.prepend(icon(ICONS.back, 16));
-  button.addEventListener('click', () => {
-    const key = step();
-    render();
-    const target = document.querySelector(`[data-focus="${key}"]`);
-    if (target) target.focus();
-  });
+// The address bar decides what is on screen, whichever way you got here
+function readUrl(moveFocus) {
+  const was = { ...state };
+  const [status, verdict] = Trail.path();
+  state.status = STATUSES.some(([name]) => name === status) ? status : null;
+  state.verdict = state.status && VERDICTS.some(([key]) => key === verdict) ? verdict : null;
+  render();
+  if (!moveFocus) return;
+
+  if (state.verdict && state.verdict !== was.verdict) document.getElementById('lesson-title').focus();
+  else if (state.status && !state.verdict && was.verdict) {
+    const tile = document.querySelector(`[data-focus="verdict:${was.verdict}"]`);
+    if (tile) tile.focus();
+  } else if (state.status && state.status !== was.status) document.getElementById('status-title').focus();
+  else if (!state.status && was.status) {
+    const tile = document.querySelector(`[data-focus="status:${was.status}"]`);
+    if (tile) tile.focus();
+  }
 }
 
-backTo(document.getElementById('back-to-statuses'), () => {
-  const name = state.status;
-  state.status = null;
-  remember('lessons-status', '');
-  return `status:${name}`;
-});
-
-backTo(document.getElementById('back-to-verdicts'), () => {
-  const key = state.verdict;
-  state.verdict = null;
-  remember('lessons-verdict', '');
-  return `verdict:${key}`;
-});
-
-render();
+Trail.watch(() => readUrl(true));
+readUrl(false);

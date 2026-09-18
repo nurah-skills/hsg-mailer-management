@@ -1,6 +1,6 @@
 setUpShell();
 
-const state = { type: CHECK_TYPES.some(([key]) => key === recall('checks-type')) ? recall('checks-type') : null };
+const state = { type: null };
 
 const groupFor = (key) => CHECKS.filter(({ type }) => type[0] === key);
 
@@ -23,21 +23,18 @@ function showTypes() {
     body.append(create('b', '', type[1]), create('small', '', phases.slice(0, 4).join(', ') + (phases.length > 4 ? ` and ${phases.length - 4} more` : '')));
 
     tile.append(art, body);
-    tile.addEventListener('click', () => openType(type[0]));
+    tile.addEventListener('click', () => {
+      Trail.go([type[0]]);
+      readUrl(true);
+    });
     grid.append(tile);
   });
-}
-
-function openType(key) {
-  state.type = key;
-  remember('checks-type', key);
-  render();
-  document.getElementById('check-title').focus();
 }
 
 function showType() {
   const type = CHECK_TYPES.find(([key]) => key === state.type);
   const group = groupFor(state.type);
+  buildTrail(document.getElementById('checks-trail'), [{ label: 'Evidence checks', path: [] }], (path) => Trail.back(path, () => readUrl(true)));
   document.getElementById('check-title').textContent = type[1];
   document.getElementById('check-note').textContent = `${group.length} row${group.length === 1 ? '' : 's'}`;
   document.getElementById('check-detail').textContent = type[2];
@@ -76,16 +73,19 @@ function render() {
   else showTypes();
 }
 
-const backButton = document.getElementById('back-to-checks');
-backButton.prepend(icon(ICONS.back, 16));
-
-backButton.addEventListener('click', () => {
-  const key = state.type;
-  state.type = null;
-  remember('checks-type', '');
+// The address bar decides what is on screen, whichever way you got here
+function readUrl(moveFocus) {
+  const was = state.type;
+  const [key] = Trail.path();
+  state.type = CHECK_TYPES.some(([name]) => name === key) ? key : null;
   render();
-  const tile = document.querySelector(`[data-focus="check:${key}"]`);
-  if (tile) tile.focus();
-});
+  if (!moveFocus || state.type === was) return;
+  if (state.type) document.getElementById('check-title').focus();
+  else {
+    const tile = document.querySelector(`[data-focus="check:${was}"]`);
+    if (tile) tile.focus();
+  }
+}
 
-render();
+Trail.watch(() => readUrl(true));
+readUrl(false);
