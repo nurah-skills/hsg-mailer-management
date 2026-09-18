@@ -1199,3 +1199,11 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 @media (max-width: 560px) {
   .figure-list.is-across { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* A share panel beside a taller one: the ring sits above its key and both grow into the
+   space, rather than leaving a hole under the chart */
+#college-share { flex: 1; min-height: 0; display: flex; }
+#college-share .donut { flex: 1; flex-direction: column; justify-content: center; align-items: center; gap: 26px; }
+#college-share .donut-art { width: clamp(190px, 66%, 300px); }
+#college-share .donut-legend { flex: none; align-self: stretch; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+#college-share .donut-legend b { font-size: 15px; }
