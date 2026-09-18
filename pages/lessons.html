@@ -88,21 +88,19 @@
           <span class="tag">Sample figures · mail read <span id="mail-read"></span></span>
         </div>
 
-        <div class="controls">
-          <div class="segmented segmented-three" id="verdict-picker" role="group" aria-label="Which lessons to show"></div>
+        <div class="status-grid" id="status-grid"></div>
+
+        <div id="lesson-view" hidden>
+          <div class="category-head">
+            <button class="back-link" id="back-to-statuses" type="button">Back to all statuses</button>
+            <div class="category-heading">
+              <h2 id="status-title" tabindex="-1"></h2>
+              <p class="panel-note" id="status-note"></p>
+            </div>
+          </div>
+          <div class="grid" id="lesson-grid"></div>
         </div>
 
-        <div class="grid" id="lesson-grid"></div>
-
-        <details class="about">
-          <summary>What the statuses mean</summary>
-          <div class="about-body">
-            <p><strong>Observed:</strong> a pattern someone noticed in the figures.</p>
-            <p><strong>Being tested:</strong> a working explanation that still needs another period to confirm.</p>
-            <p><strong>Confirmed:</strong> management has reviewed the evidence. It still does not prove cause and effect.</p>
-            <p><strong>Retired:</strong> kept as a record, but no longer acted on.</p>
-          </div>
-        </details>
       </main>
     </div>
   </div>

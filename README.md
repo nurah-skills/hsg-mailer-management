@@ -26,7 +26,7 @@ The board is for the marketing managers, so there is one kind of account. On a p
 | `pages/jobs.html` | Every work item from the trackers: phase, stage, owner, audience, next check and the note, with filters and search. The count above the table says what is filtering the list, and **Show all** puts every row back. |
 | `pages/campaigns.html` | Every campaign with sends, deliveries, opens, clicks and hard bounces. Every campaign counted in the heading is on the page. Sort by clicking a column heading, or with the **Sort by** control on a phone. Anything above the review thresholds is marked “worth a look”. |
 | `pages/checks.html` | Rows whose record contradicts itself or is missing something, grouped by the kind of problem. Choose one to see those rows. |
-| `pages/lessons.html` | What to repeat and what to change, each with the evidence, what it does not prove, and what to do. One filter: all, working well, or working badly. Every lesson is on the page, its status on the card, retired ones last. |
+| `pages/lessons.html` | Four tiles, one per status — **Observed**, **Being tested**, **Confirmed**, **Retired** — each with a count and what that status means. Open one to read its lessons: the evidence, what it does not prove, and what to do, marked working well or working badly. |
 | `pages/sources.html` | What the board is connected to and what each connection may do, the workbooks it reads and when they were read, how to read the figures, and what is still not joined up. |
 | `index.html` | Sign in, or look around as a manager. |
 
