@@ -56,7 +56,7 @@ function icon(paths, size = 18) {
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('fill', 'none');
   svg.setAttribute('stroke', 'currentColor');
-  svg.setAttribute('stroke-width', '2.2');
+  svg.setAttribute('stroke-width', '2');
   svg.setAttribute('stroke-linecap', 'round');
   svg.setAttribute('stroke-linejoin', 'round');
   svg.setAttribute('aria-hidden', 'true');
@@ -106,11 +106,13 @@ function buildTabBar(sidebar) {
   const pages = [['overview.html', 'Overview'], ['decisions.html', 'Decisions'], ['week.html', 'This week']];
 
   pages.forEach(([href, label]) => {
+    const item = sidebar.querySelector(`.menu-item[href="${href}"]`);
     const link = create('a', 'tab');
     link.href = href;
     if (href === current) link.setAttribute('aria-current', 'page');
-    link.append(sidebar.querySelector(`.menu-item[href="${href}"] svg`).cloneNode(true), create('span', '', label));
+    link.append(item.querySelector('svg').cloneNode(true), create('span', '', label));
     nav.append(link);
+    item.classList.add('in-tabbar');
   });
 
   const more = create('button', 'tab');

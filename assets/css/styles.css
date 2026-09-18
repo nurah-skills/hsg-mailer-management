@@ -776,6 +776,8 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 
 @media (max-width: 700px) {
   .app-main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  /* These three sit in the bar along the bottom, so the menu behind More does not repeat them */
+  .menu-item.in-tabbar { display: none; }
   .tabbar {
     position: fixed;
     inset: auto 0 0 0;
@@ -866,8 +868,6 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .decision-action { font-weight: 700; }
 .finding-list .panel-note:first-of-type { order: -1; }
 .stage-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
-.lesson .subheading { margin-bottom: 0; }
-.lesson p + .subheading { margin-top: 10px; }
 .card-art.kind-check { min-height: 118px; }
 .job-note td { padding-top: 0; border-bottom: 1px solid var(--line); }
 .job-note .panel-note { max-width: 90ch; }
@@ -1021,3 +1021,21 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 #lesson-view .category-head { margin-bottom: 16px; }
 .lesson > h3 { margin: 0; font-family: var(--heading); font-size: 18px; font-weight: 600; text-wrap: balance; }
 .lesson > h3 + .panel-note { margin-top: 4px; }
+
+/* A section that owns the page rather than sitting in a panel */
+.open-section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.open-section > .panel-head h2 { font-size: 18px; }
+
+/* Running text stops at a comfortable line, however wide the panel is */
+.about-body p,
+.lesson > p,
+.decision-card > p,
+.finding > p,
+.source-list p,
+.gap-list p,
+.notice span,
+.panel > .panel-note { max-width: 68ch; }
+
+/* A heading belongs to what follows it */
+.lesson .subheading { margin: 0 0 4px; }
+.lesson p + .subheading { margin-top: 16px; }
