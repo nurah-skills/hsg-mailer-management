@@ -187,7 +187,6 @@ function showAttention() {
 }
 
 function render() {
-  document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   buildSegmented(document.getElementById('view-picker'), VIEWS, state.view, (view) => {
     state.view = view;
     Params.set({ view: view === 'comparison' ? '' : view });

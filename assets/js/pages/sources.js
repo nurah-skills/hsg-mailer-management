@@ -64,7 +64,6 @@ function showGaps() {
   });
 }
 
-document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
 showCoverage();
 showConnections();
 showSources();

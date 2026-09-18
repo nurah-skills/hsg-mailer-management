@@ -88,7 +88,6 @@ function showLessons() {
 }
 
 function render() {
-  document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   const atLessons = Boolean(state.status && state.verdict);
   document.getElementById('status-grid').hidden = Boolean(state.status);
   document.getElementById('verdict-view').hidden = !state.status || atLessons;

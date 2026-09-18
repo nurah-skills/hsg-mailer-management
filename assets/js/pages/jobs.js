@@ -120,7 +120,6 @@ function showStageTiles() {
 }
 
 function render() {
-  document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   const rows = shown();
   const filters = activeFilters();
 

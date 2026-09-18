@@ -139,7 +139,6 @@ function showOutcomes() {
   });
 }
 
-document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
 showTiles();
 showSends();
 showRates();

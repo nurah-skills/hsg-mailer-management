@@ -66,7 +66,6 @@ function showType() {
 }
 
 function render() {
-  document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   document.getElementById('check-list').hidden = Boolean(state.type);
   document.getElementById('check-view').hidden = !state.type;
   if (state.type) showType();

@@ -246,17 +246,34 @@ const RELATED = [
   ['#', 'Lead tracker']
 ];
 
+// The header is built here rather than read out of the page, so a browser holding an older
+// copy of the HTML still gets the right header from the current script.
 function buildHeaderTools() {
   const header = document.querySelector('.page-header');
   if (!header) return;
-  const tools = create('div', 'header-tools');
+
+  header.querySelectorAll('.board-state, .tag, .header-tools').forEach((old) => old.remove());
+
   const refresh = create('button', 'button button-secondary button-inline');
   refresh.type = 'button';
   refresh.append(icon(ICONS.refresh, 16), document.createTextNode('Refresh the mail tool'));
   refresh.addEventListener('click', () => showToast(`Sample figures, so nothing refreshes. The mail tool was read at ${SNAPSHOT.mailRead} and that reading is fixed.`));
-  const state = header.querySelector('.board-state');
-  tools.append(refresh);
-  if (state) tools.append(state);
+
+  const dot = create('span', 'board-dot');
+  dot.setAttribute('aria-hidden', 'true');
+  const read = create('span');
+  read.id = 'mail-read';
+  read.textContent = SNAPSHOT.mailRead;
+  const lines = create('div');
+  const detail = create('small', '', 'Sample figures · read ');
+  detail.append(read);
+  lines.append(create('b', '', 'Not connected'), detail);
+
+  const state = create('div', 'board-state');
+  state.append(dot, lines);
+
+  const tools = create('div', 'header-tools');
+  tools.append(refresh, state);
   header.append(tools);
 }
 

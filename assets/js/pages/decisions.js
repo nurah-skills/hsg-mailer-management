@@ -153,7 +153,6 @@ function showMail() {
   });
 }
 
-document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
 readUrl(false);
 showStages();
 showMail();
