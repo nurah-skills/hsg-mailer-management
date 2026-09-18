@@ -70,6 +70,7 @@ function icon(paths, size = 18) {
 
 const ICONS = {
   check: ['M4 12.5l5 5L20 6.5'],
+  back: ['M19 12H5', 'M11 18l-6-6 6-6'],
   refresh: ['M20 11a8 8 0 0 0-13.7-5.6L3 8', 'M4 13a8 8 0 0 0 13.7 5.6L21 16', 'M3 4v4h4', 'M21 20v-4h-4'],
   external: ['M14 4h6v6', 'M20 4l-8 8', 'M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'],
   up: ['M12 19V5', 'M6 11l6-6 6 6'],

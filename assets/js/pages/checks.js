@@ -75,7 +75,10 @@ function render() {
   else showTypes();
 }
 
-document.getElementById('back-to-checks').addEventListener('click', () => {
+const backButton = document.getElementById('back-to-checks');
+backButton.prepend(icon(ICONS.back, 16));
+
+backButton.addEventListener('click', () => {
   const key = state.type;
   state.type = null;
   remember('checks-type', '');
