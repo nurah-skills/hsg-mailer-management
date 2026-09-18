@@ -100,9 +100,14 @@
           <button class="button button-secondary button-inline" id="jobs-clear" type="button" hidden>Show all 44</button>
         </div>
 
-        <section class="panel" aria-labelledby="jobs-title">
+        <section class="open-section" aria-labelledby="stage-grid-title">
+          <h2 class="sr-only" id="stage-grid-title">Choose a stage</h2>
+          <div class="status-grid" id="stage-grid"></div>
+        </section>
+
+        <section class="panel" id="jobs-panel" aria-labelledby="jobs-title" hidden>
           <div class="panel-head">
-            <h2 id="jobs-title">Jobs</h2>
+            <h2 id="jobs-title" tabindex="-1">Jobs</h2>
             <p class="panel-note" id="jobs-note" role="status"></p>
           </div>
           <div class="table-wrap">

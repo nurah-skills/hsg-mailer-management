@@ -395,9 +395,9 @@ a.menu-item:hover { background: rgba(255, 255, 255, .08); color: var(--on-navy);
 
 .app-main {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1760px;
   margin: 0 auto;
-  padding: 36px 40px 56px;
+  padding: 32px 40px 56px;
   display: flex;
   flex-direction: column;
   gap: 22px;
@@ -1093,3 +1093,9 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 }
 
 .bar-list.is-split { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 175px), 1fr)); gap: 16px 24px; }
+
+/* A long list runs in columns when the panel is wide enough to hold them */
+.source-list.is-split,
+.gap-list.is-split { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 0 28px; }
+.source-list.is-split > li,
+.gap-list.is-split > li { border-top: 0; padding-top: 14px; }

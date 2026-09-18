@@ -14,13 +14,10 @@ function showCoverage() {
     ['Campaign records', formatNumber(COVERAGE.mailRecords), `Retrieved from ${COVERAGE.since}`],
     ['Two-week outcomes filled', formatNumber(COVERAGE.outcomesFilled), 'Cash and enrolment cells with an entry']
   ];
-  const holder = document.getElementById('coverage-tiles');
-  holder.replaceChildren();
-  tiles.forEach(([label, value, note]) => {
-    const tile = create('div', 'tile');
-    tile.append(create('span', '', label), create('b', '', value), create('small', '', note));
-    holder.append(tile);
-  });
+  const marks = [[ICONS.rows, 'is-info'], [ICONS.rows, ''], [ICONS.mail, ''], [ICONS.alert, 'is-warn']];
+  document.getElementById('coverage-tiles').replaceChildren(
+    ...tiles.map(([label, value, note], index) => statTile({ label, value, note, icon: marks[index][0], tone: marks[index][1] }))
+  );
 }
 
 function showSources() {

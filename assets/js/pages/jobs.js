@@ -51,7 +51,9 @@ function clearFilters() {
   ['phase-filter', 'stage-filter', 'owner-filter'].forEach((id) => { document.getElementById(id).value = 'All'; });
   document.getElementById('job-search').value = '';
   render();
-  document.getElementById('phase-filter').focus();
+  const tile = document.querySelector('.status-tile');
+  if (tile) tile.focus();
+  else document.getElementById('phase-filter').focus();
 }
 
 function jobRow(job) {
@@ -82,10 +84,54 @@ function jobRow(job) {
   return [row, note];
 }
 
+const STAGE_MEANING = {
+  'In preparation': 'The brief and the copy are still being put together.',
+  'Audience prepared': 'The list is ready and waiting for the build.',
+  'Ready for AC build': 'Everything is in place for the mail tool build.',
+  'Waiting on AC': 'Handed over, waiting on the build to come back.',
+  'Reported sent / live': 'The owner reports it went out. Still a reported state.',
+  'Paused / blocked': 'Stopped until someone settles something.'
+};
+
+function showStageTiles() {
+  const grid = document.getElementById('stage-grid');
+  grid.replaceChildren();
+
+  STAGES.forEach((stage) => {
+    const jobs = JOBS.filter((job) => job.stage === stage);
+    if (!jobs.length) return;
+
+    const tile = create('button', 'status-tile');
+    tile.type = 'button';
+    tile.dataset.focus = `stage:${stage}`;
+
+    const count = create('span', 'status-count');
+    count.append(create('b', '', String(jobs.length)), create('span', '', jobs.length === 1 ? 'job' : 'jobs'));
+    tile.append(count, statusChip({ tone: STAGE_TONES[stage] || 'info', text: stage }), create('small', '', STAGE_MEANING[stage] || ''));
+    tile.addEventListener('click', () => {
+      state.stage = stage;
+      Params.set({ stage });
+      document.getElementById('stage-filter').value = stage;
+      render();
+      document.getElementById('jobs-title').focus();
+    });
+    grid.append(tile);
+  });
+}
+
 function render() {
   document.getElementById('mail-read').textContent = SNAPSHOT.mailRead;
   const rows = shown();
   const filters = activeFilters();
+
+  // Nothing chosen yet: the stages are the way in, so nobody scrolls 44 jobs to find one
+  document.getElementById('stage-grid').parentElement.hidden = Boolean(filters.length);
+  document.getElementById('jobs-panel').hidden = !filters.length;
+  if (!filters.length) {
+    showStageTiles();
+    document.getElementById('jobs-clear').hidden = true;
+    return;
+  }
   const audience = formatNumber(rows.reduce((sum, job) => sum + job.audience, 0));
   document.getElementById('jobs-note').textContent = filters.length
     ? `${formatNumber(rows.length)} of ${formatNumber(JOBS.length)} jobs, filtered by ${filters.join(' and ')} · ${audience} on the lists`
@@ -135,7 +181,7 @@ fillSelect('owner-filter', 'All owners', [...new Set(JOBS.map((job) => job.owner
 });
 
 const jobsClear = document.getElementById('jobs-clear');
-jobsClear.textContent = `Show all ${formatNumber(JOBS.length)}`;
+jobsClear.textContent = 'Back to the stages';
 jobsClear.addEventListener('click', clearFilters);
 
 const jobSearch = document.getElementById('job-search');
