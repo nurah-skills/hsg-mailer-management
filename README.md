@@ -22,7 +22,7 @@ The board is for the marketing managers, so there is one kind of account. On a p
 | --- | --- |
 | `pages/overview.html` | The landing page: four figures with how each moved, emails sent by day, how the mail landed as three rings, the work by phase, the problems to resolve first, and the mail figures against the period before. |
 | `pages/decisions.html` | The job stages and the period’s mail figures, then what needs a management call. “Decide first” shows three tiles — **Blocked** (red), **Waiting** (yellow) and **Being tested** (green) — with a count on each. Open one to read its items; the cards take the colour of the group. |
-| `pages/week.html` | The period against the same weekdays before, with filters for college, purpose and family. Three views: **Comparison** (sends, campaigns, click rate, unsubscribes, plus registrations and responses alongside), **Same age** (results measured the same number of hours after each send) and **Needs attention** (dated findings from the lead-source audit). |
+| `pages/week.html` | The period against the same weekdays before, with filters for college, purpose and family. Three views: **Comparison** (four figures, the share of the sends as a ring, mail and registrations by college as before-and-now bars, and every purpose and family ranked), **Same age** (results measured the same number of hours after each send) and **Needs attention** (dated findings from the lead-source audit). |
 | `pages/jobs.html` | Opens on the six stages, each with a count and what it means. Choose one to see those jobs: phase, stage, owner, audience, next check and the note. The filters and search narrow it further, the count says what is filtering, and **Back to the stages** returns to the tiles. |
 | `pages/campaigns.html` | Every campaign with sends, deliveries, opens, clicks and hard bounces. Every campaign counted in the heading is on the page. Sort by clicking a column heading, or with the **Sort by** control on a phone. Anything above the review thresholds is marked “worth a look”. |
 | `pages/checks.html` | Rows whose record contradicts itself or is missing something, grouped by the kind of problem. Choose one to see those rows. |
@@ -58,7 +58,7 @@ assets/js/shared/      used by several pages
   session.js           demo sign-in and sign-out (loads first on every page)
   data.js              sample campaigns, jobs, checks, lessons and sources
   app.js               menu, bottom bar, messages and small helpers
-  charts.js            rings, the run over time and the ranked bars, drawn as plain SVG
+  charts.js            rings, donuts, the run over time and the ranked bars, drawn as plain SVG
   auth.js              sign-in buttons
 assets/js/pages/       one script per page, named after the page
 ```

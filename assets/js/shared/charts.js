@@ -110,3 +110,88 @@ function barList(rows, { format = formatNumber, split = false } = {}) {
   });
   return list;
 }
+
+// A share of a whole, drawn once and named in the legend beside it
+function donutChart(slices, { format = formatNumber } = {}) {
+  const size = 150;
+  const stroke = 26;
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const total = slices.reduce((sum, slice) => sum + slice.value, 0) || 1;
+
+  const svg = svgNode('svg', { viewBox: `0 0 ${size} ${size}`, 'aria-hidden': 'true' });
+  svg.append(svgNode('circle', {
+    cx: size / 2, cy: size / 2, r: radius, fill: 'none', stroke: 'var(--field)', 'stroke-width': stroke
+  }));
+
+  let travelled = 0;
+  slices.forEach((slice, index) => {
+    const part = slice.value / total;
+    if (!part) return;
+    svg.append(svgNode('circle', {
+      cx: size / 2, cy: size / 2, r: radius, fill: 'none',
+      stroke: `var(--slice-${(index % 5) + 1})`, 'stroke-width': stroke,
+      'stroke-dasharray': `${circumference * part} ${circumference}`,
+      'stroke-dashoffset': -circumference * travelled,
+      transform: `rotate(-90 ${size / 2} ${size / 2})`
+    }));
+    travelled += part;
+  });
+
+  const art = create('div', 'donut-art');
+  art.append(svg);
+
+  const legend = create('ul', 'donut-legend');
+  slices.forEach((slice, index) => {
+    const item = create('li');
+    const dot = create('span', 'donut-dot');
+    dot.style.background = `var(--slice-${(index % 5) + 1})`;
+    const text = create('div');
+    text.append(create('b', '', slice.label), create('small', '', `${format(slice.value)} · ${formatPercent(slice.value / total)}`));
+    item.append(dot, text);
+    legend.append(item);
+  });
+
+  const chart = create('div', 'donut');
+  chart.append(art, legend);
+  return chart;
+}
+
+// Two figures side by side for each row, so before and now can be read against each other
+function pairedBars(rows, { format = formatNumber, first = 'Before', second = 'Now' } = {}) {
+  const most = Math.max(...rows.flatMap((row) => [row.first, row.second]), 1);
+
+  const key = create('div', 'chart-key');
+  [[first, 'is-first'], [second, 'is-second']].forEach(([label, tone]) => {
+    const item = create('span', `chart-key-item ${tone}`);
+    item.append(create('i', ''), document.createTextNode(label));
+    key.append(item);
+  });
+
+  const list = create('ul', 'pair-list');
+  rows.forEach((row) => {
+    const item = create('li');
+    const head = create('div', 'bar-head');
+    head.append(create('span', '', row.label));
+    if (row.chip) head.append(row.chip);
+
+    const pair = create('div', 'pair');
+    [['first', row.first], ['second', row.second]].forEach(([which, value]) => {
+      const line = create('div', 'pair-row');
+      const track = create('div', `track track-small is-${which}`);
+      const fill = create('span', 'track-fill');
+      fill.style.width = `${(value / most) * 100}%`;
+      track.append(fill);
+      line.append(track, create('b', '', format(value)));
+      pair.append(line);
+    });
+
+    item.append(head, pair);
+    if (row.note) item.append(create('small', '', row.note));
+    list.append(item);
+  });
+
+  const chart = create('div', 'chart');
+  chart.append(key, list);
+  return chart;
+}

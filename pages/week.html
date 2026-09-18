@@ -105,13 +105,19 @@
           <section class="tiles tiles-four" id="week-tiles" aria-label="Totals"></section>
 
           <div class="grid">
-            <section class="panel span-8" aria-labelledby="mail-college-title">
+            <section class="panel span-5" aria-labelledby="share-title">
+              <div class="panel-head">
+                <h2 id="share-title">Share of the sends</h2>
+              </div>
+              <div id="college-share"></div>
+              <p class="panel-note">Each college's part of the mail that went out from 14 to 16 September.</p>
+            </section>
+
+            <section class="panel span-7" aria-labelledby="mail-college-title">
               <div class="panel-head">
                 <h2 id="mail-college-title">Mail and registrations by college</h2>
               </div>
-              <div class="table-wrap">
-                <table class="results" id="college-table"></table>
-              </div>
+              <div id="college-chart"></div>
               <p class="panel-note">Registrations come from the sales sheets, not from the mail tool. They are not attributed to any campaign.</p>
             </section>
 
@@ -122,16 +128,15 @@
               <dl class="figure-list" id="outcome-figures"></dl>
               <p class="panel-note">Read from the sales and survey sheets. No campaign conversion rate is worked out from these.</p>
             </section>
-          </div>
 
-          <section class="panel" aria-labelledby="family-title">
-            <div class="panel-head">
-              <h2 id="family-title">Mail by purpose and family</h2>
-            </div>
-            <div class="table-wrap">
-              <table class="results" id="family-table"></table>
-            </div>
-          </section>
+            <section class="panel span-12" aria-labelledby="family-title">
+              <div class="panel-head">
+                <h2 id="family-title">Mail by purpose and family</h2>
+                <p class="panel-note">Ranked by what went out this period</p>
+              </div>
+              <div id="family-chart"></div>
+            </section>
+          </div>
         </section>
 
         <section id="view-sameage" hidden>
@@ -174,6 +179,7 @@
 
   <script src="../assets/js/shared/data.js"></script>
   <script src="../assets/js/shared/app.js"></script>
+  <script src="../assets/js/shared/charts.js"></script>
   <script src="../assets/js/pages/week.js"></script>
 </body>
 </html>

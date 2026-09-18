@@ -67,7 +67,7 @@ Rules that hold everywhere: running text stops at **68 characters**; every figur
 - **`.tile`** — a figure with its name, an icon badge, and a footer that can hold a change chip and a note. Built by `statTile()` in `assets/js/shared/app.js`, used on Overview, This week and Campaigns.
 - **`.status`** — a chip. `status-up` / `status-down` carry a direction arrow and the green/red pair; `status-well` / `status-poor` say whether a lesson is good news; `status-good`, `-info`, `-waiting`, `-changed` are the neutral states. A chip never carries a verdict the figure does not support.
 - **Drill-down tiles** — `.decide-tile` (colour-filled, urgency) and `.status-tile` / `.category-tile` (plain, a stage or a kind). Opening one puts the step in the address bar; a `.trail` above the heading names the way back.
-- **Charts**, in `assets/js/shared/charts.js`, drawn as plain SVG with no library: `ringChart()` for one rate, `areaChart()` for a run over time, `barList()` for a ranked set. Every chart prints its scale, so each mark names a value the chart reaches.
+- **Charts**, in `assets/js/shared/charts.js`, drawn as plain SVG with no library: `ringChart()` for one rate, `donutChart()` for a share of a whole, `areaChart()` for a run over time, `pairedBars()` for before against now, `barList()` for a ranked set. Every chart prints its scale or its legend, so each mark names a value the chart reaches. Donut slices take `--slice-1` to `--slice-5`.
 - **Tables** (`.results`) show a heading row on a laptop. On a phone the heading row is hidden and each cell carries its own heading through `data-label`, set by `labelCells()`.
 
 ## Motion

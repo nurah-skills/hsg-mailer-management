@@ -59,25 +59,30 @@ function headRow(labels) {
 }
 
 function showColleges() {
-  const table = document.getElementById('college-table');
-  table.replaceChildren(headRow(['College', 'Before', 'Now', 'Change', 'Registrations']));
-  const body = create('tbody');
+  const rows = [];
+  const slices = [];
 
   COLLEGES.forEach((college) => {
     const current = totalsFor(campaignsIn(PERIOD.current, { ...filters(), college }));
     const previous = totalsFor(campaignsIn(PERIOD.previous, { ...filters(), college }));
     if (!current.sent && !previous.sent) return;
     const registrations = OUTCOMES.registrations.byCollege[college];
-    body.append(tableRow([
-      COLLEGE_NAMES[college],
-      formatNumber(previous.sent),
-      formatNumber(current.sent),
-      statusChip(changeBetween(previous.sent, current.sent)),
-      registrations ? `${formatNumber(registrations[1])} · ${formatNumber(registrations[0])} before` : 'Not mapped'
-    ]));
+    rows.push({
+      label: COLLEGE_NAMES[college],
+      first: previous.sent,
+      second: current.sent,
+      chip: statusChip(changeBetween(previous.sent, current.sent)),
+      note: registrations
+        ? `Registrations ${formatNumber(registrations[1])}, ${formatNumber(registrations[0])} before`
+        : 'Registrations not mapped to this college'
+    });
+    if (current.sent) slices.push({ label: COLLEGE_NAMES[college], value: current.sent });
   });
-  table.append(body);
-  labelCells(table);
+
+  document.getElementById('college-chart').replaceChildren(pairedBars(rows, { first: 'Period before', second: 'This period' }));
+  document.getElementById('college-share').replaceChildren(
+    slices.length ? donutChart(slices) : create('p', 'empty', 'No mail in this selection.')
+  );
 }
 
 function showOutcomes() {
@@ -97,34 +102,27 @@ function showOutcomes() {
 }
 
 function showFamilies() {
-  const table = document.getElementById('family-table');
-  table.replaceChildren(headRow(['Purpose and family', 'Sends before', 'Sends now', 'Clickers now', 'Click rate']));
-  const body = create('tbody');
+  const rows = [];
 
   PURPOSES.forEach((purpose) => {
     FAMILIES.forEach((family) => {
       const current = totalsFor(campaignsIn(PERIOD.current, { ...filters(), purpose, family }));
       const previous = totalsFor(campaignsIn(PERIOD.previous, { ...filters(), purpose, family }));
       if (!current.sent && !previous.sent) return;
-      body.append(tableRow([
-        `${purpose} · ${family}`,
-        formatNumber(previous.sent),
-        formatNumber(current.sent),
-        formatNumber(current.clickers),
-        current.delivered ? formatPercent(current.clickRate) : 'No sends yet'
-      ]));
+      rows.push({
+        label: `${purpose} · ${family}`,
+        value: current.sent,
+        note: current.delivered
+          ? `${formatNumber(current.clickers)} clickers · ${formatPercent(current.clickRate)} click rate · ${formatNumber(previous.sent)} sent before`
+          : `No sends yet · ${formatNumber(previous.sent)} sent before`
+      });
     });
   });
 
-  if (!body.children.length) {
-    const row = create('tr');
-    const cell = create('td', 'is-empty', 'No mail in this selection.');
-    cell.colSpan = 5;
-    row.append(cell);
-    body.append(row);
-  }
-  table.append(body);
-  labelCells(table);
+  rows.sort((a, b) => b.value - a.value);
+  document.getElementById('family-chart').replaceChildren(
+    rows.length ? barList(rows) : create('p', 'empty', 'No mail in this selection.')
+  );
 }
 
 // A reading counts towards the window it sits closest to, so an empty window is visible before it is chosen

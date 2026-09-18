@@ -32,6 +32,11 @@
   --ring-warn: #B4543C;
   --chart-line: #C98416;
   --chart-fill: rgba(232, 163, 60, .16);
+  --slice-1: #D08A1E;
+  --slice-2: #2E4A6B;
+  --slice-3: #3F7D42;
+  --slice-4: #8A5410;
+  --slice-5: #7C8994;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,6 +67,11 @@
     --ring-warn: #E89A87;
     --chart-line: #E0AE55;
     --chart-fill: rgba(224, 174, 85, .14);
+    --slice-1: #E0AE55;
+    --slice-2: #7FA6D0;
+    --slice-3: #8FC194;
+    --slice-4: #C98F5B;
+    --slice-5: #8A97A3;
   }
 
   select.input,
@@ -294,7 +304,7 @@ select option, select optgroup { background-color: var(--card); color: var(--ink
   flex-direction: column;
   gap: 24px;
   padding: 24px 16px;
-  background: var(--navy);
+  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
   border-right: 1px solid var(--navy-deep);
   color: var(--on-navy);
 }
@@ -1099,3 +1109,27 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .gap-list.is-split { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 0 28px; }
 .source-list.is-split > li,
 .gap-list.is-split > li { border-top: 0; padding-top: 14px; }
+
+/* A share of a whole, named in the legend beside it */
+.donut { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.donut-art { flex: none; width: 150px; max-width: 100%; }
+.donut-art svg { display: block; width: 100%; height: auto; }
+.donut-legend { flex: 1; min-width: 150px; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.donut-legend li { display: flex; align-items: flex-start; gap: 10px; }
+.donut-dot { flex: none; width: 12px; height: 12px; margin-top: 4px; border-radius: 4px; }
+.donut-legend b { display: block; font-size: 15px; font-weight: 700; }
+.donut-legend small { display: block; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Before and now, one above the other, so the pair reads as one row */
+.chart-key { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 4px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.chart-key-item { display: inline-flex; align-items: center; gap: 7px; }
+.chart-key-item i { width: 12px; height: 12px; border-radius: 4px; }
+.chart-key-item.is-first i { background: var(--field-line); }
+.chart-key-item.is-second i { background: var(--bar); }
+.pair-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+.pair { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+.pair-row { display: flex; align-items: center; gap: 12px; }
+.pair-row .track { flex: 1; min-width: 0; }
+.pair-row b { flex: none; min-width: 74px; font-family: var(--heading); font-size: 14px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.track.is-first .track-fill { background: var(--field-line); }
+.span-12 { grid-column: span 12; }
