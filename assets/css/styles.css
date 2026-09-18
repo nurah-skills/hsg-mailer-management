@@ -981,8 +981,11 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .decision-card h4 { margin: 0; font-family: var(--heading); font-size: 17px; font-weight: 600; }
 .decision-card .text-link { align-self: flex-start; color: var(--flag-ink); }
 
-/* A change chip says which way, not whether it is good news */
-.status-move { gap: 3px; padding-left: 7px; background: var(--field); color: var(--ink); }
+/* A change chip: green when the figure went up, red when it went down */
+.status-move, .status-up, .status-down { gap: 3px; padding-left: 7px; }
+.status-move { background: var(--field); color: var(--ink); }
+.status-up { background: var(--green-soft); color: var(--green-ink); }
+.status-down { background: var(--red-soft); color: var(--red-ink); }
 .status svg { flex: none; }
 
 /* The three selects sit in the controls row, and go away together when a view ignores them */

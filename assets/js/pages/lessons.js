@@ -1,18 +1,17 @@
 setUpShell();
 
-const VERDICTS = [['all', 'Both'], ['good', 'Working well'], ['bad', 'Working badly']];
-const STATUSES = ['Observed', 'Being tested', 'Confirmed', 'Retired'];
+const VERDICTS = [['all', 'All'], ['good', 'Working well'], ['bad', 'Working badly']];
 const STATUS_TONES = { Observed: 'info', 'Being tested': 'changed', Confirmed: 'good', Retired: 'waiting' };
 
 const state = {
-  verdict: VERDICTS.some(([key]) => key === recall('lessons-verdict')) ? recall('lessons-verdict') : 'all',
-  status: recall('lessons-status') || 'Active'
+  verdict: VERDICTS.some(([key]) => key === recall('lessons-verdict')) ? recall('lessons-verdict') : 'all'
 };
 
+// Every lesson is on the page. The status is on each card, and retired ones sit at the end.
 function shown() {
-  return LESSONS.filter((lesson) =>
-    (state.verdict === 'all' || lesson.verdict === state.verdict)
-    && (state.status === 'All' ? true : state.status === 'Active' ? lesson.status !== 'Retired' : lesson.status === state.status));
+  return LESSONS
+    .filter((lesson) => state.verdict === 'all' || lesson.verdict === state.verdict)
+    .sort((a, b) => (a.status === 'Retired' ? 1 : 0) - (b.status === 'Retired' ? 1 : 0));
 }
 
 function lessonCard(lesson) {
@@ -47,14 +46,5 @@ function render() {
   }
   lessons.forEach((lesson) => grid.append(lessonCard(lesson)));
 }
-
-const statusSelect = document.getElementById('status-filter');
-statusSelect.replaceChildren(new Option('Active lessons', 'Active'), new Option('All statuses', 'All'), ...STATUSES.map((status) => new Option(status, status)));
-statusSelect.value = state.status;
-statusSelect.addEventListener('change', (event) => {
-  state.status = event.target.value;
-  remember('lessons-status', state.status);
-  render();
-});
 
 render();

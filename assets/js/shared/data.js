@@ -415,9 +415,10 @@ function changeBetween(previous, current) {
   if (!previous) return { text: 'No earlier figure', tone: 'move' };
   const difference = (current - previous) / previous;
   if (Math.abs(difference) < 0.005) return { text: 'No change', tone: 'move' };
+  const direction = difference > 0 ? 'up' : 'down';
   return {
     text: `${Math.abs(difference * 100).toFixed(1)}%`,
-    tone: 'move',
-    direction: difference > 0 ? 'up' : 'down'
+    tone: direction,
+    direction
   };
 }

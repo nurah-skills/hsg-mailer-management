@@ -26,7 +26,7 @@ The board is for the marketing managers, so there is one kind of account. On a p
 | `pages/jobs.html` | Every work item from the trackers: phase, stage, owner, audience, next check and the note, with filters and search. The count above the table says what is filtering the list, and **Show all** puts every row back. |
 | `pages/campaigns.html` | Every campaign with sends, deliveries, opens, clicks and hard bounces. Every campaign counted in the heading is on the page. Sort by clicking a column heading, or with the **Sort by** control on a phone. Anything above the review thresholds is marked “worth a look”. |
 | `pages/checks.html` | Rows whose record contradicts itself or is missing something, grouped by the kind of problem. Choose one to see those rows. |
-| `pages/lessons.html` | What to repeat and what to change, each with the evidence, what it does not prove, and what to do. Marked Observed, Being tested, Confirmed or Retired. |
+| `pages/lessons.html` | What to repeat and what to change, each with the evidence, what it does not prove, and what to do. One filter: all, working well, or working badly. Every lesson is on the page, its status on the card, retired ones last. |
 | `pages/sources.html` | What the board is connected to and what each connection may do, the workbooks it reads and when they were read, how to read the figures, and what is still not joined up. |
 | `index.html` | Sign in, or look around as a manager. |
 
@@ -39,7 +39,7 @@ The board is for the marketing managers, so there is one kind of account. On a p
 - **Registrations and cash are never joined to campaigns** on this board, so no conversion rate is shown.
 - **A tracker saying “sent” is a reported state,** not evidence that mail went out.
 - **A hard bounce rate above 3% or a click rate above 20%** is marked “worth a look”. Neither proves a fault.
-- **A change is a direction, not a verdict.** The arrow on a figure says which way it moved against the period before. Up is not automatically good: fewer unsubscribes is an improvement, more sends is neither.
+- **A change chip is green when the figure went up and red when it went down,** against the period before. It reports the direction, not a verdict: on unsubscribes and hard bounces, up is not the good news.
 - **“The current period” always means 14 to 16 September.** Any figure counted over a longer run says so on the figure itself.
 - **Reading only.** The board never creates, schedules or sends a mailer, and never writes back to a tracker.
 
