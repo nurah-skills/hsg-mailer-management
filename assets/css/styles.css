@@ -1017,4 +1017,5 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .status-tile small { font-size: 14px; line-height: 1.45; color: var(--muted); }
 
 #lesson-view .category-head { margin-bottom: 16px; }
-.lesson .panel-head h3 { margin: 0; font-family: var(--heading); font-size: 18px; font-weight: 600; }
+.lesson > h3 { margin: 0; font-family: var(--heading); font-size: 18px; font-weight: 600; text-wrap: balance; }
+.lesson > h3 + .panel-note { margin-top: 4px; }
