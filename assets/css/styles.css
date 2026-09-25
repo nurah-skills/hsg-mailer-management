@@ -1106,12 +1106,8 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .lesson p + .subheading { margin-top: 16px; }
 
 /* A figure gets an icon beside it, the way a dashboard reads at a glance */
-.tile-badge { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; min-height: 42px; margin-bottom: 8px; }
+.tile-badge { display: flex; align-items: flex-start; min-height: 42px; margin-bottom: 8px; }
 .tile-badge > span { font-size: 14px; font-weight: 700; line-height: 1.35; color: var(--muted); }
-.tile-icon { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: var(--radius-control); background: var(--accent-soft); color: var(--accent-ink); }
-.tile-icon.is-good { background: var(--green-soft); color: var(--green-ink); }
-.tile-icon.is-warn { background: var(--red-soft); color: var(--red-ink); }
-.tile-icon.is-info { background: var(--info-soft); color: var(--info-ink); }
 .tile b { font-size: 30px; }
 .tile-foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .tile-foot small { margin-top: 0; }
@@ -1264,6 +1260,47 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 /* One search for the whole board, in the page header */
 .board-search { position: relative; }
 .board-search .search { min-width: 240px; }
+.board-search[data-open="false"] .search,
+.board-search[data-open="false"] .search-results { display: none; }
+.board-search[data-open="true"] .search-open { display: none; }
+
+/* Shut, it is a button that says what it opens and which key opens it. */
+.search-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px 8px 14px;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-control);
+  background: var(--field);
+  color: var(--muted);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+.search-open:hover { border-color: var(--muted); color: var(--ink); }
+.search-open svg { flex: none; }
+.search-open kbd {
+  flex: none;
+  min-width: 20px;
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  /* On a phone the button is the icon alone. */
+  .search-open span, .search-open kbd { display: none; }
+  .search-open { padding: 8px; }
+}
 .search-results {
   position: absolute;
   z-index: 40;
@@ -1301,12 +1338,12 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 }
 
 /* A figure, the run behind it, and an explanation you can open */
-.tile-figure { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
+.tile-figure { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; min-height: 38px; }
 .tile-figure b { margin: 0; }
 .spark { display: flex; align-items: flex-end; gap: 3px; flex: none; width: 74px; height: 38px; }
 .spark span { flex: 1; min-width: 0; border-radius: 2px 2px 0 0; background: var(--accent-soft); }
 .spark span.is-marked { background: var(--accent); }
-.tile-badge > span:not(.tile-icon) { display: inline-flex; align-items: center; gap: 6px; }
+.tile-badge > span { display: inline-flex; align-items: center; gap: 6px; }
 .tile-about-open {
   display: inline-grid;
   place-items: center;
