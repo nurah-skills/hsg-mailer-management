@@ -1,71 +1,49 @@
 # Design
 
+> **This board follows the Service Board design system.** Its tokens, type, spacing,
+> radii and component rules come from there, so the boards in the family read as one
+> thing. Where this file and the system disagree, the system wins — except for the one
+> deviation recorded under Colour.
+
 How the mailer board is put together. Written from the code, not ahead of it: if the two disagree, the code is right and this file is out of date.
 
 The board is a **working tool, not a pitch**. Someone opens it to settle something, so scanning, consistency and plain language come before expression. Every figure on screen is a count the board can trace; nothing is inferred, and nothing is dressed up as more certain than it is.
 
 ## Colour
 
-Colours live as custom properties on `:root` in `assets/css/styles.css`, redefined once under `@media (prefers-color-scheme: dark)`. Nothing in the stylesheet uses a raw colour value — if a new colour is needed, it becomes a token first.
+The palette is the Service Board system's, light only. The boards are read at a desk in
+office light and on meeting-room projectors, so there is no dark theme.
 
-| Token | Light | Dark | Used for |
-| --- | --- | --- | --- |
-| `--page` | `#F1F6F3` | `#0A130F` | The ground behind everything |
-| `--card` | `#FFFFFF` | `#12201A` | Panels, tiles, the raised surfaces |
-| `--field` | `#E6EEE9` | `#1A2B24` | Inputs, chip backgrounds, chart tracks |
-| `--ink` | `#11211B` | `#E7F0EB` | Body text |
-| `--muted` | `#52665D` | `#96A9A0` | Second-line text, labels, captions |
-| `--line` | `#D6E4DC` | `#26382F` | Hairlines and dividers |
-| `--navy` / `--navy-deep` | `#14352C` / `#0C211A` | `#143027` / `#0C1F19` | The dark green cards, the sign-in panel, and the art on the check tiles |
-| `--accent` | `#17A57C` | `#3FBF95` | The green the board is known by |
-| `--accent-ink` | `#0A6B50` | `#7FDCBB` | Links, and text on green |
-| `--focus` | `#0F766E` | `#6EE7C4` | The focus ring |
+| Token | Value | Used for |
+| --- | --- | --- |
+| `--page` | `#F4F5F8` | The cool grey canvas behind every card |
+| `--card` | `#FFFFFF` | Cards, the sidebar, controls |
+| `--subtle` | `#FAFBFC` | Table headers, row hover, the user block |
+| `--ink` | `#0F172A` | Headings, figures and body text |
+| `--ink-2` | `#334155` | Secondary text: menu rows, table cells, neutral pills |
+| `--muted` | `#5B6878` | Notes, labels, chart axes |
+| `--line` | `#E7E9EE` | The hairline every surface is defined by |
+| `--accent` | `#2F6FEB` | Charts, focus rings. Never text |
+| `--accent-ink` | `#1D56C9` | Link and accent text |
+| `--navy` | `#0E1B3D` | Primary buttons, the current menu icon, the dark card art |
 
-**The three status colours** carry meaning and are used nowhere decorative:
+**The State Colour Rule.** Green means on track, amber means attention, red means late,
+and they mean nothing else. They appear as a soft pill, a thin meter or a short phrase —
+never as a card fill.
 
-| Meaning | Soft | Line | Ink |
-| --- | --- | --- | --- |
-| Stop (blocked, went down, working badly) | `--red-soft` | `--red-line` | `--red-ink` |
-| Hold (waiting) | `--yellow-soft` | `--yellow-line` | `--yellow-ink` |
-| Go (being tested, went up, working well) | `--green-soft` | `--green-line` | `--green-ink` |
-
-A group applies them by setting `data-flag="blocked|waiting|testing"`, which maps them onto `--flag-soft`, `--flag-line` and `--flag-ink` for everything inside.
-
-**The colleges** each keep the colour they use on their own material, so a college looks the same in every chart:
-
-| College | Token | Light | Dark |
-| --- | --- | --- | --- |
-| Skills Academy | `--college-sa` | `#0E8C86` | `#46B8B1` |
-| Matric College | `--college-mc` | `#B3332A` | `#E2786A` |
-| Bellview | `--college-bv` | `#29426B` | `#7E9DC9` |
-| More than one college | `--college-multi` | `#6D6350` | `#BCA98A` |
-| Not labelled yet | `--college-none` | `#77877F` | `#93A39B` |
-
-`COLLEGE_COLOURS` in `assets/js/shared/data.js` maps a college to its token, and a chart row or slice carries it as `colour`. Matric College's red is a college colour, not a verdict — every chart that uses these names them in its key, and status still lives in chips and tinted cards, never in a chart fill.
-
-**Charts** take `--ring-accent`, `--ring-good`, `--ring-warn`, `--chart-line`, `--chart-fill` and `--slice-1` … `--slice-5`. These are darkened versions of the palette so a thin stroke still reads against `--card`.
-
-**Contrast.** Every text colour measures at least 4.5:1 against the surface behind it, in both themes. Chips and tinted cards are measured the same way, against their own tint rather than the page.
+**One deviation from the system, deliberately.** The system sets `--muted` to `#64748B`,
+and its own note warns that this reaches only 4.4:1 on the page. These boards also use
+`--field` and the segmented track as surfaces, where it falls to 4.17:1 and 4.02:1 —
+below the system's own 4.5:1 requirement. One notch darker, `#5B6878`, clears 4.5:1 on
+all five grounds these boards actually use.
 
 ## Type
 
-Two faces, from Google Fonts:
+One face, **Geist**, at 400/500/600/700, carries everything. **Geist Mono** at 500 is for
+figures that should read like an instrument, and never for words. Both load from Google
+Fonts, the only external resource the content security policy allows.
 
-- **Archivo** (`--heading`) at 500/600/700 — headings, figures, tile counts, table figures. Chosen for a squarer skeleton that suits dense numbers.
-- **Nunito** (`--body`) at 400/600/700 — everything else.
-
-| Role | Size | Weight |
-| --- | --- | --- |
-| Page title `h1` | 30px (26px ≤900px) | 600 |
-| Panel heading `h2` | 16px, `.open-section` 18px | 600 |
-| Drill-down heading | 20–22px | 600 |
-| Card title `h3` | 17–18px | 600 |
-| Section label `.subheading` | 14px, body face | 700 |
-| Body | 15px | 400 |
-| Second line, captions | 13–14px | 400–700 |
-| Big figure `.tile b` | 30px | 600 |
-
-Rules that hold everywhere: running text stops at **68 characters**; every figure carries `font-variant-numeric: tabular-nums` so columns line up; a heading sits closer to what follows it than to what came before.
+Every figure, table and scorecard uses `font-variant-numeric: tabular-nums`.
 
 ## Space and shape
 
