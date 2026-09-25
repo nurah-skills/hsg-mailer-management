@@ -474,6 +474,11 @@ a.menu-item:hover { background: var(--field); color: var(--ink); }
   font-weight: 700;
 }
 
+/* Saved views: a picker and one button whose label says what it will do. */
+.views { display: contents; }
+.view-naming { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.view-naming .search { min-width: 180px; max-width: 220px; }
+
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 
 .select {
