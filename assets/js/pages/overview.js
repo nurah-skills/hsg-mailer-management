@@ -91,20 +91,13 @@ function showStartHere() {
     }
   ].filter((item) => item.count);
 
+  // The same items, said as one sentence with the figure in it.
   const holder = document.getElementById('start-here');
-  holder.replaceChildren();
-  if (!items.length) {
-    holder.append(create('p', 'start-empty', 'Nothing is waiting on a manager today.'));
-    return;
-  }
-
-  holder.append(create('b', 'start-lead', 'Where to start'));
-  items.forEach((item) => {
-    const link = create('a', `start-item ${item.tone}`);
-    link.href = item.href;
-    link.append(create('b', '', formatNumber(item.count)), create('span', '', item.count === 1 ? item.one : item.many));
-    holder.append(link);
-  });
+  holder.replaceChildren(buildBanner(items, {
+    action: 'Open the decisions',
+    calmTitle: 'Nothing is waiting on a manager.',
+    calmNote: 'Every decision on this board has been settled, and no check is overdue.'
+  }));
   if (recent.length) {
     holder.append(create('small', 'start-note', `${recent.length === 1 ? 'One was' : `${recent.length} were`} first written up today.`));
   }
