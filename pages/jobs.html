@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="../assets/css/styles.css?v=ad76d6ea">
+  <link rel="stylesheet" href="../assets/css/styles.css?v=adafcaf7">
   <script src="../assets/js/shared/session.js?v=6349e7f3"></script>
 </head>
 <body>
@@ -93,15 +93,18 @@
         <div class="controls">
           <label class="sr-only" for="college-filter">College</label>
           <select class="select" id="college-filter"></select>
-          <label class="sr-only" for="phase-filter">Phase</label>
-          <select class="select" id="phase-filter"></select>
-          <label class="sr-only" for="stage-filter">Stage</label>
-          <select class="select" id="stage-filter"></select>
-          <label class="sr-only" for="owner-filter">Owner</label>
-          <select class="select" id="owner-filter"></select>
           <label class="sr-only" for="job-search">Search jobs</label>
           <input class="search" id="job-search" type="search" placeholder="Search jobs" autocomplete="off">
-          <div class="views" id="saved-views"></div>
+          <button class="button button-secondary button-inline more-filters" id="more-filters" type="button" aria-expanded="false" aria-controls="more-filter-set">More filters</button>
+          <div class="more-filter-set" id="more-filter-set" hidden>
+            <label class="sr-only" for="phase-filter">Phase</label>
+            <select class="select" id="phase-filter"></select>
+            <label class="sr-only" for="stage-filter">Stage</label>
+            <select class="select" id="stage-filter"></select>
+            <label class="sr-only" for="owner-filter">Owner</label>
+            <select class="select" id="owner-filter"></select>
+            <div class="views" id="saved-views"></div>
+          </div>
           <button class="button button-secondary button-inline" id="jobs-clear" type="button" hidden>Show all 44</button>
         </div>
 
@@ -125,10 +128,10 @@
 
   <div class="toast" id="toast" role="status" hidden></div>
 
-  <script src="../assets/js/shared/data.js?v=b0fc9bdd"></script>
-  <script src="../assets/js/shared/app.js?v=925bd730"></script>
-  <script src="../assets/js/shared/lines.js?v=1865effe"></script>
-  <script src="../assets/js/shared/views.js?v=2fb3dd97"></script>
-  <script src="../assets/js/pages/jobs.js?v=5a8ace11"></script>
+  <script src="../assets/js/shared/data.js?v=8b06f1a3"></script>
+  <script src="../assets/js/shared/app.js?v=6a82a63d"></script>
+  <script src="../assets/js/shared/lines.js?v=0f9d11f8"></script>
+  <script src="../assets/js/shared/views.js?v=3244a64a"></script>
+  <script src="../assets/js/pages/jobs.js?v=9708271c"></script>
 </body>
 </html>

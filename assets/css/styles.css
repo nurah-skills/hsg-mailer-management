@@ -43,6 +43,7 @@
   --mono: "Geist Mono", ui-monospace, "Cascadia Mono", monospace; /* Figures that should read like an instrument. */
   --shadow-focus: 0 0 0 3px rgba(47, 111, 235, .25); /* Fields on focus, with an accent border. */
   --shell: 0 1px 2px rgba(15, 23, 42, .05);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* The one curve for anything that appears. */
   --ring-accent: #2F6FEB;
   --ring-good: #22A55A;
   --ring-warn: #F0A020;
@@ -587,24 +588,6 @@ a.menu-item:hover { background: var(--field); color: var(--ink); }
 .about[open] summary::after { transform: rotate(180deg); }
 .about-body { display: flex; flex-direction: column; gap: 10px; max-width: 75ch; padding-bottom: 20px; color: var(--muted); }
 
-/* At a glance on Home: one strip, split into three answers */
-.summary {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-radius: var(--radius);
-  background: var(--card);
-  box-shadow: var(--shell);
-}
-.summary-item { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; min-width: 0; }
-.summary-item + .summary-item { border-left: 1px solid var(--line); }
-.summary-label { font-size: 14px; font-weight: 700; color: var(--muted); }
-.summary-value { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; }
-.summary-value b { font-family: var(--heading); font-size: 30px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.summary-note { font-size: 15px; color: var(--muted); }
-a.summary-note { color: var(--accent-ink); }
-
-/* Staff incentives on Home */
-
 /* Team page */
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .tile { display: flex; flex-direction: column; gap: 0; padding: 18px; border-radius: var(--radius); background: var(--card); box-shadow: var(--shell); }
@@ -889,10 +872,6 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
   .sort-picker .select { width: 100%; }
   .segmented button,
 .password button { min-height: 44px; }
-  .summary { grid-template-columns: minmax(0, 1fr); }
-  .summary-item { padding: 14px 18px; }
-  .summary-item + .summary-item { border-left: 0; border-top: 1px solid var(--line); }
-  .summary-value b { font-size: 28px; }
   /* No heading row fits on a phone, so each figure is read out with its own heading */
   .results,
 .results tbody { display: block; }
@@ -1678,3 +1657,18 @@ h1 { letter-spacing: -.02em; font-weight: 650; }
 
   @page { margin: 14mm; }
 }
+
+/* More filters: the filters a page uses less often, and its saved views, opened from one
+   button. It is opened a few times a day, so the controls fade in (150ms, the board's
+   ease-out) rather than popping, and do not slide: the row reflows around them either way. */
+.more-filter-set:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; transition: opacity 150ms var(--ease-out); }
+@starting-style { .more-filter-set:not([hidden]) { opacity: 0; } }
+.more-filters[aria-expanded="true"] { background: var(--subtle); border-color: var(--field-line); }
+@media (max-width: 560px) {
+  .controls .more-filters { grid-column: 1 / -1; }
+  .more-filter-set:not([hidden]) { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .more-filter-set .select { width: 100%; min-width: 0; }
+  .more-filter-set .button,
+  .more-filter-set .view-naming { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) { .more-filter-set:not([hidden]) { transition: none; } }

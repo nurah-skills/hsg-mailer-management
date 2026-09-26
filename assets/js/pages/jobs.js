@@ -57,7 +57,7 @@ function clearFilters() {
   render();
   const tile = document.querySelector('.status-tile');
   if (tile) tile.focus();
-  else document.getElementById('phase-filter').focus();
+  else document.getElementById('college-filter').focus();
 }
 
 const picker = rowPicker(() => showPicked());
@@ -141,15 +141,15 @@ function render() {
   // Nothing chosen yet: the stages are the way in, so nobody scrolls 44 jobs to find one
   document.getElementById('stage-grid').parentElement.hidden = Boolean(filters.length);
   document.getElementById('jobs-panel').hidden = !filters.length;
+  showMore();
   if (!filters.length) {
     showStageTiles();
     document.getElementById('jobs-clear').hidden = true;
     return;
   }
   const audience = formatNumber(rows.reduce((sum, job) => sum + job.audience, 0));
-  document.getElementById('jobs-note').textContent = filters.length
-    ? `${formatNumber(rows.length)} of ${formatNumber(JOBS.length)} jobs, filtered by ${filters.join(' and ')} · ${audience} on the lists`
-    : `All ${formatNumber(JOBS.length)} jobs · ${audience} on the lists`;
+  document.getElementById('jobs-note').textContent =
+    `Showing ${formatNumber(rows.length)} of ${formatNumber(JOBS.length)} jobs · ${filters.join(' and ')} · ${audience} on the lists`;
   document.getElementById('jobs-clear').hidden = !filters.length;
 
   const table = document.getElementById('jobs-table');
@@ -220,6 +220,10 @@ document.getElementById('jobs-panel').querySelector('.panel-head').append(jobsEx
 const jobsClear = document.getElementById('jobs-clear');
 jobsClear.textContent = 'Back to the stages';
 jobsClear.addEventListener('click', clearFilters);
+
+// Phase, stage, owner and the saved views sit behind "More filters". Opening a stage
+// tile sets the stage, so the closed button then counts it.
+const showMore = moreFilters(() => [state.phase, state.stage, state.owner].filter((value) => value !== 'All').length);
 
 const jobSearch = document.getElementById('job-search');
 jobSearch.value = state.search;

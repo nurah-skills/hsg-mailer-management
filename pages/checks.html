@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="../assets/css/styles.css?v=ad76d6ea">
+  <link rel="stylesheet" href="../assets/css/styles.css?v=adafcaf7">
   <script src="../assets/js/shared/session.js?v=6349e7f3"></script>
 </head>
 <body>
@@ -92,21 +92,24 @@
 
         <p class="notice">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
-          <span>These checks compare what the tracker rows record. They do not check the audience, the copy, the routing or the built email.</span>
+          <span>These checks compare what the tracker rows record. They do not check the audience, the copy, the routing or the built email. One row can raise more than one check.</span>
         </p>
 
         <div class="controls">
           <label class="sr-only" for="check-college">College</label>
           <select class="select" id="check-college"></select>
-          <label class="sr-only" for="check-phase">Phase</label>
-          <select class="select" id="check-phase"></select>
           <label class="sr-only" for="check-search">Search the checks</label>
           <input class="search" id="check-search" type="search" placeholder="Search job, code or owner" autocomplete="off">
-          <div class="views" id="saved-views"></div>
+          <button class="button button-secondary button-inline more-filters" id="more-filters" type="button" aria-expanded="false" aria-controls="more-filter-set">More filters</button>
+          <div class="more-filter-set" id="more-filter-set" hidden>
+            <label class="sr-only" for="check-phase">Phase</label>
+            <select class="select" id="check-phase"></select>
+            <div class="views" id="saved-views"></div>
+          </div>
           <button class="button button-secondary button-inline" id="checks-clear" type="button" hidden>Show every check</button>
         </div>
 
-        <p class="panel-note" id="checks-note"></p>
+        <p class="panel-note" id="checks-note" hidden></p>
 
         <section id="check-list" aria-labelledby="check-list-title">
           <h2 class="sr-only" id="check-list-title">Choose a kind of problem</h2>
@@ -134,10 +137,10 @@
 
   <div class="toast" id="toast" role="status" hidden></div>
 
-  <script src="../assets/js/shared/data.js?v=b0fc9bdd"></script>
-  <script src="../assets/js/shared/app.js?v=925bd730"></script>
-  <script src="../assets/js/shared/lines.js?v=1865effe"></script>
-  <script src="../assets/js/shared/views.js?v=2fb3dd97"></script>
-  <script src="../assets/js/pages/checks.js?v=e872e3da"></script>
+  <script src="../assets/js/shared/data.js?v=8b06f1a3"></script>
+  <script src="../assets/js/shared/app.js?v=6a82a63d"></script>
+  <script src="../assets/js/shared/lines.js?v=0f9d11f8"></script>
+  <script src="../assets/js/shared/views.js?v=3244a64a"></script>
+  <script src="../assets/js/pages/checks.js?v=6a81f46f"></script>
 </body>
 </html>

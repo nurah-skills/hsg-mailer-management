@@ -49,8 +49,6 @@ function showGroup() {
 
 function render() {
   document.getElementById('decide-count').textContent = `${list.length} ${list.length === 1 ? 'item' : 'items'} in three groups`;
-  document.getElementById('summary-decisions').textContent = String(list.length);
-  document.getElementById('summary-decisions-note').textContent = list.length === 1 ? 'item' : 'items';
   document.getElementById('decide-grid').hidden = Boolean(state.group);
   document.getElementById('decide-view').hidden = !state.group;
   if (state.group) showGroup();
@@ -95,11 +93,6 @@ function showStages() {
 function showMail() {
   const current = totalsFor(campaignsIn(PERIOD.current));
   const previous = totalsFor(campaignsIn(PERIOD.previous));
-
-  document.getElementById('summary-sent').textContent = formatNumber(current.sent);
-  document.getElementById('summary-sent-change').replaceChildren(statusChip(changeBetween(previous.sent, current.sent)));
-  document.getElementById('summary-unmatched').textContent =
-    String(CHECKS.filter(({ type }) => type[0] === 'sent-early').length);
 
   const rows = [
     ['Campaigns sent', `${formatNumber(current.campaigns)} · ${formatNumber(previous.campaigns)} before`],

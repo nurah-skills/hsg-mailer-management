@@ -42,13 +42,17 @@ function activeFilters() {
   ].filter(Boolean);
 }
 
+// Said only when something is filtered: with nothing set, the figures already say what they count.
 function showNote() {
   const filters = activeFilters();
   const workOnly = state.phase !== 'All' || state.search.trim();
-  document.getElementById('overview-note').textContent = filters.length
-    ? `${formatNumber(jobsShown().length)} of ${formatNumber(JOBS.length)} tracker rows, filtered by ${filters.join(' and ')}${workOnly ? ' · phase and search are tracker fields, so the mail figures below follow the college only' : ''}`
-    : `All ${formatNumber(JOBS.length)} tracker rows and every campaign the board holds`;
+  const note = document.getElementById('overview-note');
+  note.hidden = !filters.length;
+  note.textContent = filters.length
+    ? `Showing ${formatNumber(jobsShown().length)} of ${formatNumber(JOBS.length)} tracker rows · ${filters.join(' and ')}${workOnly ? ' · phase and search are tracker fields, so the mail figures follow the college only' : ''}`
+    : '';
   document.getElementById('overview-clear').hidden = !filters.length;
+  showMore();
 }
 
 function clearFilters() {
@@ -62,7 +66,8 @@ function clearFilters() {
   document.getElementById('overview-college').focus();
 }
 
-// What is waiting for a manager, whatever the filters below are set to
+// What is waiting for a manager, whatever the filters below are set to. Rows to settle
+// are left out here: the tile below counts them and "Resolve these first" opens them.
 function showStartHere() {
   const waiting = decisionsWaiting();
   const open = PROBLEMS.filter((problem) => problem.status !== 'Resolved');
@@ -78,11 +83,6 @@ function showStartHere() {
       count: waiting.filter((item) => item.group === 'waiting').length,
       one: 'decision waiting on someone', many: 'decisions waiting on someone',
       href: 'decisions.html#waiting', tone: 'is-hold'
-    },
-    {
-      count: [...new Set(CHECKS.map(({ job }) => job.code))].length,
-      one: 'row to settle', many: 'rows to settle',
-      href: 'checks.html', tone: 'is-hold'
     },
     {
       count: open.length,
@@ -111,7 +111,6 @@ function showTiles() {
   const jobs = jobsShown();
   const checks = checksShown();
   const current = mailNow();
-  const previous = mailBefore();
   const needsCheck = [...new Set(checks.map(({ job }) => job.code))].length;
   const where = state.college === 'All' ? '' : ` · ${COLLEGE_NAMES[state.college] || state.college}`;
 
@@ -138,8 +137,7 @@ function showTiles() {
       label: 'Emails sent', icon: ICONS.mail, tone: '',
       value: formatNumber(current.sent),
       watch: { value: current.sent, unit: 'emails', better: null },
-      note: `${formatNumber(current.campaigns)} campaigns · ${period().current.label}${where}`,
-      change: changeBetween(previous.sent, current.sent),
+      note: `sends, not people · ${period().current.label}${where}`,
       spark: dailyTotals('sent', 10, state.through, mailFilters()),
       sparkLabel: 'Emails sent on each of the last ten days',
       about: 'What the mail tool reports as sent over the three days in the period, not what the trackers plan to send. The college filter narrows this; phase and the search do not, because the mail tool does not carry them.'
@@ -148,8 +146,7 @@ function showTiles() {
       label: 'People who clicked', icon: ICONS.click, tone: 'is-good',
       value: formatNumber(current.clickers),
       watch: { value: current.clickers, unit: 'people', better: 'above' },
-      note: `${formatPercent(current.clickRate)} of deliveries${where}`,
-      change: changeBetween(previous.clickers, current.clickers),
+      note: `people, not clicks · ${period().current.label}${where}`,
       spark: dailyTotals('clickers', 10, state.through, mailFilters()),
       sparkLabel: 'People who clicked on each of the last ten days',
       about: 'People, not clicks: one person who clicks four links counts once. Newer mail has had less time to collect clicks, so the newest days sit low.'
@@ -176,7 +173,7 @@ function showRates() {
   const current = mailNow();
   const rates = [
     [current.delivered ? current.openers / current.delivered : 0, 'Opened', `${formatNumber(current.openers)} of ${formatNumber(current.delivered)} deliveries`, 'accent'],
-    [current.clickRate, 'Clicked', `${formatNumber(current.clickers)} people`, 'good'],
+    [current.clickRate, 'Clicked', 'People who clicked, of those deliveries', 'good'],
     [current.sent ? current.hardBounces / current.sent : 0, 'Hard bounces', `${formatNumber(current.hardBounces)} addresses that do not exist`, 'warn']
   ];
   const holder = document.getElementById('rate-rings');
@@ -220,7 +217,7 @@ function showSettle() {
     link.href = `checks.html#${type[0]}`;
     const heading = create('h3');
     heading.append(link);
-    top.append(heading, statusChip({ tone: 'changed', text: `${group.length} rows` }));
+    top.append(heading, statusChip({ tone: 'changed', text: `${group.length} ${group.length === 1 ? 'row' : 'rows'}` }));
     item.append(top, create('p', '', type[2]));
     holder.append(item);
   });
@@ -325,6 +322,9 @@ overviewSearch.addEventListener('input', (event) => {
 });
 
 document.getElementById('overview-clear').addEventListener('click', clearFilters);
+
+// Phase and the saved views sit behind "More filters"
+const showMore = moreFilters(() => (state.phase !== 'All' ? 1 : 0));
 
 render();
 showOutcomes();

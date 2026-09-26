@@ -315,10 +315,20 @@ function exportButton(label, build) {
   return button;
 }
 
+// A movement said in words, for the one muted line under a figure. The direction is a
+// fact, not a verdict, so it carries no colour: an unsubscribe count going up is not good
+// news, and a green arrow would say it was.
+function changeWords(previous, current, before) {
+  const change = changeBetween(previous, current);
+  if (!change.direction) return previous ? `${change.text} on ${before} before` : change.text;
+  return `${change.direction === 'up' ? 'Up' : 'Down'} ${change.text} on ${before} before`;
+}
+
 let tileCount = 0;
+// A figure card: its name, the figure, and one muted line saying its base.
 // `watch` makes a figure watchable: { value, unit, better }. The value is the raw
 // number behind the formatted one, because "4h" cannot be compared with anything.
-function statTile({ label, value, note, change, spark, sparkLabel, sparkMark = 'newest', about, watch }) {
+function statTile({ label, value, note, spark, sparkLabel, sparkMark = 'newest', about, watch }) {
   const tile = create('div', 'tile');
   const badge = create('div', 'tile-badge');
   const name = create('span', '', label);
@@ -352,10 +362,9 @@ function statTile({ label, value, note, change, spark, sparkLabel, sparkMark = '
   if (spark) figure.append(sparkline(spark, sparkLabel || label, sparkMark));
 
   const foot = create('div', 'tile-foot');
-  if (change) foot.append(statusChip(change));
 
   // The reader's own line, if they drew one and the figure has crossed it. It sits
-  // beside the movement chip and says whose line it is, because a figure the board
+  // above the figure's own line and says whose line it is, because a figure the board
   // flagged and a figure you asked it to watch are different claims.
   if (watch && typeof Lines !== 'undefined') {
     const line = Lines.for(label);
@@ -377,6 +386,34 @@ function statTile({ label, value, note, change, spark, sparkLabel, sparkMark = '
     tile.append(explain);
   }
   return tile;
+}
+
+// The filters a page uses less often, and its saved views, sit behind one button. A filter
+// that is set is never hidden: the button opens by itself on arrival when one of them is
+// on (a shared link, a saved view), and says how many are on while it is closed. After
+// that it stays however it was left. `countOn` says how many of its filters are set.
+function moreFilters(countOn) {
+  const button = document.getElementById('more-filters');
+  const set = document.getElementById('more-filter-set');
+  if (!button || !set) return () => {};
+  let open = null;
+  const show = () => {
+    const on = countOn();
+    if (open === null) open = on > 0;
+    set.hidden = !open;
+    button.setAttribute('aria-expanded', String(open));
+    button.textContent = open ? 'Fewer filters' : on ? `More filters · ${on}` : 'More filters';
+  };
+  button.addEventListener('click', () => {
+    open = !open;
+    show();
+    if (open) {
+      const first = [...set.querySelectorAll('select, input, button')].find((field) => !field.disabled && field.offsetParent);
+      if (first) first.focus();
+    }
+  });
+  show();
+  return show;
 }
 
 function statusChip(pace) {

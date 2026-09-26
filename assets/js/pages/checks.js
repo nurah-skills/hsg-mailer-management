@@ -36,10 +36,15 @@ function activeFilters() {
 function showNote() {
   const rows = matching().length;
   const filters = activeFilters();
-  document.getElementById('checks-note').textContent = filters.length
-    ? `${formatNumber(rows)} of ${formatNumber(CHECKS.length)} checks, filtered by ${filters.join(' and ')}`
-    : `All ${formatNumber(CHECKS.length)} checks · one row can raise more than one`;
+  // Said only when something is filtered. That one row can raise more than one check is
+  // said once, in the notice at the top.
+  const note = document.getElementById('checks-note');
+  note.hidden = !filters.length;
+  note.textContent = filters.length
+    ? `Showing ${formatNumber(rows)} of ${formatNumber(CHECKS.length)} checks · ${filters.join(' and ')}`
+    : '';
   document.getElementById('checks-clear').hidden = !filters.length;
+  showMore();
 }
 
 function clearFilters() {
@@ -167,6 +172,9 @@ checkSearch.addEventListener('input', (event) => {
 });
 
 document.getElementById('checks-clear').addEventListener('click', clearFilters);
+
+// Phase and the saved views sit behind "More filters"
+const showMore = moreFilters(() => (state.phase !== 'All' ? 1 : 0));
 
 Trail.watch(() => readUrl(true));
 readUrl(false);

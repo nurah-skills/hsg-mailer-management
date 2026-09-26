@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap">
-  <link rel="stylesheet" href="../assets/css/styles.css?v=ad76d6ea">
+  <link rel="stylesheet" href="../assets/css/styles.css?v=adafcaf7">
   <script src="../assets/js/shared/session.js?v=6349e7f3"></script>
 </head>
 <body>
@@ -97,14 +97,19 @@
           <div class="filter-set" id="week-filters">
             <label class="sr-only" for="college-filter">College</label>
             <select class="select" id="college-filter"></select>
-            <label class="sr-only" for="purpose-filter">Email purpose</label>
-            <select class="select" id="purpose-filter"></select>
-            <label class="sr-only" for="family-filter">Campaign family</label>
-            <select class="select" id="family-filter"></select>
           </div>
-          <p class="panel-note" id="filters-off" hidden>The filters above apply to the comparison only.</p>
-        
-          <div class="views" id="saved-views"></div></div>
+          <button class="button button-secondary button-inline more-filters" id="more-filters" type="button" aria-expanded="false" aria-controls="more-filter-set">More filters</button>
+          <div class="more-filter-set" id="more-filter-set" hidden>
+            <div class="filter-set" id="week-more-filters">
+              <label class="sr-only" for="purpose-filter">Email purpose</label>
+              <select class="select" id="purpose-filter"></select>
+              <label class="sr-only" for="family-filter">Campaign family</label>
+              <select class="select" id="family-filter"></select>
+            </div>
+            <div class="views" id="saved-views"></div>
+          </div>
+          <p class="panel-note" id="filters-off" hidden>College, purpose and family apply to the comparison only.</p>
+        </div>
 
         <section id="view-comparison">
           <section class="tiles tiles-four" id="week-tiles" aria-label="Totals"></section>
@@ -182,11 +187,11 @@
 
   <div class="toast" id="toast" role="status" hidden></div>
 
-  <script src="../assets/js/shared/data.js?v=b0fc9bdd"></script>
-  <script src="../assets/js/shared/app.js?v=925bd730"></script>
-  <script src="../assets/js/shared/lines.js?v=1865effe"></script>
-  <script src="../assets/js/shared/views.js?v=2fb3dd97"></script>
+  <script src="../assets/js/shared/data.js?v=8b06f1a3"></script>
+  <script src="../assets/js/shared/app.js?v=6a82a63d"></script>
+  <script src="../assets/js/shared/lines.js?v=0f9d11f8"></script>
+  <script src="../assets/js/shared/views.js?v=3244a64a"></script>
   <script src="../assets/js/shared/charts.js?v=c7a8f4a5"></script>
-  <script src="../assets/js/pages/week.js?v=6b7425f1"></script>
+  <script src="../assets/js/pages/week.js?v=67477e11"></script>
 </body>
 </html>

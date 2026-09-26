@@ -170,7 +170,7 @@ function buildSavedViews() {
     }
     draw();
     showToast(replaced
-      ? `"${given}" now points at this selection. It is kept in this browser only — to send this view to somebody, send them the page link.`
+      ? `"${given}" now points at this selection. It is kept in this browser only. To send this view to somebody, send them the page link.`
       : `Saved as "${given}", in this browser only. To send this view to somebody, send them the page link: it already carries the selection.`);
     action.focus();
   }

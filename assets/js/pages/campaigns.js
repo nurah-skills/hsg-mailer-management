@@ -49,8 +49,11 @@ function shown() {
 
 function showTiles(rows) {
   const totals = totalsFor(rows);
+  // The dates come from the rows themselves, so the line can never name a day the list does not hold.
+  const dates = rows.map((campaign) => campaign.date).sort();
+  const span = dates.length ? ` · ${spanLabel(dates[0], dates[dates.length - 1])}` : '';
   const tiles = [
-    ['Sent', formatNumber(totals.sent), `${formatNumber(totals.campaigns)} campaigns in this selection`],
+    ['Sent', formatNumber(totals.sent), `${formatNumber(totals.campaigns)} campaigns${span}`],
     ['Delivered', formatNumber(totals.delivered), 'Sends minus hard and soft bounces'],
     ['Click rate', formatPercent(totals.clickRate), 'People who clicked, of deliveries'],
     ['Hard bounce rate', formatPercent(totals.bounceRate), `${formatNumber(totals.hardBounces)} addresses that do not exist`]
@@ -170,10 +173,12 @@ function render() {
   const rows = shown();
   showTiles(rows);
   const filters = activeFilters();
+  // Said only when something is filtered; the Sent figure already says how many and when.
   document.getElementById('campaigns-note').textContent = filters.length
-    ? `${formatNumber(rows.length)} of ${formatNumber(CAMPAIGNS.length)} campaigns, filtered by ${filters.join(' and ')}`
-    : `All ${formatNumber(CAMPAIGNS.length)} campaigns, sent between 7 and 16 September`;
+    ? `Showing ${formatNumber(rows.length)} of ${formatNumber(CAMPAIGNS.length)} campaigns · ${filters.join(' and ')}`
+    : '';
   document.getElementById('campaigns-clear').hidden = !filters.length;
+  showMore();
 
   document.getElementById('sort-select').value = state.sortKey;
 
@@ -232,6 +237,9 @@ campaignsClear.textContent = `Show all ${formatNumber(CAMPAIGNS.length)}`;
 campaignsClear.addEventListener('click', clearFilters);
 
 fillSortPicker();
+
+// Purpose, family and the saved views sit behind "More filters"
+const showMore = moreFilters(() => [state.purpose, state.family].filter((value) => value !== 'All').length);
 
 fillSelect('campaign-college', 'All colleges', COLLEGES, state.college, (value) => {
   state.college = value;

@@ -11,8 +11,7 @@ const SNAPSHOT = {
 
 const PERIOD = {
   current: { from: '2026-09-14', to: '2026-09-16', label: '14 to 16 September' },
-  previous: { from: '2026-09-07', to: '2026-09-09', label: '7 to 9 September' },
-  note: 'Same weekdays, Monday to Wednesday'
+  previous: { from: '2026-09-07', to: '2026-09-09', label: '7 to 9 September' }
 };
 
 const COLLEGES = ['SA', 'MC', 'BV', 'Multiple', 'Unclassified'];
@@ -130,7 +129,6 @@ const inPeriod = (date, period) => date >= period.from && date <= period.to;
 // same three weekdays a week earlier. Only days the board has actually read can be chosen.
 const COMPLETED_DAYS = SEND_DATES.filter((date) => date >= '2026-09-11');
 
-const dayName = (date) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date(date + 'T00:00:00Z').getUTCDay()];
 const shiftDays = (date, days) => new Date(Date.parse(date + 'T00:00:00Z') + days * 86400000).toISOString().slice(0, 10);
 const readable = (date) => `${Number(date.slice(8))} ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][Number(date.slice(5, 7)) - 1]}`;
 
@@ -147,8 +145,7 @@ function periodThrough(endDate) {
   const previousFrom = shiftDays(previousEnd, -2);
   return {
     current: { from, to: endDate, label: spanLabel(from, endDate) },
-    previous: { from: previousFrom, to: previousEnd, label: spanLabel(previousFrom, previousEnd) },
-    note: `Same weekdays, ${dayName(from)} to ${dayName(endDate)}`
+    previous: { from: previousFrom, to: previousEnd, label: spanLabel(previousFrom, previousEnd) }
   };
 }
 

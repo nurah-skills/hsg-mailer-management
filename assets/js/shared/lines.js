@@ -103,7 +103,7 @@ function buildLineControl(label, watch, onChange) {
     said.append(
       document.createTextNode('Watching for '),
       create('b', '', lineWords(line, watch.unit)),
-      document.createTextNode('. It shows when you open the board — nothing is sent.')
+      document.createTextNode('. It shows when you open the board. Nothing is sent.')
     );
 
     const change = create('button', 'text-link');
