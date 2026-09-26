@@ -103,6 +103,10 @@ function showStartHere() {
   }
 }
 
+function redrawTiles() {
+  showTiles();
+}
+
 function showTiles() {
   const jobs = jobsShown();
   const checks = checksShown();
@@ -115,6 +119,7 @@ function showTiles() {
     {
       label: 'Tracker rows', icon: ICONS.rows, tone: 'is-info',
       value: formatNumber(jobs.length),
+      watch: { value: jobs.length, unit: 'rows', better: null },
       note: `${formatNumber(jobs.filter((job) => job.stage === 'Ready for AC build').length)} ready for the build`,
       spark: STAGES.map((stage) => jobs.filter((job) => job.stage === stage).length),
       sparkLabel: 'Rows in each stage, in stage order', sparkMark: 'biggest',
@@ -123,6 +128,7 @@ function showTiles() {
     {
       label: 'Rows needing a check', icon: ICONS.alert, tone: 'is-warn',
       value: formatNumber(needsCheck),
+      watch: { value: needsCheck, unit: 'rows', better: 'below' },
       note: `${formatNumber(jobs.filter((job) => job.stage === 'Paused / blocked').length)} paused or blocked`,
       spark: CHECK_TYPES.map((type) => checks.filter((check) => check.type[0] === type[0]).length),
       sparkLabel: 'Checks raised of each kind', sparkMark: 'biggest',
@@ -131,6 +137,7 @@ function showTiles() {
     {
       label: 'Emails sent', icon: ICONS.mail, tone: '',
       value: formatNumber(current.sent),
+      watch: { value: current.sent, unit: 'emails', better: null },
       note: `${formatNumber(current.campaigns)} campaigns · ${period().current.label}${where}`,
       change: changeBetween(previous.sent, current.sent),
       spark: dailyTotals('sent', 10, state.through, mailFilters()),
@@ -140,6 +147,7 @@ function showTiles() {
     {
       label: 'People who clicked', icon: ICONS.click, tone: 'is-good',
       value: formatNumber(current.clickers),
+      watch: { value: current.clickers, unit: 'people', better: 'above' },
       note: `${formatPercent(current.clickRate)} of deliveries${where}`,
       change: changeBetween(previous.clickers, current.clickers),
       spark: dailyTotals('clickers', 10, state.through, mailFilters()),

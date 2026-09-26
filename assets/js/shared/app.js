@@ -316,7 +316,9 @@ function exportButton(label, build) {
 }
 
 let tileCount = 0;
-function statTile({ label, value, note, change, spark, sparkLabel, sparkMark = 'newest', about }) {
+// `watch` makes a figure watchable: { value, unit, better }. The value is the raw
+// number behind the formatted one, because "4h" cannot be compared with anything.
+function statTile({ label, value, note, change, spark, sparkLabel, sparkMark = 'newest', about, watch }) {
   const tile = create('div', 'tile');
   const badge = create('div', 'tile-badge');
   const name = create('span', '', label);
@@ -331,6 +333,7 @@ function statTile({ label, value, note, change, spark, sparkLabel, sparkMark = '
     ask.setAttribute('aria-expanded', 'false');
     ask.setAttribute('aria-controls', id);
     ask.setAttribute('aria-label', `What "${label}" counts`);
+    ask.dataset.focus = `about:${label}`;
     ask.append(icon(ICONS.about, 15));
     name.append(ask);
 
@@ -350,10 +353,29 @@ function statTile({ label, value, note, change, spark, sparkLabel, sparkMark = '
 
   const foot = create('div', 'tile-foot');
   if (change) foot.append(statusChip(change));
+
+  // The reader's own line, if they drew one and the figure has crossed it. It sits
+  // beside the movement chip and says whose line it is, because a figure the board
+  // flagged and a figure you asked it to watch are different claims.
+  if (watch && typeof Lines !== 'undefined') {
+    const line = Lines.for(label);
+    if (Lines.crossed(line, watch.value)) {
+      foot.append(statusChip({ tone: 'changed', text: `past your line, ${lineWords(line, watch.unit)}` }));
+    }
+  }
+
   if (note) foot.append(create('small', '', note));
 
   tile.append(badge, figure, foot);
-  if (explain) tile.append(explain);
+
+  if (explain) {
+    if (watch && typeof buildLineControl !== 'undefined') {
+      explain.append(buildLineControl(label, watch, () => {
+        if (typeof redrawTiles === 'function') redrawTiles();
+      }));
+    }
+    tile.append(explain);
+  }
   return tile;
 }
 

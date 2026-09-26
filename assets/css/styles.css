@@ -479,6 +479,15 @@ a.menu-item:hover { background: var(--field); color: var(--ink); }
 .view-naming { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .view-naming .search { min-width: 180px; max-width: 220px; }
 
+/* Your own line on a figure, set where the figure explains itself. */
+.line-set { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.line-said { margin: 0 0 6px; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.line-tools { display: flex; flex-wrap: wrap; gap: 14px; }
+.line-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.line-form .select { min-height: 38px; width: auto; }
+.line-at { min-height: 38px; width: 110px; min-width: 0; }
+.line-unit { display: block; margin-top: 8px; font-size: 12px; color: var(--muted); }
+
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 
 .select {
@@ -600,7 +609,7 @@ a.summary-note { color: var(--accent-ink); }
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .tile { display: flex; flex-direction: column; gap: 0; padding: 18px; border-radius: var(--radius); background: var(--card); box-shadow: var(--shell); }
 .tile > span { display: block; font-size: 14px; font-weight: 700; color: var(--muted); }
-.tile b { display: block; margin-top: 2px; font-family: var(--heading); font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.tile-figure b { display: block; margin-top: 2px; font-family: var(--heading); font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .tile small { display: block; margin-top: 2px; font-size: 14px; color: var(--muted); }
 
 .search {
@@ -917,7 +926,7 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
   .segmented-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .tiles { gap: 10px; }
   .tile { padding: 14px; }
-  .tile b { font-size: 22px; }
+  .tile-figure b { font-size: 22px; }
   .card-art { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 12px; }
   .card-art b { margin-top: 0; }
 }
@@ -1108,7 +1117,7 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 /* A figure gets an icon beside it, the way a dashboard reads at a glance */
 .tile-badge { display: flex; align-items: flex-start; min-height: 42px; margin-bottom: 8px; }
 .tile-badge > span { font-size: 14px; font-weight: 700; line-height: 1.35; color: var(--muted); }
-.tile b { font-size: 30px; }
+.tile-figure b { font-size: 30px; }
 .tile-foot { align-items: center; flex-wrap: wrap; }
 .tile-foot small { margin-top: 0; }
 
