@@ -29,16 +29,12 @@ function showTiles() {
 
   const tiles = [
     { label: 'Emails sent', value: formatNumber(current.sent), note: changeWords(previous.sent, current.sent, formatNumber(previous.sent)), icon: ICONS.mail,
-      spark: dailyTotals('sent', 10, state.through, filters()), sparkLabel: 'Emails sent on each of the ten days up to the day you are comparing through',
-      about: 'What the mail tool reports as sent over the three weekdays in this period, after the filters above. The small chart runs over the ten days up to the day you compare through.' },
+      about: 'What the mail tool reports as sent over the three weekdays in this period, after the filters above. Day by day, below, runs over the ten days up to the day you compare through.' },
     { label: 'Campaigns', value: formatNumber(current.campaigns), note: `${changeWords(previous.campaigns, current.campaigns, formatNumber(previous.campaigns))} · sends, not people`, icon: ICONS.rows, tone: 'is-info',
-      spark: dailyTotals('campaigns', 10, state.through, filters()), sparkLabel: 'Campaigns sent on each of the ten days up to the day you are comparing through',
       about: 'Sends, not people. One mail sent to three colleges counts three times, because the mail tool records it three times.' },
     { label: 'Click rate', value: formatPercent(current.clickRate), note: `${formatPercent(previous.clickRate)} before · newer mail has had less time to collect clicks`, icon: ICONS.click, tone: 'is-good',
-      spark: dailyTotals('clickers', 10, state.through, filters()), sparkLabel: 'People who clicked on each of the ten days up to the day you are comparing through',
       about: 'People who clicked, as a share of mail that was delivered. Newer mail has had less time to collect clicks, so a period that ends today reads lower than one that ended a week ago.' },
     { label: 'Unsubscribes', value: formatNumber(current.unsubscribes), note: `${changeWords(previous.unsubscribes, current.unsubscribes, formatNumber(previous.unsubscribes))} · ${formatPercent(current.unsubscribeRate)} of deliveries`, icon: ICONS.alert, tone: 'is-warn',
-      spark: dailyTotals('unsubscribes', 10, state.through, filters()), sparkLabel: 'Unsubscribes on each of the ten days up to the day you are comparing through',
       about: 'People who asked to stop hearing from us. The line under the figure says which way it moved, not whether that is good: up here is not good news.' }
   ];
 
@@ -136,6 +132,30 @@ function showFamilies() {
   );
 }
 
+// The ten days up to the day you compare through, one row for each day the board read.
+// Days with no mail read are left out rather than shown as nothing sent.
+function showDays() {
+  const first = shiftDays(state.through, -9);
+  const runs = ['sent', 'campaigns', 'clickers', 'unsubscribes'].map((key) => dailyTotals(key, 10, state.through, filters()));
+  const inPeriod = (date) => date >= period().current.from && date <= period().current.to;
+
+  const table = document.getElementById('day-table');
+  table.replaceChildren(headRow(['Day', 'Emails sent', 'Campaigns', 'People who clicked', 'Unsubscribes']));
+  const body = create('tbody');
+  for (let step = 0; step < 10; step += 1) {
+    const date = shiftDays(first, step);
+    if (!SEND_DATES.includes(date)) continue;
+    const row = tableRow([
+      `${readableShort(date)}${inPeriod(date) ? ' · this period' : ''}`,
+      ...runs.map((run) => formatNumber(run[step]))
+    ]);
+    [...row.children].slice(1).forEach((cell) => cell.classList.add('cell-best'));
+    body.append(row);
+  }
+  table.append(body);
+  labelCells(table);
+}
+
 // A reading counts towards the window it sits closest to, so an empty window is visible before it is chosen
 const nearestWindow = (age) => CHECKPOINT_WINDOWS.reduce((best, hours) => (Math.abs(hours - age) < Math.abs(best - age) ? hours : best));
 const readingsAt = (hours) => CHECKPOINTS.filter((point) => nearestWindow(point.age) === hours);
@@ -224,6 +244,7 @@ function render() {
     showColleges();
     showOutcomes();
     showFamilies();
+    showDays();
   } else if (state.view === 'sameage') {
     showCheckpoints();
   } else {

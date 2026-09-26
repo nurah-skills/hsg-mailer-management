@@ -120,17 +120,13 @@ function showTiles() {
       value: formatNumber(jobs.length),
       watch: { value: jobs.length, unit: 'rows', better: null },
       note: `${formatNumber(jobs.filter((job) => job.stage === 'Ready for AC build').length)} ready for the build`,
-      spark: STAGES.map((stage) => jobs.filter((job) => job.stage === stage).length),
-      sparkLabel: 'Rows in each stage, in stage order', sparkMark: 'biggest',
-      about: 'Every row on the mailer trackers, whatever state it is in. The small chart shows how those rows sit across the six stages.'
+      about: 'Every row on the mailer trackers, whatever state it is in. How they sit across the six stages is under Work by phase.'
     },
     {
       label: 'Rows needing a check', icon: ICONS.alert, tone: 'is-warn',
       value: formatNumber(needsCheck),
       watch: { value: needsCheck, unit: 'rows', better: 'below' },
       note: `${formatNumber(jobs.filter((job) => job.stage === 'Paused / blocked').length)} paused or blocked`,
-      spark: CHECK_TYPES.map((type) => checks.filter((check) => check.type[0] === type[0]).length),
-      sparkLabel: 'Checks raised of each kind', sparkMark: 'biggest',
       about: 'Rows where something is missing or does not agree with itself. One row can raise more than one check, so the checks add up to more than this number.'
     },
     {
@@ -138,8 +134,6 @@ function showTiles() {
       value: formatNumber(current.sent),
       watch: { value: current.sent, unit: 'emails', better: null },
       note: `sends, not people · ${period().current.label}${where}`,
-      spark: dailyTotals('sent', 10, state.through, mailFilters()),
-      sparkLabel: 'Emails sent on each of the last ten days',
       about: 'What the mail tool reports as sent over the three days in the period, not what the trackers plan to send. The college filter narrows this; phase and the search do not, because the mail tool does not carry them.'
     },
     {
@@ -147,9 +141,7 @@ function showTiles() {
       value: formatNumber(current.clickers),
       watch: { value: current.clickers, unit: 'people', better: 'above' },
       note: `people, not clicks · ${period().current.label}${where}`,
-      spark: dailyTotals('clickers', 10, state.through, mailFilters()),
-      sparkLabel: 'People who clicked on each of the last ten days',
-      about: 'People, not clicks: one person who clicks four links counts once. Newer mail has had less time to collect clicks, so the newest days sit low.'
+      about: 'People, not clicks: one person who clicks four links counts once. Newer mail has had less time to collect clicks. The run day by day is on This week.'
     }
   ];
 
@@ -193,6 +185,15 @@ function showPhases() {
   const holder = document.getElementById('phase-chart');
   if (!rows.length) holder.replaceChildren(create('p', 'empty', 'No tracker row matches this selection.'));
   else holder.replaceChildren(barList(rows, { split: true }));
+
+  // The same rows by stage, which is what the Tracker rows figure is made of
+  const stages = STAGES
+    .map((stage) => [stage, jobs.filter((job) => job.stage === stage).length])
+    .filter(([, count]) => count)
+    .map(([stage, count]) => `${formatNumber(count)} ${stage.charAt(0).toLowerCase()}${stage.slice(1)}`);
+  const byStage = document.getElementById('stage-line');
+  byStage.hidden = !stages.length;
+  byStage.textContent = stages.length ? `By stage: ${stages.join(', ')}.` : '';
 }
 
 function showSettle() {
@@ -202,8 +203,7 @@ function showSettle() {
   const byType = CHECK_TYPES
     .map((type) => [type, checks.filter((check) => check.type[0] === type[0])])
     .filter(([, group]) => group.length)
-    .sort((a, b) => b[1].length - a[1].length)
-    .slice(0, 4);
+    .sort((a, b) => b[1].length - a[1].length);
 
   if (!byType.length) {
     holder.append(create('li', '', 'Nothing to settle in this selection.'));

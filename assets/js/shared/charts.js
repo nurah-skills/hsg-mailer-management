@@ -304,18 +304,3 @@ function columnChart(rows, { format = formatNumber, groups = [] } = {}) {
   chart.append(plot);
   return chart;
 }
-
-// The breakdown behind a figure, small enough to sit inside its card
-function sparkline(values, label, mark = 'newest') {
-  const most = Math.max(...values, 1);
-  const marked = mark === 'newest' ? values.length - 1 : values.indexOf(most);
-  const holder = create('span', 'spark');
-  holder.setAttribute('role', 'img');
-  holder.setAttribute('aria-label', label);
-  values.forEach((value, index) => {
-    const bar = create('span', index === marked ? 'is-marked' : '');
-    bar.style.height = `${Math.max(8, (value / most) * 100)}%`;
-    holder.append(bar);
-  });
-  return holder;
-}
