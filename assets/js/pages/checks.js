@@ -9,7 +9,7 @@ const state = {
 
 function fillSelect(id, label, options, value, onChange) {
   const select = document.getElementById(id);
-  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => new Option(option, option)));
+  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => (Array.isArray(option) ? new Option(option[1], option[0]) : new Option(option, option))));
   select.value = value;
   select.addEventListener('change', (event) => onChange(event.target.value));
 }
@@ -152,12 +152,12 @@ function readUrl(moveFocus) {
   }
 }
 
-fillSelect('check-college', 'All colleges', COLLEGES, state.college, (value) => {
+fillSelect('check-college', 'All colleges', COLLEGE_OPTIONS, state.college, (value) => {
   state.college = value;
   Params.set({ college: value });
   render();
 });
-fillSelect('check-phase', 'All phases', PHASES, state.phase, (value) => {
+fillSelect('check-phase', 'All phases', PHASE_OPTIONS, state.phase, (value) => {
   state.phase = value;
   Params.set({ phase: value });
   render();

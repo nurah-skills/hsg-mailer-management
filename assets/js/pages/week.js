@@ -15,7 +15,7 @@ const state = {
 
 function fillSelect(id, label, options, value, onChange) {
   const select = document.getElementById(id);
-  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => new Option(option, option)));
+  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => (Array.isArray(option) ? new Option(option[1], option[0]) : new Option(option, option))));
   select.value = value;
   select.addEventListener('change', (event) => onChange(event.target.value));
 }
@@ -265,7 +265,7 @@ throughSelect.addEventListener('change', (event) => {
   render();
 });
 
-fillSelect('college-filter', 'All colleges', COLLEGES, state.college, (value) => {
+fillSelect('college-filter', 'All colleges', COLLEGE_OPTIONS, state.college, (value) => {
   state.college = value;
   Params.set({ college: value });
   render();

@@ -38,6 +38,11 @@ const OWNERS = [
 ];
 
 const PHASES = ['B', 'C', 'D', 'E', 'E-2', 'F', 'G', 'H', 'K'];
+
+// For the dropdowns: the code stays the value (it is what the address and saved views
+// carry), and the name is what a person reads.
+const COLLEGE_OPTIONS = COLLEGES.map((college) => [college, COLLEGE_NAMES[college] || college]);
+const PHASE_OPTIONS = PHASES.map((phase) => [phase, `Phase ${phase}`]);
 const STAGES = ['In preparation', 'Audience prepared', 'Ready for AC build', 'Waiting on AC', 'Reported sent / live', 'Paused / blocked'];
 
 // Same seed gives the same figures on every visit

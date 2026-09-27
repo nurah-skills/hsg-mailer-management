@@ -26,7 +26,7 @@ const CLICK_PROMPT = 0.2;
 
 function fillSelect(id, label, options, value, onChange) {
   const select = document.getElementById(id);
-  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => new Option(option, option)));
+  select.replaceChildren(new Option(label, 'All'), ...options.map((option) => (Array.isArray(option) ? new Option(option[1], option[0]) : new Option(option, option))));
   select.value = value;
   select.addEventListener('change', (event) => onChange(event.target.value));
 }
@@ -241,7 +241,7 @@ fillSortPicker();
 // Purpose, family and the saved views sit behind "More filters"
 const showMore = moreFilters(() => [state.purpose, state.family].filter((value) => value !== 'All').length);
 
-fillSelect('campaign-college', 'All colleges', COLLEGES, state.college, (value) => {
+fillSelect('campaign-college', 'All colleges', COLLEGE_OPTIONS, state.college, (value) => {
   state.college = value;
   Params.set({ college: value });
   render();
