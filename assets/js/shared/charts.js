@@ -131,15 +131,47 @@ function areaChart(points, { format = formatNumber, label = 'value', key = 'Emai
   plot.addEventListener('pointermove', readAt);
   plot.addEventListener('pointerleave', rest);
 
-  // A long run cannot label every day, so it labels the ends, the peak and a few between
-  const every = Math.max(1, Math.ceil(points.length / 11));
+  // A long run cannot label every day. Each date sits under its own day, and the dates
+  // shown are picked from the width the chart actually has: the two ends first, then the
+  // peak (the key names it as well), then evenly spaced days, skipping any that would touch
+  // one already placed.
+  // It picks again when the panel changes width, so a projector and a phone both read.
   const marks = create('div', 'chart-marks');
-  points.forEach((point, index) => {
-    const named = index === 0 || index === points.length - 1 || index === highest || index % every === 0;
-    const mark = create('span', '', named ? point.label : '');
-    if (index === highest) mark.className = 'is-peak';
-    marks.append(mark);
-  });
+  const track = create('div', 'chart-marks-track');
+  marks.append(track);
+  const placeMarks = () => {
+    // The dates start where the drawing starts, after the scale, whatever width the scale takes.
+    const offset = svg.getBoundingClientRect().left - marks.getBoundingClientRect().left;
+    if (Math.abs(offset - (parseFloat(marks.style.paddingLeft) || 0)) > 0.5) marks.style.paddingLeft = `${Math.max(0, offset)}px`;
+    const span = track.clientWidth;
+    if (!span) return;
+    const last = points.length - 1;
+    const x = (index) => (last ? (index / last) * span : 0);
+    // The longest date at 12px bold, and the gap kept between two dates.
+    const wide = Math.max(...points.map((point) => String(point.label).length)) * 7.5;
+    const gap = 14;
+    // Where a date's text sits: centred under its day, or held to the edge at either end.
+    const extent = (index) => (index === 0 ? [0, wide] : index === last ? [span - wide, span] : [x(index) - wide / 2, x(index) + wide / 2]);
+    const shown = [];
+    const fits = (index) => shown.every((other) => {
+      const [a1, a2] = extent(index);
+      const [b1, b2] = extent(other);
+      return a2 + gap <= b1 || b2 + gap <= a1;
+    });
+    const stride = Math.max(1, Math.ceil((wide + gap) / Math.max(1, span / Math.max(1, last))));
+    const wanted = [0, last, highest];
+    for (let index = 0; index <= last; index += stride) wanted.push(index);
+    wanted.forEach((index) => { if (!shown.includes(index) && fits(index)) shown.push(index); });
+    track.replaceChildren(...shown.sort((a, b) => a - b).map((index) => {
+      const mark = create('span', index === highest ? 'is-peak' : '', points[index].label);
+      mark.style.left = `${(x(index) / span) * 100}%`;
+      if (index === 0) mark.classList.add('is-start');
+      else if (index === last) mark.classList.add('is-end');
+      return mark;
+    }));
+  };
+  if (typeof ResizeObserver === 'function') new ResizeObserver(placeMarks).observe(track);
+  else requestAnimationFrame(placeMarks);
 
   const legend = create('div', 'chart-key');
   const series = create('span', 'chart-key-item');

@@ -1116,7 +1116,13 @@ textarea.input { resize: vertical; min-height: 120px; line-height: 1.5; }
 .chart-scale { display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 22px; font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
 .chart-art { flex: 1; min-width: 0; height: auto; }
 .chart-marks { display: flex; justify-content: space-between; gap: 4px; padding-left: 54px; font-size: 12px; font-weight: 700; color: var(--muted); }
-.chart-marks span { min-width: 0; white-space: nowrap; }
+/* The script sets the row's left padding to where the drawing starts. */
+.chart-marks:has(.chart-marks-track) { padding-left: 0; }
+.chart-marks-track { position: relative; flex: 1; min-width: 0; height: 1.5em; }
+/* Each date is centred under its own day; the first and last hold to the chart's edges. */
+.chart-marks-track span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.chart-marks-track .is-start { transform: none; }
+.chart-marks-track .is-end { transform: translateX(-100%); }
 .chart-marks .is-peak { color: var(--ink); }
 
 /* A ranked list of figures */
